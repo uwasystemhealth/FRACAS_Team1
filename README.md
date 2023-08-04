@@ -1,4 +1,4 @@
-# FRACAS
+# FRACAS Team 1
 FRACAS for UWA Motorsport
 
 The University of Western Australia Motorsport club (UWAM) is a student-led club that competes annually in the FSAE-Australasia student design competition. This competition involves designing, building and racing a formula-style racecar. UWAM is inefficient at transferring experience and technical knowledge from competent members such as current Team Leads to new members.
