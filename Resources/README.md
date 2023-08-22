@@ -1,7 +1,7 @@
 # Project Resources
 Project-related documents are stored here.
-# Other Resources
-Documents available elsewhere are listed below:
+# External Resources
+Documents available outside the project repository are listed below:
 | Document | Description|
 | --- | --- |
 | [Database Design](https://drive.google.com/file/d/1NpMdot_N6a7G8_wHirPJRZQT3zHoJY2n/view?usp=sharing) | Database design using Draw.io |
