@@ -1,6 +1,7 @@
 # Planning Resources
 
-Planning-related documents are stored here.
+Planning-related documents are stored here.  
+(Excluding meeting minutes these are mostly related to CITS5206 Capstone Unit)
 
 ## External Resources
 
