@@ -103,9 +103,9 @@ CREATE TABLE IF NOT EXISTS FRACAS.records(
 	isDeleted boolean,
 	status text,
 	creationTime timestamp, -- Based in WA, timezone is ignored
-	recordCreator int,
-	recordOwner int,
-	technicalTeam int,
+	recordCreator text,
+	recordOwner text,
+	technicalTeam text,
 	subsystem text,
 	carYear text,
 	failureTime timestamp,
@@ -127,38 +127,8 @@ CREATE TABLE IF NOT EXISTS FRACAS.records(
 	isAnalysisValidated boolean,
 	isCorrectionValidated boolean,
 	isReviewed boolean,
-	category int,
-	subcategory int,
-	CONSTRAINT fk_records_recordCreator
-		FOREIGN KEY (recordCreator)
-			REFERENCES FRACAS.users(userID)
-			ON DELETE SET NULL
-			ON UPDATE CASCADE,
-	CONSTRAINT fk_records_recordOwner
-		FOREIGN KEY (recordOwner)
-			REFERENCES FRACAS.users(userID)
-			ON DELETE SET NULL
-			ON UPDATE CASCADE,
-	CONSTRAINT fk_records_teamLead
-		FOREIGN KEY (teamLead)
-			REFERENCES FRACAS.users(userID)
-			ON DELETE SET NULL
-			ON UPDATE CASCADE,
-	CONSTRAINT fk_records_categories
-		FOREIGN KEY (category)
-			REFERENCES FRACAS.categories(categoryID)
-			ON DELETE SET NULL
-			ON UPDATE CASCADE,
-	CONSTRAINT fk_records_subcategory
-		FOREIGN KEY (subcategory)
-			REFERENCES FRACAS.categories(categoryID)
-			ON DELETE SET NULL
-			ON UPDATE CASCADE,
-	CONSTRAINT fk_records_teams
-		FOREIGN KEY (technicalTeam)
-			REFERENCES FRACAS.teams(teamID)
-			ON DELETE SET NULL
-			ON UPDATE CASCADE
+	category text,
+	subcategory text
 	);
 COMMIT;
 
