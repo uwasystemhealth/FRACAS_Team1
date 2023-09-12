@@ -1,0 +1,248 @@
+.w{
+    max-width: 1100px;
+    margin: 0 auto;
+}
+li{
+    list-style: none;
+}
+.topimg{
+    height: 100px;
+    background-image: linear-gradient(to right, #032D5F, rgb(255, 255, 255));
+}
+.topimg h1{
+    color: white;
+    margin-left: 90px;
+    padding-top: 7px;
+    font-size: 34px;
+}
+.mainbox{
+    position: relative;
+    margin-top: 30px;
+    height: 1450px;
+    background-color: rgb(221, 221, 221);
+}
+.mainbox h4{
+    text-align: center;
+    height: 70px;
+    line-height: 70px;
+    font-size: 19px;
+}
+.mainbox ul{
+	display: inline-block;
+    margin-top: 20px;
+    max-width: 600px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+    /* background-color: aliceblue; */
+}
+.mainbox ul li{
+    width: 60px;
+    height: 50px;
+    background-color: #e4e4e4;
+    margin: 20px 45px;
+    float: left;
+    display: flex;  
+    justify-content: center;  
+    align-items: center;  
+    cursor: pointer;
+    position: relative;
+}
+.mainbox ul li span{
+    /* display: block; */
+    width: 45px;
+    height: 40px;
+    background-color: rgb(109, 109, 109,0.4);
+    text-align: center;
+    line-height: 40px;
+    color: white;
+}
+.mainbox ul li img{
+    width: 27px;
+    height: 27px;
+    position: absolute;
+    top: -26px;
+    right: -19px;
+}
+.licolor{
+    background-color: rgb(153, 248, 150);
+}
+.spancolor{
+    background-color: rgba(8, 114, 4, 0.5);
+}
+
+.mainbox ul li:nth-child(1){
+    background-color: rgb(253, 125, 125);
+}
+.mainbox ul li #s1{
+    background-color: rgb(168, 42, 42,0.5);
+}
+/* ---- */
+.mainbox ul li:nth-child(2){
+    background-color: rgb(153, 248, 150);
+}
+.mainbox ul li #s2{
+    background-color: rgba(8, 114, 4, 0.5);
+}
+/* ---- */
+.mainbox ul li:nth-child(3){
+    background-color: rgb(253, 125, 125);
+}
+.mainbox ul li #s3{
+    background-color: rgb(168, 42, 42,0.5);
+}
+.inpbox{
+    max-height: 1260px;
+    /* background-color: #ffe1e1; */
+    margin-top: 20px;
+}
+.inpbox div{
+	display: flex
+    width: 90%;
+    height: 80px;
+    /* background-color: #032D5F; */
+    margin-left: 5%;
+}
+.inpbox div u{
+    display: block;
+    width: 230px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 80px;
+    float: left;
+}
+.inpbox div input{
+    width: 620px;
+    height: 48px;
+    margin-left: 10px;
+    font-size: 20px;
+    border: 1px solid #6d6d6d;
+    outline: none;
+    margin-top: 16px;
+}
+input::-webkit-input-placeholder{
+    font-size: 16px;
+    padding-left: 20px;
+ }
+.shoubox{
+    width: 100%;
+    min-height: 95px;
+    background-color: #8b8b8b;
+	margin: 50px 0;
+}
+.shoubox h4{
+    text-align: center;
+    margin-top: -10px;
+}
+.shoubox span{
+    display: block;
+    width: 0;  
+    height: 0;  
+    border-top: 30px solid transparent;  
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+    border-bottom: 30px solid #dbdbdb;
+    margin: 0 auto;
+    margin-top: -50px;
+    cursor: pointer;
+}
+#box{
+    background-color: rgb(221, 221, 221);
+    margin-top: -30px;
+    height: 880px;
+}
+.botbtn{
+    width: 80%;
+    margin-left: 10%;
+    height: 70px;
+    /* background-color: #032D5F; */
+    float: left;
+}
+.botbtn div{
+    width: 228px;
+    height: 100%;
+    background-color: rgb(245, 211, 59);
+    text-align: center;
+    font-size: 18px;
+    line-height: 70px;
+}
+.botbtn .left{
+    float: left;
+}
+.botbtn .right{
+    float: right;
+}
+.details{
+    position: absolute;
+    max-width: 320px;
+	height: auto;
+	padding: 20px;
+    background-color: rgba(31, 31, 31, 0.7);
+    left: 50%;
+    top: 130px;
+	transform: translate(-50%,-50%);
+    display: none;
+}
+.details .x{
+    display: block;
+    width: 28px;
+    height: 28px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(139, 1, 1, 0.6);
+    text-align: center;
+    line-height: 28px;
+    color: white;
+    cursor: pointer;
+}
+.details div{
+    height: 30px;
+}
+.endnav{
+    /* position: relative; */
+    width: 100%;
+    height: 90px;
+    background-color: #032D5F;
+    float: left;
+    margin-top: 150px;
+    /* position: absolute;   */
+    /* bottom: 0px;   */
+    /* left: 0px;  */
+}
+@media screen and (max-width: 1024px) {
+	.mainbox{
+		height: auto;
+	}
+	.inpbox{
+		height: auto;
+	}
+	.inpbox div{
+		width: 90%;
+		margin: 40px auto;
+		display: grid;
+		grid-template-columns: repeat(1,1fr);
+	}
+	.inpbox div u{
+		line-height: 30px;
+	}
+	.inpbox div input{
+		margin: 0;
+		width: 100%;
+	}
+	.shoubox{
+		margin-top: 140px;
+	}
+	.btnbox{
+		width: 100%;
+	}
+	.btnbox .botbtn{
+		width: 100%;
+		margin: 0%;
+		display: grid;
+		grid-template-columns: repeat(2,1fr);
+	}
+	.btnbox .botbtn div{
+		width: 100%;
+	}
+}

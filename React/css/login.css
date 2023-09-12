@@ -1,0 +1,108 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+.w{
+    max-width: 1100px;
+    margin: 0 auto;
+}
+li{
+    list-style: none;
+}
+.topimg{
+    height: 100px;
+    background-image: linear-gradient(to right, #032D5F, rgb(255, 255, 255));
+}
+.topimg h1{
+    color: white;
+    margin-left: 90px;
+    padding-top: 7px;
+    font-size: 34px;
+}
+.loginbox{
+    max-width: 580px;
+    height: 500px;
+    margin-top: 30px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 0px 10px #ccc;
+    border-radius: 10px;
+	margin-bottom: 20px;
+}
+.loginbox .icon{
+    display: block;
+    width: 60px;
+    height: 60px;
+    background-color: #ffffff;
+    margin: 10px auto;
+    padding-top: 20px;
+}
+.loginbox .icon img{
+    width: 100%;
+    height: 100%;
+}
+.loginbox .inpbox{
+    max-width: 400px;
+    height: 260px;
+    /* background-color: #ccc; */
+    margin-top: 10px;
+}
+.inpbox .inp{
+    width: 100%;
+    height: 76px;
+    /* background-color: #ffd6d6; */
+    margin-bottom: 40px;
+}
+.inpbox .inp span{
+    font-size: 20px;
+    color: rgb(90, 90, 90);
+}
+.inpbox .inp input{
+    width: 100%;
+    height: 48px;
+    border: 0px;
+    outline: none;
+    border-bottom: 1px solid rgb(224, 224, 224);
+    font-size: 18px;
+}
+.inpbox button{
+    width: 240px;
+    height: 45px;
+    background-color: #501acf;
+    display: block;
+    border: 0px;
+    margin: 0 auto;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+    border-radius: 25px;
+}
+.inpbox button:hover{
+    background-color: #2b0d70;
+}
+.inpbox .s1{
+    display: block;
+    color: #ccc;
+    margin-top: 20px;
+    cursor: pointer;
+    float: left;
+}
+.inpbox .s1:hover{
+    color: #501acf;
+}
+.inpbox .s2{
+    display: block;
+    color: #ccc;
+    margin-top: 20px;
+    float: right;
+    cursor: pointer;
+}
+.inpbox .s2:hover{
+    color: #501acf;
+}
+@media screen and (max-width:920px){
+	.loginbox{
+		width: calc(90% - 20px);
+		padding: 0 20px;
+		margin-bottom: 20px;
+	}
+}
