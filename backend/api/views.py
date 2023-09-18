@@ -24,7 +24,7 @@ from .serializers import (
 User = get_user_model()
 
 
-# , DestroyModelMixin can be used to add delete for CRUD functionality
+# XYZModelMixin can be used for CRUD functionality
 
 
 # User Viewset
@@ -60,6 +60,7 @@ class TeamViewSet(
     RetrieveModelMixin,
     ListModelMixin,
     UpdateModelMixin,
+    DestroyModelMixin,
     GenericViewSet,
 ):
     serializer_class = TeamSerializer
@@ -70,8 +71,18 @@ class TeamViewSet(
     @action(detail=True, methods=["get"])
     def members(self, request, team_name=None):
         team = self.get_object()
-        members = User.objects.filter(team_name=team)
-        serializer = UserSerializer(members, many=True)
+        members = User.objects.filter(team=team)
+        serializer = UserSerializer(members, many=True, context={"request": request})
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
+
+    @action(detail=True, methods=["get"])
+    def lead(self, request, team_name=None):
+        team = self.get_object()
+        lead = team.team_lead
+        # first_name = lead.split()[0]
+        # last_name = lead.split()[1]
+        user = User.objects.filter(first_name=lead.first_name, last_name=lead.last_name)
+        serializer = UserSerializer(user, many=True, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
@@ -82,6 +93,7 @@ class CategoryViewSet(
     RetrieveModelMixin,
     ListModelMixin,
     UpdateModelMixin,
+    DestroyModelMixin,
     GenericViewSet,
 ):
     serializer_class = CategorySerializer
@@ -91,11 +103,13 @@ class CategoryViewSet(
     # return all subcategories in a category
     @action(detail=True, methods=["get"])
     def subcategories(self, request, category_name=None):
-        category = self.get_object().category_name
+        category = self.get_object()
         subcategories = Subcategory.objects.filter(parent_category=category).order_by(
             "subcategory_name"
         )
-        serializer = SubcategorySerializer(subcategories, many=True)
+        serializer = SubcategorySerializer(
+            subcategories, many=True, context={"request": request}
+        )
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
@@ -106,6 +120,7 @@ class SubcategoryViewSet(
     RetrieveModelMixin,
     ListModelMixin,
     UpdateModelMixin,
+    DestroyModelMixin,
     GenericViewSet,
 ):
     serializer_class = SubcategorySerializer
@@ -116,7 +131,9 @@ class SubcategoryViewSet(
     @action(detail=True, methods=["get"])
     def parent(self, request, subcategory_name=None):
         subcategory = self.get_object()
-        serializer = CategorySerializer(subcategory.parent_category)
+        serializer = CategorySerializer(
+            subcategory.parent_category, context={"request": request}
+        )
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
@@ -127,6 +144,7 @@ class RecordViewSet(
     RetrieveModelMixin,
     ListModelMixin,
     UpdateModelMixin,
+    DestroyModelMixin,
     GenericViewSet,
 ):
     serializer_class = RecordSerializer
@@ -138,7 +156,9 @@ class RecordViewSet(
     def comments(self, request, record_id=None):
         record = self.get_object()
         comments = Comment.objects.filter(record_id=record).order_by("creation_time")
-        serializer = CommentSerializer(comments, many=True)
+        serializer = CommentSerializer(
+            comments, many=True, context={"request": request}
+        )
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
@@ -149,6 +169,7 @@ class CommentViewSet(
     RetrieveModelMixin,
     ListModelMixin,
     UpdateModelMixin,
+    DestroyModelMixin,
     GenericViewSet,
 ):
     serializer_class = CommentSerializer
@@ -159,5 +180,5 @@ class CommentViewSet(
     @action(detail=True, methods=["get"])
     def record(self, request, comment_id=None):
         comment = self.get_object()
-        serializer = RecordSerializer(comment.record_id)
+        serializer = RecordSerializer(comment.record_id, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)

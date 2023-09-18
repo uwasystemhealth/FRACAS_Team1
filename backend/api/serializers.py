@@ -1,26 +1,15 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import *
+from .models import Category, Comment, Record, Subcategory, Team, User
 
 User = get_user_model()
-
-
-# user serializer
-# ------------------------------------------------------------------------------
-class UserSerializer(serializers.ModelSerializer[User]):
-    class Meta:
-        model = User
-        fields = ["username", "first_name", "last_name", "email", "team", "url"]
-
-        extra_kwargs = {
-            "url": {"view_name": "api:user-detail", "lookup_field": "username"},
-        }
 
 
 # team serializer
 # ------------------------------------------------------------------------------
 class TeamSerializer(serializers.ModelSerializer):
+    team_lead = serializers.StringRelatedField()
     url = serializers.HyperlinkedIdentityField(
         view_name="api:team-detail", lookup_field="team_name"
     )
@@ -32,6 +21,20 @@ class TeamSerializer(serializers.ModelSerializer):
     extra_kwargs = {
         "url": {"view_name": "api:team-detail", "lookup_field": "team_name"},
     }
+
+
+# user serializer
+# ------------------------------------------------------------------------------
+class UserSerializer(serializers.ModelSerializer[User]):
+    team = serializers.SlugRelatedField(slug_field="team_name", read_only=True)
+
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "last_name", "email", "team", "url"]
+
+        extra_kwargs = {
+            "url": {"view_name": "api:user-detail", "lookup_field": "username"},
+        }
 
 
 # category serializer
@@ -49,21 +52,28 @@ class CategorySerializer(serializers.ModelSerializer):
 # subcategory serializer
 # ------------------------------------------------------------------------------
 class SubcategorySerializer(serializers.ModelSerializer):
+    parent_category = serializers.SlugRelatedField(
+        slug_field="category_name", read_only=True
+    )
     url = serializers.HyperlinkedIdentityField(
         view_name="api:subcategory-detail", lookup_field="subcategory_name"
     )
 
     class Meta:
         model = Subcategory
-        fields = ["subcategory_name", "url"]
+        fields = ["subcategory_name", "parent_category", "url"]
 
 
 # record serializer
 # ------------------------------------------------------------------------------
 class RecordSerializer(serializers.ModelSerializer):
-    # url = serializers.HyperlinkedIdentityField(
-    #     view_name="api:record-detail", lookup_field="record_id"
-    # )
+    category = serializers.SlugRelatedField(slug_field="category_name", read_only=True)
+    subcategory = serializers.SlugRelatedField(
+        slug_field="subcategory_name", read_only=True
+    )
+    url = serializers.HyperlinkedIdentityField(
+        view_name="api:record-detail", lookup_field="record_id"
+    )
 
     class Meta:
         model = Record
@@ -73,9 +83,10 @@ class RecordSerializer(serializers.ModelSerializer):
 # comment serializer
 # ------------------------------------------------------------------------------
 class CommentSerializer(serializers.ModelSerializer):
-    # url = serializers.HyperlinkedIdentityField(
-    #     view_name="api:comment-detail", lookup_field="comment_id"
-    # )
+    commenter = serializers.StringRelatedField()
+    url = serializers.HyperlinkedIdentityField(
+        view_name="api:comment-detail", lookup_field="comment_id"
+    )
 
     class Meta:
         model = Comment

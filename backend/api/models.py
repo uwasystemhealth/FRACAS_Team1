@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.urls import reverse
 from django.utils import timezone
 
 
@@ -129,7 +128,7 @@ class Record(models.Model):
         null=True,
         blank=True,
         default=None,
-        related_name="records",
+        related_name="record_category",
     )
     subcategory = models.ForeignKey(
         Subcategory,
@@ -137,7 +136,7 @@ class Record(models.Model):
         null=True,
         blank=True,
         default=None,
-        related_name="records",
+        related_name="record_subcategory",
     )
 
     def __str__(self):
@@ -153,9 +152,11 @@ class Comment(models.Model):
 
     comment_id = models.AutoField(primary_key=True)
     record_id = models.ForeignKey(Record, on_delete=models.CASCADE)
-    parent_comment_id = models.ForeignKey("self", on_delete=models.CASCADE)
+    parent_comment_id = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.CASCADE
+    )
     commenter = models.ForeignKey(
-        User, null=True, on_delete=models.SET_NULL, related_name="record_comments"
+        User, null=True, on_delete=models.SET_NULL, related_name="commented"
     )
     creation_time = models.DateTimeField(default=timezone.now)
     comment_text = models.TextField()
