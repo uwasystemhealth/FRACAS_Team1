@@ -1,8 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 
+# user model
+# ------------------------------------------------------------------------------
 class User(AbstractUser):
     """
     Default custom user model for UWAM FRACAS.
@@ -19,6 +22,9 @@ class User(AbstractUser):
         related_name="teams",
     )
 
+    # def get_absolute_url(self):
+    #     return reverse("api:user-detail", kwargs={"username": self.username})
+
     def __str__(self):
         if self.first_name and self.last_name:
             name = self.first_name + " " + self.last_name
@@ -27,6 +33,8 @@ class User(AbstractUser):
         return str(name)
 
 
+# team model
+# ------------------------------------------------------------------------------
 class Team(models.Model):
     """
     model for teams
@@ -46,6 +54,8 @@ class Team(models.Model):
         return str(self.team_name)
 
 
+# category model
+# ------------------------------------------------------------------------------
 class Category(models.Model):
     """
     model for categories
@@ -61,6 +71,8 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 
+# subcategory model
+# ------------------------------------------------------------------------------
 class Subcategory(models.Model):
     """
     model for subcategories
@@ -77,39 +89,20 @@ class Subcategory(models.Model):
         verbose_name_plural = "Subcategories"
 
 
-class Report(models.Model):
+# record model
+# ------------------------------------------------------------------------------
+class Record(models.Model):
     """
-    model for reports
+    model for records
     """
 
-    report_id = models.AutoField(primary_key=True)
+    record_id = models.AutoField(primary_key=True)
     is_deleted = models.BooleanField(default=None, blank=True, null=True)
     status = models.TextField(blank=True, null=True)
-    report_creator = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        default=None,
-        related_name="created_reports",
-    )
-    report_creation_time = models.DateTimeField(default=timezone.now)
-    report_owner = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        default=None,
-        related_name="owned_reports",
-    )
-    team = models.ForeignKey(
-        Team,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        default=None,
-        related_name="reports",
-    )
+    record_creator = models.TextField(null=True, blank=True)
+    record_creation_time = models.DateTimeField(default=timezone.now)
+    record_owner = models.TextField(null=True, blank=True)
+    team = models.TextField(null=True, blank=True)
     team_lead = models.TextField(blank=True, null=True)
     subsystem = models.TextField(blank=True, null=True)
     car_year = models.TextField(blank=True, null=True)
@@ -126,7 +119,7 @@ class Report(models.Model):
     due_date = models.DateTimeField(blank=True, null=True)
     is_resolved = models.BooleanField(blank=True, null=True, default=False)
     resolve_date = models.DateTimeField(blank=True, null=True)
-    is_report_validated = models.BooleanField(blank=True, null=True, default=False)
+    is_record_validated = models.BooleanField(blank=True, null=True, default=False)
     is_analysis_validated = models.BooleanField(blank=True, null=True, default=False)
     is_correction_validated = models.BooleanField(blank=True, null=True, default=False)
     is_reviewed = models.BooleanField(blank=True, null=True, default=False)
@@ -136,7 +129,7 @@ class Report(models.Model):
         null=True,
         blank=True,
         default=None,
-        related_name="reports",
+        related_name="records",
     )
     subcategory = models.ForeignKey(
         Subcategory,
@@ -144,23 +137,25 @@ class Report(models.Model):
         null=True,
         blank=True,
         default=None,
-        related_name="reports",
+        related_name="records",
     )
 
     def __str__(self):
-        return str(self.report_id)
+        return str(self.record_id)
 
 
+# comment model
+# ------------------------------------------------------------------------------
 class Comment(models.Model):
     """
     model for comments
     """
 
     comment_id = models.AutoField(primary_key=True)
-    report_id = models.ForeignKey(Report, on_delete=models.CASCADE)
+    record_id = models.ForeignKey(Record, on_delete=models.CASCADE)
     parent_comment_id = models.ForeignKey("self", on_delete=models.CASCADE)
     commenter = models.ForeignKey(
-        User, null=True, on_delete=models.SET_NULL, related_name="report_comments"
+        User, null=True, on_delete=models.SET_NULL, related_name="record_comments"
     )
     creation_time = models.DateTimeField(default=timezone.now)
     comment_text = models.TextField()
