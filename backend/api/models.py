@@ -21,12 +21,9 @@ class User(AbstractUser):
         related_name="teams",
     )
 
-    # def get_absolute_url(self):
-    #     return reverse("api:user-detail", kwargs={"username": self.username})
-
     def __str__(self):
         if self.first_name and self.last_name:
-            name = self.first_name + " " + self.last_name
+            name = f"{self.first_name} {self.last_name}"
         else:
             name = self.username
         return str(name)
@@ -40,52 +37,30 @@ class Team(models.Model):
     """
 
     team_id = models.AutoField(primary_key=True)
-    team_name = models.TextField(unique=True)
-    team_lead = models.ForeignKey(
-        User,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="team_leads",
+    team_name = models.CharField(unique=True, max_length=100)
+    team_lead = models.OneToOneField(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="team_lead"
     )
 
     def __str__(self):
         return str(self.team_name)
 
 
-# category model
+# subsystem model
 # ------------------------------------------------------------------------------
-class Category(models.Model):
+class Subsystem(models.Model):
     """
-    model for categories
+    model for subsystems
     """
 
-    category_id = models.AutoField(primary_key=True)
-    category_name = models.TextField(unique=True)
+    subsystem_id = models.AutoField(primary_key=True)
+    subsystem_name = models.CharField(unique=True, max_length=100)
+    parent_team = models.ForeignKey(
+        Team, null=True, blank=True, default=None, on_delete=models.CASCADE
+    )
 
     def __str__(self):
-        return str(self.category_name)
-
-    class Meta:
-        verbose_name_plural = "Categories"
-
-
-# subcategory model
-# ------------------------------------------------------------------------------
-class Subcategory(models.Model):
-    """
-    model for subcategories
-    """
-
-    subcategory_id = models.AutoField(primary_key=True)
-    subcategory_name = models.TextField(unique=True)
-    parent_category = models.ForeignKey(Category, null=False, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.subcategory_name)
-
-    class Meta:
-        verbose_name_plural = "Subcategories"
+        return str(self.subsystem_name)
 
 
 # record model
@@ -96,14 +71,19 @@ class Record(models.Model):
     """
 
     record_id = models.AutoField(primary_key=True)
-    is_deleted = models.BooleanField(default=None, blank=True, null=True)
+    is_deleted = models.BooleanField(default=False, blank=True, null=True)
     status = models.TextField(blank=True, null=True)
     record_creator = models.TextField(null=True, blank=True)
-    record_creation_time = models.DateTimeField(default=timezone.now)
     record_owner = models.TextField(null=True, blank=True)
     team = models.TextField(null=True, blank=True)
-    team_lead = models.TextField(blank=True, null=True)
-    subsystem = models.TextField(blank=True, null=True)
+    subsystem = models.ForeignKey(
+        Subsystem,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        default=None,
+        related_name="record_subsystem",
+    )
     car_year = models.TextField(blank=True, null=True)
     failure_time = models.DateTimeField(default=timezone.now, blank=True, null=True)
     failure_title = models.TextField(blank=True, null=True)
@@ -111,33 +91,18 @@ class Record(models.Model):
     failure_impact = models.TextField(blank=True, null=True)
     failure_cause = models.TextField(blank=True, null=True)
     failure_mechanism = models.TextField(blank=True, null=True)
-    response_action_plan = models.TextField(blank=True, null=True)
     corrective_action_plan = models.TextField(blank=True, null=True)
+    team_lead = models.TextField(blank=True, null=True)
+    record_creation_time = models.DateTimeField(default=timezone.now)
+    due_date = models.DateTimeField(blank=True, null=True)
+    resolve_date = models.DateTimeField(blank=True, null=True)
     resolution_status = models.TextField(blank=True, null=True)
     review_date = models.DateTimeField(blank=True, null=True)
-    due_date = models.DateTimeField(blank=True, null=True)
     is_resolved = models.BooleanField(blank=True, null=True, default=False)
-    resolve_date = models.DateTimeField(blank=True, null=True)
     is_record_validated = models.BooleanField(blank=True, null=True, default=False)
     is_analysis_validated = models.BooleanField(blank=True, null=True, default=False)
     is_correction_validated = models.BooleanField(blank=True, null=True, default=False)
     is_reviewed = models.BooleanField(blank=True, null=True, default=False)
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        default=None,
-        related_name="record_category",
-    )
-    subcategory = models.ForeignKey(
-        Subcategory,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        default=None,
-        related_name="record_subcategory",
-    )
 
     def __str__(self):
         return str(self.record_id)
@@ -155,9 +120,7 @@ class Comment(models.Model):
     parent_comment_id = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE
     )
-    commenter = models.ForeignKey(
-        User, null=True, on_delete=models.SET_NULL, related_name="commented"
-    )
+    commenter = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     creation_time = models.DateTimeField(default=timezone.now)
     comment_text = models.TextField()
 

@@ -11,12 +11,11 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from .models import Category, Comment, Record, Subcategory, Team
+from .models import Comment, Record, Subsystem, Team
 from .serializers import (
-    CategorySerializer,
     CommentSerializer,
     RecordSerializer,
-    SubcategorySerializer,
+    SubsystemSerializer,
     TeamSerializer,
     UserSerializer,
 )
@@ -79,43 +78,26 @@ class TeamViewSet(
     def lead(self, request, team_name=None):
         team = self.get_object()
         lead = team.team_lead
-        # first_name = lead.split()[0]
-        # last_name = lead.split()[1]
-        user = User.objects.filter(first_name=lead.first_name, last_name=lead.last_name)
+        user = User.objects.filter(username=lead.username)
         serializer = UserSerializer(user, many=True, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
-
-# Category Viewset
-# ------------------------------------------------------------------------------
-class CategoryViewSet(
-    CreateModelMixin,
-    RetrieveModelMixin,
-    ListModelMixin,
-    UpdateModelMixin,
-    DestroyModelMixin,
-    GenericViewSet,
-):
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
-    lookup_field = "category_name"
-
-    # return all subcategories in a category
+    # return all subsystems in a team
     @action(detail=True, methods=["get"])
-    def subcategories(self, request, category_name=None):
-        category = self.get_object()
-        subcategories = Subcategory.objects.filter(parent_category=category).order_by(
-            "subcategory_name"
+    def subsystems(self, request, team_name=None):
+        team = self.get_object()
+        subsystems = Subsystem.objects.filter(parent_team=team).order_by(
+            "subsystem_name"
         )
-        serializer = SubcategorySerializer(
-            subcategories, many=True, context={"request": request}
+        serializer = SubsystemSerializer(
+            subsystems, many=True, context={"request": request}
         )
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
-# Subcategory Viewset
+# Subsystem Viewset
 # ------------------------------------------------------------------------------
-class SubcategoryViewSet(
+class SubsystemViewSet(
     CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
@@ -123,17 +105,15 @@ class SubcategoryViewSet(
     DestroyModelMixin,
     GenericViewSet,
 ):
-    serializer_class = SubcategorySerializer
-    queryset = Subcategory.objects.all()
-    lookup_field = "subcategory_name"
+    serializer_class = SubsystemSerializer
+    queryset = Subsystem.objects.all()
+    lookup_field = "subsystem_name"
 
-    # return subcategory's parent category
+    # return subsystem's parent team
     @action(detail=True, methods=["get"])
-    def parent(self, request, subcategory_name=None):
-        subcategory = self.get_object()
-        serializer = CategorySerializer(
-            subcategory.parent_category, context={"request": request}
-        )
+    def parent(self, request, subsystem_name=None):
+        subsystem = self.get_object()
+        serializer = TeamSerializer(subsystem.parent_team, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 
-from .models import Category, Comment, Record, Subcategory, Team
+from .models import Comment, Record, Subsystem, Team
 
 User = get_user_model()
 
@@ -22,7 +22,6 @@ class UserAdmin(auth_admin.UserAdmin):
                     "is_staff",
                     "is_superuser",
                     "groups",
-                    "user_permissions",
                 ),
             },
         ),
@@ -47,18 +46,11 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ["team_name", "team_lead"]
 
 
-# category admin
+# subsystem admin
 # ------------------------------------------------------------------------------
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ["category_name"]
-
-
-# subcategory admin
-# ------------------------------------------------------------------------------
-@admin.register(Subcategory)
-class SubcategoryAdmin(admin.ModelAdmin):
-    list_display = ["subcategory_name", "parent_category"]
+@admin.register(Subsystem)
+class SubsystemAdmin(admin.ModelAdmin):
+    list_display = ["subsystem_name", "parent_team"]
 
 
 # record admin
@@ -68,16 +60,16 @@ class RecordAdmin(admin.ModelAdmin):
     list_display = [
         "record_creation_time",
         "status",
-        "category",
-        "subcategory",
+        "team",
+        "subsystem",
         "record_creator",
         "car_year",
     ]
     list_filter = [
         "record_creation_time",
         "status",
-        "category",
-        "subcategory",
+        "team",
+        "subsystem",
         "record_creator",
         "car_year",
     ]
