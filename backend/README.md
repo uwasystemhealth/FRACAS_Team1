@@ -13,8 +13,8 @@ DEBUG is turned on and the database is sqlite3 for now.
 2. Install virtualenv: `pip3 install virtualenv`
 3. clone this repo.
 4. cd into the backend directory: `cd backend`
-5. Create a virtual environment: `virtualenv venv`
-6. Activate the virtual environment: `source venv/bin/activate`
+5. Create a virtual environment: `virtualenv .venv`
+6. Activate the virtual environment: `source .venv/bin/activate`
 7. Install dependencies: `pip3 install -r requirements.txt`
 8. migrate the database: `python3 manage.py migrate`
 9. Create superuser: `python3 manage.py createsuperuser`
