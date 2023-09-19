@@ -10,13 +10,22 @@ User = get_user_model()
 # user admin
 # ------------------------------------------------------------------------------
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(auth_admin.UserAdmin):
     fieldsets = (
-        (None, {"fields": ["password"]}),
+        (None, {"fields": ("username", "password")}),
+        ("Personal info", {"fields": ("first_name", "last_name", "team", "email")}),
         (
-            "Personal info",
-            {"fields": ("first_name", "last_name", "username", "team", "email")},
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                ),
+            },
         ),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
     )
 
     list_display = [
@@ -25,6 +34,7 @@ class UserAdmin(admin.ModelAdmin):
         "team",
         "username",
         "email",
+        "is_superuser",
     ]
     search_fields = ["first_name", "last_name", "team", "username", "email"]
 
