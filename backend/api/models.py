@@ -1,18 +1,21 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from django.utils import timezone
 
 
 # user model
 # ------------------------------------------------------------------------------
-class User(AbstractUser):
+class User(AbstractBaseUser):
     """
     Default custom user model for UWAM FRACAS.
-
-    first_name, last_name, email, username, password inherited from AbstractUser
-
     """
 
+    username = models.CharField(unique=True, max_length=50)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    email = models.EmailField(unique=True, max_length=50)
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
     team = models.ForeignKey(
         "Team",
         null=True,
