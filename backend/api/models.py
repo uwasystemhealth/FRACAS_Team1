@@ -1,11 +1,42 @@
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
 
+# user model manager
+# https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#auth-custom-user
+# ------------------------------------------------------------------------------
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, email, password=None):
+        """
+        Creates and saves a User with the given username, email, and password.
+        """
+        if not email:
+            raise ValueError('The Email field must be set')
+        user = self.model(
+            username=username,
+            email=self.normalize_email(email),
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, password=None):
+        """
+        Creates and saves a superser with the given username, email, and password.
+        """
+        user = self.create_user(
+            username=username,
+            email=email,
+            password=password,
+        )
+        user.is_admin = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
 
 # user model
 # ------------------------------------------------------------------------------
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     """
     Default custom user model for UWAM FRACAS.
     """
@@ -15,6 +46,7 @@ class User(AbstractBaseUser):
     last_name = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField(unique=True, max_length=50)
     USERNAME_FIELD = "email"
+    EMAIL_FIELD = "email" # satisfies built-in auth form PasswordResetForm
     REQUIRED_FIELDS = ["username"]
     team = models.ForeignKey(
         "Team",
@@ -23,6 +55,11 @@ class User(AbstractBaseUser):
         on_delete=models.SET_NULL,
         related_name="teams",
     )
+    is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    
+    # customised user manager
+    objects = CustomUserManager()
 
     def __str__(self):
         if self.first_name and self.last_name:
@@ -30,6 +67,12 @@ class User(AbstractBaseUser):
         else:
             name = self.username
         return str(name)
+    @property
+    def is_staff(self):
+        """
+        Satisifes built-in forms for user authorisation
+        """
+        return self.is_admin
 
 
 # team model
