@@ -11,28 +11,25 @@ from django.utils import timezone
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#auth-custom-user
 # ------------------------------------------------------------------------------
 class CustomUserManager(BaseUserManager):
-    def create_user(self, username, email, password=None):
+    def create_user(self, username, email, password=None, **extra_fields):
         """
         Creates and saves a User with the given username, email, and password.
         """
         if not email:
             raise ValueError("The Email field must be set")
         user = self.model(
-            username=username,
-            email=self.normalize_email(email),
+            username=username, email=self.normalize_email(email), **extra_fields
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password=None):
+    def create_superuser(self, username, email, password=None, **extra_fields):
         """
         Creates and saves a superser with the given username, email, and password.
         """
         user = self.create_user(
-            username=username,
-            email=email,
-            password=password,
+            username=username, email=email, password=password, **extra_fields
         )
         user.is_admin = True
         user.is_superuser = True

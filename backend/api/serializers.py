@@ -31,11 +31,15 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, clean_data):
-        user_obj = User.objects.create_user(
-            email=clean_data["email"],
-            username=clean_data["username"],
-            password=clean_data["password"],
-        )
+        user_data = clean_data.copy()
+        team = user_data["team"]
+        if team is not None:
+            user_data["team"] = Team.objects.get(pk=clean_data["team"])
+        else:
+            user_data["team"] = None
+
+        user_obj = User.objects.create_user(**user_data)
+
         user_obj.username = clean_data["username"]
         user_obj.save()
         return user_obj

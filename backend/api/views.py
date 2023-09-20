@@ -23,16 +23,20 @@ from .serializers import (
     UserRegisterSerializer,
     UserSerializer,
 )
-from .validations import custom_validation, validate_email, validate_password
+from .validations import register_validation, validate_email, validate_password
 
 User = get_user_model()
+
+
+# views
+# register, login, logout views for sessionid authentication
 
 
 class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        clean_data = custom_validation(request.data)
+        clean_data = register_validation(request.data)
         serializer = UserRegisterSerializer(data=clean_data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.create(clean_data)
@@ -66,6 +70,7 @@ class UserLogout(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+# Viewsets
 # XYZModelMixin can be used for CRUD functionality
 
 
