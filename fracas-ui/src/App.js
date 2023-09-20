@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import SignUpPage from "./pages/Signup";
 import UserDashboard from "./pages/UserDashboard";
 import Report from "./pages/Report";
+import SearchReports from "./pages/SearchReports";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/userdashboard" element={<UserDashboard />} />
         <Route path="/report" element={<Report />} />
+        <Route path="/search" element={<SearchReports />} />
       </Routes>
       <Footer />
     </Router>

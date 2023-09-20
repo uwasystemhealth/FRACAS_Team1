@@ -87,7 +87,7 @@ const Report = () => {
                 </div>
                 <div>
                     <u>Failure description:</u>
-                    <input type="text" placeholder="The LV PDM buck converter on ‘22 (Flo) failed whilst driving." style={{ height: '80px' }} />
+                    <input type="text" placeholder="The LV PDM buck converter on ‘22 (Flo) failed whilst driving." style={{ height: '60px' }} />
                 </div>
                 <div>
                     <u>Failure cause:</u>
