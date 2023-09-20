@@ -10,7 +10,10 @@ User = get_user_model()
 # ------------------------------------------------------------------------------
 class UserSerializer(serializers.ModelSerializer[User]):
     team = serializers.SlugRelatedField(
-        slug_field="team_name", queryset=Team.objects.all()
+        slug_field="team_name",
+        queryset=Team.objects.all(),
+        allow_null=True,
+        required=False,
     )
 
     class Meta:
@@ -26,7 +29,10 @@ class UserSerializer(serializers.ModelSerializer[User]):
 # ------------------------------------------------------------------------------
 class TeamSerializer(serializers.ModelSerializer):
     team_lead = serializers.SlugRelatedField(
-        slug_field="username", queryset=User.objects.all()
+        slug_field="username",
+        queryset=User.objects.all(),
+        allow_null=True,
+        required=False,
     )
     url = serializers.HyperlinkedIdentityField(
         view_name="api:team-detail", lookup_field="team_name"
@@ -45,7 +51,10 @@ class TeamSerializer(serializers.ModelSerializer):
 # ------------------------------------------------------------------------------
 class SubsystemSerializer(serializers.ModelSerializer):
     parent_team = serializers.SlugRelatedField(
-        slug_field="team_name", queryset=Team.objects.all()
+        slug_field="team_name",
+        queryset=Team.objects.all(),
+        allow_null=True,
+        required=False,
     )
     url = serializers.HyperlinkedIdentityField(
         view_name="api:subsystem-detail", lookup_field="subsystem_name"
@@ -61,7 +70,10 @@ class SubsystemSerializer(serializers.ModelSerializer):
 # ------------------------------------------------------------------------------
 class RecordSerializer(serializers.ModelSerializer):
     team = serializers.SlugRelatedField(
-        slug_field="team_name", queryset=Team.objects.all()
+        slug_field="team_name",
+        queryset=Team.objects.all(),
+        allow_null=True,
+        required=False,
     )
     subsystem = serializers.SlugRelatedField(
         slug_field="subsystem_name", queryset=Subsystem.objects.all()
@@ -78,7 +90,12 @@ class RecordSerializer(serializers.ModelSerializer):
 # comment serializer
 # ------------------------------------------------------------------------------
 class CommentSerializer(serializers.ModelSerializer):
-    commenter = serializers.StringRelatedField()
+    commenter = serializers.SlugRelatedField(
+        slug_field="username",
+        queryset=User.objects.all(),
+        allow_null=True,
+        required=False,
+    )
     url = serializers.HyperlinkedIdentityField(
         view_name="api:comment-detail", lookup_field="comment_id"
     )
