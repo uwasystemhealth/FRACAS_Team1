@@ -1,6 +1,11 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.db import models
 from django.utils import timezone
+
 
 # user model manager
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#auth-custom-user
@@ -11,7 +16,7 @@ class CustomUserManager(BaseUserManager):
         Creates and saves a User with the given username, email, and password.
         """
         if not email:
-            raise ValueError('The Email field must be set')
+            raise ValueError("The Email field must be set")
         user = self.model(
             username=username,
             email=self.normalize_email(email),
@@ -34,6 +39,7 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 # user model
 # ------------------------------------------------------------------------------
 class User(AbstractBaseUser, PermissionsMixin):
@@ -46,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField(unique=True, max_length=50)
     USERNAME_FIELD = "email"
-    EMAIL_FIELD = "email" # satisfies built-in auth form PasswordResetForm
+    EMAIL_FIELD = "email"  # satisfies built-in auth form PasswordResetForm
     REQUIRED_FIELDS = ["username"]
     team = models.ForeignKey(
         "Team",
@@ -57,7 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    
+
     # customised user manager
     objects = CustomUserManager()
 
@@ -67,6 +73,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             name = self.username
         return str(name)
+
     @property
     def is_staff(self):
         """
