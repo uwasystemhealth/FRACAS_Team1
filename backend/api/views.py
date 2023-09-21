@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model, login, logout
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
+from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.mixins import (
@@ -27,6 +27,12 @@ from .serializers import (
 from .validations import register_validation, validate_email, validate_password
 
 User = get_user_model()
+
+
+class ReadOnlyPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS
+
 
 # views
 # register, login, logout views for sessionid authentication
@@ -97,7 +103,7 @@ class UserViewSet(
     #     return self.queryset.filter(id=self.request.user.id)
 
     # return current user
-    @action(detail=False)
+    @action(detail=False, methods=["get"], permission_classes=[ReadOnlyPermission])
     def me(self, request):
         serializer = UserSerializer(request.user, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
@@ -122,14 +128,15 @@ class TeamViewSet(
     ordering_fields = ["team_name"]
 
     # return team members
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def members(self, request, team_name=None):
         team = self.get_object()
         members = User.objects.filter(team=team)
         serializer = UserSerializer(members, many=True, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
-    @action(detail=True, methods=["get"])
+    # return team lead
+    @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def lead(self, request, team_name=None):
         team = self.get_object()
         lead = team.team_lead
@@ -138,7 +145,7 @@ class TeamViewSet(
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
     # return all subsystems in a team
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def subsystems(self, request, team_name=None):
         team = self.get_object()
         subsystems = Subsystem.objects.filter(parent_team=team).order_by(
@@ -169,7 +176,7 @@ class SubsystemViewSet(
     ordering_fields = ["subsystem_name"]
 
     # return subsystem's parent team
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def parent(self, request, subsystem_name=None):
         subsystem = self.get_object()
         serializer = TeamSerializer(subsystem.parent_team, context={"request": request})
@@ -216,7 +223,7 @@ class RecordViewSet(
     ordering_fields = ["record_creation_time"]
 
     # return all comments on a record
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def comments(self, request, record_id=None):
         record = self.get_object()
         comments = Comment.objects.filter(record_id=record).order_by("creation_time")
@@ -245,7 +252,7 @@ class CommentViewSet(
     ordering_fields = ["creation_time"]
 
     # return comment's record
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def record(self, request, comment_id=None):
         comment = self.get_object()
         serializer = RecordSerializer(comment.record_id, context={"request": request})
