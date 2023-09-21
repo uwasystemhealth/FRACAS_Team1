@@ -30,23 +30,25 @@ const Login = () => {
         <p style={{ color: 'rgb(119, 119, 119)', textAlign: 'center', fontSize: '17px' }}>Sign in to your account</p>
         <div className="inpbox w">
           <div className="inp">
-            <span>*Name</span>
+            <span>Username</span>
             <br />
             <input 
               type="text" 
               placeholder="Please enter your name" 
               value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
+              onChange={(e) => setUsername(e.target.value)}
+              required 
             />
           </div>
           <div className="inp">
-            <span>*Password</span>
+            <span>Password</span>
             <br />
             <input 
               type="password" 
               placeholder="Please enter your Password" 
               value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
+              onChange={(e) => setPassword(e.target.value)}
+              required 
             />
           </div>
           <button onClick={handleLogin}>Log in</button>
