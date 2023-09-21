@@ -109,7 +109,10 @@ class RecordSerializer(serializers.ModelSerializer):
         required=False,
     )
     subsystem = serializers.SlugRelatedField(
-        slug_field="subsystem_name", queryset=Subsystem.objects.all()
+        slug_field="subsystem_name",
+        queryset=Subsystem.objects.all(),
+        allow_null=True,
+        required=False,
     )
     url = serializers.HyperlinkedIdentityField(
         view_name="api:record-detail", lookup_field="record_id"

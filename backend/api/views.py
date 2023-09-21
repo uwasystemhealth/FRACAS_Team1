@@ -1,8 +1,6 @@
-from re import search
-
 from django.contrib.auth import get_user_model, login, logout
-from rest_framework import permissions, status
-from rest_framework.authentication import SessionAuthentication
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.mixins import (
@@ -29,7 +27,6 @@ from .serializers import (
 from .validations import register_validation, validate_email, validate_password
 
 User = get_user_model()
-
 
 # views
 # register, login, logout views for sessionid authentication
@@ -89,7 +86,10 @@ class UserViewSet(
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "username"
-    filter_backends = [SearchFilter, OrderingFilter]
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
+    search_fields = ["username", "email", "team__team_name"]
+    filterset_fields = ["username", "email", "team__team_name"]
+    ordering_fields = ["username"]
 
     # filter by user id
     # def get_queryset(self, *args, **kwargs):
@@ -116,7 +116,10 @@ class TeamViewSet(
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"
-    filter_backends = [SearchFilter, OrderingFilter]
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
+    search_fields = ["team_name", "team_lead__username", "team_lead__email"]
+    filterset_fields = ["team_name", "team_lead__username", "team_lead__email"]
+    ordering_fields = ["team_name"]
 
     # return team members
     @action(detail=True, methods=["get"])
@@ -160,7 +163,10 @@ class SubsystemViewSet(
     serializer_class = SubsystemSerializer
     queryset = Subsystem.objects.all()
     lookup_field = "subsystem_name"
-    filter_backends = [SearchFilter, OrderingFilter]
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
+    search_fields = ["subsystem_name", "parent_team__team_name"]
+    filterset_fields = ["subsystem_name", "parent_team__team_name"]
+    ordering_fields = ["subsystem_name"]
 
     # return subsystem's parent team
     @action(detail=True, methods=["get"])
@@ -183,8 +189,31 @@ class RecordViewSet(
     serializer_class = RecordSerializer
     queryset = Record.objects.all()
     lookup_field = "record_id"
-    filter_backends = [SearchFilter, OrderingFilter]
-    search_fields = ["record_creator__username", "record_creator__email"]
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
+    search_fields = [
+        "record_id",
+        "team__team_name",
+        "subsystem__subsystem_name",
+        "record_creation_time",
+        "status",
+        "failure_title",
+        "failure_description",
+        "failure_impact",
+        "failure_cause",
+        "failure_mechanism",
+        "corrective_action_plan",
+        "team_lead",
+        "car_year",
+    ]
+    filterset_fields = [
+        "record_id",
+        "team__team_name",
+        "subsystem__subsystem_name",
+        "status",
+        "car_year",
+    ]
+
+    ordering_fields = ["record_creation_time"]
 
     # return all comments on a record
     @action(detail=True, methods=["get"])
@@ -210,8 +239,10 @@ class CommentViewSet(
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     lookup_field = "comment_id"
-    filter_backends = [SearchFilter, OrderingFilter]
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = ["comment_text", "commenter__username"]
+    filterset_fields = ["comment_text", "commenter__username"]
+    ordering_fields = ["creation_time"]
 
     # return comment's record
     @action(detail=True, methods=["get"])

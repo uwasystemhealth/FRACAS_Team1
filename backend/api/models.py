@@ -44,7 +44,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     Default custom user model for UWAM FRACAS.
     """
 
-    username = models.CharField(unique=True, max_length=50)
+    username = models.CharField(
+        unique=True, max_length=50
+    )  # _id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField(unique=True, max_length=50)
@@ -125,14 +127,15 @@ class Record(models.Model):
     status = models.TextField(blank=True, null=True)
     record_creator = models.TextField(null=True, blank=True)
     record_owner = models.TextField(null=True, blank=True)
-    team = models.TextField(null=True, blank=True)
+    team = models.ForeignKey(
+        Team, on_delete=models.SET_NULL, null=True, blank=True, default=None
+    )
     subsystem = models.ForeignKey(
         Subsystem,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         default=None,
-        related_name="record_subsystem",
     )
     car_year = models.TextField(blank=True, null=True)
     failure_time = models.DateTimeField(default=timezone.now, blank=True, null=True)

@@ -3,8 +3,9 @@ from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from .models import Comment, Record, Subsystem, Team
 from .forms import UserChangeForm, UserCreationForm
+from .models import Comment, Record, Subsystem, Team
+
 User = get_user_model()
 
 
@@ -31,8 +32,8 @@ class UserAdmin(auth_admin.UserAdmin):
         "first_name",
         "last_name",
         "team",
-        "username",
         "email",
+        "is_admin",
     ]
     search_fields = ["first_name", "last_name", "team", "username", "email"]
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -47,15 +48,18 @@ class UserAdmin(auth_admin.UserAdmin):
         ),
     ]
 
+
 # unregister unused django default Group model from admin
 # ------------------------------------------------------------------------------
 admin.site.unregister(Group)
+
 
 # team admin
 # ------------------------------------------------------------------------------
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     list_display = ["team_name", "team_lead"]
+    search_fields = ["team_name", "team_lead__username", "team_lead__email"]
 
 
 # subsystem admin

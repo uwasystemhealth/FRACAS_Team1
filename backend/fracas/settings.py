@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_extensions",
     "corsheaders",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -116,6 +117,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Authentication settings
 AUTH_USER_MODEL = "api.User"
 
+
+# rest framework settings
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": (
+        "rest_framework.filters.SearchFilter",
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ),
+}
+# from old sessionid authentication
 # REST_FRAMEWORK = {
 #     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 #     "DEFAULT_AUTHENTICATION_CLASSES": (
