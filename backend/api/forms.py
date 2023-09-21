@@ -1,7 +1,10 @@
 from django import forms
-from .models import  User
-from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.core.exceptions import ValidationError
+
+from .models import User
+
+
 # A rewritten UserCreationForm to work with a customized AbstractBaseUser
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#auth-custom-user
 # ------------------------------------------------------------------------------
@@ -16,7 +19,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["email", "username"]
+        fields = ["email", "first_name", "last_name"]
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -33,7 +36,7 @@ class UserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-    
+
 
 # A rewritten UserChangeForm to work with a customized AbstractBaseUser
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#auth-custom-user
@@ -48,4 +51,11 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["email", "password", "username", "is_active", "is_admin"]
+        fields = [
+            "email",
+            "password",
+            "first_name",
+            "last_name",
+            "is_active",
+            "is_admin",
+        ]

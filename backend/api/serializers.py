@@ -18,10 +18,10 @@ class UserSerializer(serializers.ModelSerializer[User]):
 
     class Meta:
         model = User
-        fields = ["username", "first_name", "last_name", "email", "team", "url"]
+        fields = ["user_id", "first_name", "last_name", "email", "team", "url"]
 
         extra_kwargs = {
-            "url": {"view_name": "api:user-detail", "lookup_field": "username"},
+            "url": {"view_name": "api:user-detail", "lookup_field": "user_id"},
         }
 
 
@@ -40,7 +40,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
         user_obj = User.objects.create_user(**user_data)
 
-        user_obj.username = clean_data["username"]
         user_obj.save()
         return user_obj
 
@@ -62,7 +61,7 @@ class UserLoginSerializer(serializers.Serializer):
 # ------------------------------------------------------------------------------
 class TeamSerializer(serializers.ModelSerializer):
     team_lead = serializers.SlugRelatedField(
-        slug_field="username",
+        slug_field="user_id",
         queryset=User.objects.all(),
         allow_null=True,
         required=False,
@@ -127,7 +126,7 @@ class RecordSerializer(serializers.ModelSerializer):
 # ------------------------------------------------------------------------------
 class CommentSerializer(serializers.ModelSerializer):
     commenter = serializers.SlugRelatedField(
-        slug_field="username",
+        slug_field="user_id",
         queryset=User.objects.all(),
         allow_null=True,
         required=False,

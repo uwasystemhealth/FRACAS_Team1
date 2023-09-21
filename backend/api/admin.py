@@ -21,7 +21,7 @@ class UserAdmin(auth_admin.UserAdmin):
         (None, {"fields": ["password"]}),
         (
             "Personal info",
-            {"fields": ("first_name", "last_name", "username", "team", "email")},
+            {"fields": ("first_name", "last_name", "team", "email")},
         ),
     )
     list_filter = [
@@ -35,7 +35,8 @@ class UserAdmin(auth_admin.UserAdmin):
         "email",
         "is_admin",
     ]
-    search_fields = ["first_name", "last_name", "team", "username", "email"]
+    search_fields = ["first_name", "last_name", "team", "email"]
+    ordering = ("first_name", "last_name", "team", "email", "is_admin")
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = [
@@ -43,7 +44,7 @@ class UserAdmin(auth_admin.UserAdmin):
             None,
             {
                 "classes": ["wide"],
-                "fields": ["email", "username", "password1", "password2"],
+                "fields": ["email", "password1", "password2"],
             },
         ),
     ]
@@ -59,7 +60,7 @@ admin.site.unregister(Group)
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     list_display = ["team_name", "team_lead"]
-    search_fields = ["team_name", "team_lead__username", "team_lead__email"]
+    search_fields = ["team_name", "team_lead__user_id", "team_lead__email"]
 
 
 # subsystem admin

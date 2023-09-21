@@ -11,25 +11,34 @@ from django.utils import timezone
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#auth-custom-user
 # ------------------------------------------------------------------------------
 class CustomUserManager(BaseUserManager):
-    def create_user(self, username, email, password=None, **extra_fields):
+    def create_user(self, first_name, last_name, email, password=None, **extra_fields):
         """
-        Creates and saves a User with the given username, email, and password.
+        Creates and saves a User with the given first_name, last_name, email, and password.
         """
         if not email:
             raise ValueError("The Email field must be set")
         user = self.model(
-            username=username, email=self.normalize_email(email), **extra_fields
+            first_name=first_name,
+            last_name=last_name,
+            email=self.normalize_email(email),
+            **extra_fields,
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password=None, **extra_fields):
+    def create_superuser(
+        self, first_name, last_name, email, password=None, **extra_fields
+    ):
         """
-        Creates and saves a superser with the given username, email, and password.
+        Creates and saves a superser with the given first_name, last_name, email, and password.
         """
         user = self.create_user(
-            username=username, email=email, password=password, **extra_fields
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            password=password,
+            **extra_fields,
         )
         user.is_admin = True
         user.is_superuser = True
@@ -44,15 +53,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     Default custom user model for UWAM FRACAS.
     """
 
-    username = models.CharField(
-        unique=True, max_length=50
-    )  # _id = models.AutoField(primary_key=True)
+    user_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField(unique=True, max_length=50)
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"  # satisfies built-in auth form PasswordResetForm
-    REQUIRED_FIELDS = ["username"]
+    REQUIRED_FIELDS = ["first_name", "last_name"]
     team = models.ForeignKey(
         "Team",
         null=True,
@@ -70,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.first_name and self.last_name:
             name = f"{self.first_name} {self.last_name}"
         else:
-            name = self.username
+            name = self.user_id
         return str(name)
 
     @property

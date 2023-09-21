@@ -91,11 +91,11 @@ class UserViewSet(
 ):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    lookup_field = "username"
+    lookup_field = "user_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
-    search_fields = ["username", "email", "team__team_name"]
-    filterset_fields = ["username", "email", "team__team_name"]
-    ordering_fields = ["username"]
+    search_fields = ["user_id", "email", "team__team_name"]
+    filterset_fields = ["user_id", "email", "team__team_name"]
+    ordering_fields = ["user_id"]
 
     # filter by user id
     # def get_queryset(self, *args, **kwargs):
@@ -123,8 +123,8 @@ class TeamViewSet(
     queryset = Team.objects.all()
     lookup_field = "team_name"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
-    search_fields = ["team_name", "team_lead__username", "team_lead__email"]
-    filterset_fields = ["team_name", "team_lead__username", "team_lead__email"]
+    search_fields = ["team_name", "team_lead__user_id", "team_lead__email"]
+    filterset_fields = ["team_name", "team_lead__user_id", "team_lead__email"]
     ordering_fields = ["team_name"]
 
     # return team members
@@ -140,7 +140,7 @@ class TeamViewSet(
     def lead(self, request, team_name=None):
         team = self.get_object()
         lead = team.team_lead
-        user = User.objects.filter(username=lead.username)
+        user = User.objects.filter(user_id=lead.user_id)
         serializer = UserSerializer(user, many=True, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
@@ -247,8 +247,8 @@ class CommentViewSet(
     queryset = Comment.objects.all()
     lookup_field = "comment_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
-    search_fields = ["comment_text", "commenter__username"]
-    filterset_fields = ["comment_text", "commenter__username"]
+    search_fields = ["comment_text", "commenter__user_id"]
+    filterset_fields = ["comment_text", "commenter__user_id"]
     ordering_fields = ["creation_time"]
 
     # return comment's record
