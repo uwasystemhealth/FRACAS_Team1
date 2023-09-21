@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, get_user_model
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 from .models import Comment, Record, Subsystem, Team
@@ -9,6 +10,8 @@ User = get_user_model()
 # user serializer
 # ------------------------------------------------------------------------------
 class UserSerializer(serializers.ModelSerializer[User]):
+    """Serializes the User model."""
+
     team = serializers.SlugRelatedField(
         slug_field="team_name",
         queryset=Team.objects.all(),
@@ -26,11 +29,21 @@ class UserSerializer(serializers.ModelSerializer[User]):
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
+    """Serializes the User model for Registration."""
+
     class Meta:
         model = User
         fields = "__all__"
 
     def create(self, clean_data):
+        """Creates a new user instance with the provided clean_data.
+
+        Args:
+            clean_data (dict): A dictionary containing the cleaned data.
+
+        Returns:
+            User: The newly created user instance.
+        """
         user_data = clean_data.copy()
         team = user_data["team"]
         if team is not None:
@@ -45,10 +58,23 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
+    """Serializes the User model for login."""
+
     email = serializers.EmailField()
     password = serializers.CharField()
 
     def check_user(self, clean_data):
+        """Authenticates the user with the provided clean_data.
+
+        Args:
+            clean_data (dict): A dictionary containing the cleaned data.
+
+        Returns:
+            User: The authenticated user instance.
+
+        Raises:
+            ValidationError: If the user is not found.
+        """
         user = authenticate(
             username=clean_data["email"], password=clean_data["password"]
         )
@@ -60,6 +86,8 @@ class UserLoginSerializer(serializers.Serializer):
 # team serializer
 # ------------------------------------------------------------------------------
 class TeamSerializer(serializers.ModelSerializer):
+    """Serializes the Team model."""
+
     team_lead = serializers.SlugRelatedField(
         slug_field="user_id",
         queryset=User.objects.all(),
@@ -82,6 +110,8 @@ class TeamSerializer(serializers.ModelSerializer):
 # subsystem serializer
 # ------------------------------------------------------------------------------
 class SubsystemSerializer(serializers.ModelSerializer):
+    """Serializes the Subsystem model."""
+
     parent_team = serializers.SlugRelatedField(
         slug_field="team_name",
         queryset=Team.objects.all(),
@@ -101,6 +131,8 @@ class SubsystemSerializer(serializers.ModelSerializer):
 # record serializer
 # ------------------------------------------------------------------------------
 class RecordSerializer(serializers.ModelSerializer):
+    """Serializes the Record model."""
+
     team = serializers.SlugRelatedField(
         slug_field="team_name",
         queryset=Team.objects.all(),
@@ -125,6 +157,8 @@ class RecordSerializer(serializers.ModelSerializer):
 # comment serializer
 # ------------------------------------------------------------------------------
 class CommentSerializer(serializers.ModelSerializer):
+    """Serializes the Comment model."""
+
     commenter = serializers.SlugRelatedField(
         slug_field="user_id",
         queryset=User.objects.all(),

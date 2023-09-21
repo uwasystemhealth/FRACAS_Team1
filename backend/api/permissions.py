@@ -1,10 +1,10 @@
 from rest_framework import permissions
 
-
 # Code derived from https://www.django-rest-framework.org/api-guide/permissions/
 
 # Permission for all authenticated users
 # Use permissions.IsAuthenticated
+
 
 # Permission for team lead
 class IsLeadPermission(permissions.BasePermission):
@@ -15,9 +15,8 @@ class IsLeadPermission(permissions.BasePermission):
 
 # Permission for record permission control
 class IsOwnerOrReadOnly(permissions.BasePermission):
-    """
-    Object-level permission to only allow the creator a record object to edit it.
-    """
+    """Object-level permission to only allow the creator a record object to edit it."""
+
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         if request.method in permissions.SAFE_METHODS:

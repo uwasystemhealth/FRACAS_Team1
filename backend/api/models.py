@@ -12,9 +12,7 @@ from django.utils import timezone
 # ------------------------------------------------------------------------------
 class CustomUserManager(BaseUserManager):
     def create_user(self, first_name, last_name, email, password=None, **extra_fields):
-        """
-        Creates and saves a User with the given first_name, last_name, email, and password.
-        """
+        """Creates and saves a User with the given first_name, last_name, email, and password."""
         if not email:
             raise ValueError("The Email field must be set")
         user = self.model(
@@ -30,9 +28,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(
         self, first_name, last_name, email, password=None, **extra_fields
     ):
-        """
-        Creates and saves a superser with the given first_name, last_name, email, and password.
-        """
+        """Creates and saves a superser with the given first_name, last_name, email, and password."""
         user = self.create_user(
             first_name=first_name,
             last_name=last_name,
@@ -49,9 +45,7 @@ class CustomUserManager(BaseUserManager):
 # user model
 # ------------------------------------------------------------------------------
 class User(AbstractBaseUser, PermissionsMixin):
-    """
-    Default custom user model for UWAM FRACAS.
-    """
+    """Default custom user model for UWAM FRACAS."""
 
     user_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=50, blank=True, null=True)
@@ -82,18 +76,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_staff(self):
-        """
-        Satisifes built-in forms for user authorisation
-        """
+        """Satisifes built-in forms for user authorisation"""
         return self.is_admin
 
 
 # team model
 # ------------------------------------------------------------------------------
 class Team(models.Model):
-    """
-    model for teams
-    """
+    """Model for teams"""
 
     team_id = models.AutoField(primary_key=True)
     team_name = models.CharField(unique=True, max_length=100)
@@ -108,9 +98,7 @@ class Team(models.Model):
 # subsystem model
 # ------------------------------------------------------------------------------
 class Subsystem(models.Model):
-    """
-    model for subsystems
-    """
+    """Model for subsystems"""
 
     subsystem_id = models.AutoField(primary_key=True)
     subsystem_name = models.CharField(unique=True, max_length=100)
@@ -125,9 +113,7 @@ class Subsystem(models.Model):
 # record model
 # ------------------------------------------------------------------------------
 class Record(models.Model):
-    """
-    model for records
-    """
+    """Model for records"""
 
     record_id = models.AutoField(primary_key=True)
     is_deleted = models.BooleanField(default=False, blank=True, null=True)
@@ -171,9 +157,7 @@ class Record(models.Model):
 # comment model
 # ------------------------------------------------------------------------------
 class Comment(models.Model):
-    """
-    model for comments
-    """
+    """Model for comments"""
 
     comment_id = models.AutoField(primary_key=True)
     record_id = models.ForeignKey(Record, on_delete=models.CASCADE)

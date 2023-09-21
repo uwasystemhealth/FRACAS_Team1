@@ -7,6 +7,17 @@ UserModel = get_user_model()
 
 
 def register_validation(data):
+    """Validates the data for user registration.
+
+    Args:
+        data (dict): A dictionary containing the user data.
+
+    Returns:
+        dict: The validated data with the password and team fields set.
+
+    Raises:
+        ValidationError: If the email is already taken, the password is too short, or the passwords do not match.
+    """
     email = data["email"].strip()
     first_name = data["first_name"].strip()
     last_name = data["last_name"].strip()
@@ -38,6 +49,17 @@ def register_validation(data):
 
 
 def validate_email(data):
+    """Validates the email field in the data.
+
+    Args:
+        data (dict): A dictionary containing the user data.
+
+    Returns:
+        bool: True if the email is valid, False otherwise.
+
+    Raises:
+        ValidationError: If the email is empty.
+    """
     email = data["email"].strip()
     if not email:
         raise ValidationError("An email is required.")
@@ -45,6 +67,17 @@ def validate_email(data):
 
 
 def validate_password(data):
+    """Validates the password field in the data.
+
+    Args:
+        data (dict): A dictionary containing the user data.
+
+    Returns:
+        bool: True if the password is valid, False otherwise.
+
+    Raises:
+        ValidationError: If the password is empty.
+    """
     password = data["password"].strip()
     if not password:
         raise ValidationError("Password is required.")

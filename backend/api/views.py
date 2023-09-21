@@ -34,11 +34,11 @@ class ReadOnlyPermission(permissions.BasePermission):
         return request.method in permissions.SAFE_METHODS
 
 
-# views
-# register, login, logout views for sessionid authentication
-
-
+# API views
+# ------------------------------------------------------------------------------
 class UserRegister(APIView):
+    """View to register a new user."""
+
     # permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
@@ -52,8 +52,7 @@ class UserRegister(APIView):
 
 
 class UserLogin(APIView):
-    # permission_classes = (permissions.AllowAny,)
-    # authentication_classes = (SessionAuthentication,)
+    """View to login a user."""
 
     def post(self, request):
         data = request.data
@@ -63,10 +62,12 @@ class UserLogin(APIView):
         if serializer.is_valid(raise_exception=True):
             user = serializer.check_user(data)
             login(request, user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
 
 
 class UserLogout(APIView):
+    """View to logout a user."""
+
     # permission_classes = (permissions.AllowAny,)
     # authentication_classes = ()
 
@@ -76,7 +77,7 @@ class UserLogout(APIView):
 
 
 # Viewsets
-# XYZModelMixin can be used for CRUD functionality
+# (XYZModelMixin can be used for CRUD functionality)
 
 
 # User Viewset
@@ -89,6 +90,8 @@ class UserViewSet(
     UpdateModelMixin,
     GenericViewSet,
 ):
+    """Viewset for the User model."""
+
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "user_id"
@@ -97,14 +100,9 @@ class UserViewSet(
     filterset_fields = ["user_id", "email", "team__team_name"]
     ordering_fields = ["user_id"]
 
-    # filter by user id
-    # def get_queryset(self, *args, **kwargs):
-    #     assert isinstance(self.request.user.id, int)
-    #     return self.queryset.filter(id=self.request.user.id)
-
-    # return current user
     @action(detail=False, methods=["get"], permission_classes=[ReadOnlyPermission])
     def me(self, request):
+        """return current user"""
         serializer = UserSerializer(request.user, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
@@ -119,6 +117,8 @@ class TeamViewSet(
     DestroyModelMixin,
     GenericViewSet,
 ):
+    """Viewset for the Team model."""
+
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"
@@ -127,26 +127,26 @@ class TeamViewSet(
     filterset_fields = ["team_name", "team_lead__user_id", "team_lead__email"]
     ordering_fields = ["team_name"]
 
-    # return team members
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def members(self, request, team_name=None):
+        "return team members"
         team = self.get_object()
         members = User.objects.filter(team=team)
         serializer = UserSerializer(members, many=True, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
-    # return team lead
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def lead(self, request, team_name=None):
+        """return team lead"""
         team = self.get_object()
         lead = team.team_lead
         user = User.objects.filter(user_id=lead.user_id)
         serializer = UserSerializer(user, many=True, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
-    # return all subsystems in a team
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def subsystems(self, request, team_name=None):
+        """return all subsystems in a team"""
         team = self.get_object()
         subsystems = Subsystem.objects.filter(parent_team=team).order_by(
             "subsystem_name"
@@ -167,6 +167,8 @@ class SubsystemViewSet(
     DestroyModelMixin,
     GenericViewSet,
 ):
+    """Viewset for the Subsystem model."""
+
     serializer_class = SubsystemSerializer
     queryset = Subsystem.objects.all()
     lookup_field = "subsystem_name"
@@ -175,9 +177,9 @@ class SubsystemViewSet(
     filterset_fields = ["subsystem_name", "parent_team__team_name"]
     ordering_fields = ["subsystem_name"]
 
-    # return subsystem's parent team
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def parent(self, request, subsystem_name=None):
+        """return subsystem's parent team"""
         subsystem = self.get_object()
         serializer = TeamSerializer(subsystem.parent_team, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
@@ -193,6 +195,8 @@ class RecordViewSet(
     DestroyModelMixin,
     GenericViewSet,
 ):
+    """Viewset for the Record model."""
+
     serializer_class = RecordSerializer
     queryset = Record.objects.all()
     lookup_field = "record_id"
@@ -222,9 +226,9 @@ class RecordViewSet(
 
     ordering_fields = ["record_creation_time"]
 
-    # return all comments on a record
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def comments(self, request, record_id=None):
+        """return all comments on a record"""
         record = self.get_object()
         comments = Comment.objects.filter(record_id=record).order_by("creation_time")
         serializer = CommentSerializer(
@@ -243,6 +247,8 @@ class CommentViewSet(
     DestroyModelMixin,
     GenericViewSet,
 ):
+    """Viewset for the Comment model."""
+
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     lookup_field = "comment_id"
@@ -251,9 +257,9 @@ class CommentViewSet(
     filterset_fields = ["comment_text", "commenter__user_id"]
     ordering_fields = ["creation_time"]
 
-    # return comment's record
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def record(self, request, comment_id=None):
+        """return comment's record"""
         comment = self.get_object()
         serializer = RecordSerializer(comment.record_id, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)

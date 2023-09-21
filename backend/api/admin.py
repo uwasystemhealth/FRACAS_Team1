@@ -14,6 +14,8 @@ User = get_user_model()
 # ------------------------------------------------------------------------------
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
+    """Define admin model for custom User model with no username field."""
+
     # The forms to add and change user instances
     form = UserChangeForm
     add_form = UserCreationForm
@@ -51,7 +53,6 @@ class UserAdmin(auth_admin.UserAdmin):
 
 
 # unregister unused django default Group model from admin
-# ------------------------------------------------------------------------------
 admin.site.unregister(Group)
 
 
@@ -59,6 +60,8 @@ admin.site.unregister(Group)
 # ------------------------------------------------------------------------------
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
+    """Admin class for the Team model."""
+
     list_display = ["team_name", "team_lead"]
     search_fields = ["team_name", "team_lead__user_id", "team_lead__email"]
 
@@ -67,6 +70,8 @@ class TeamAdmin(admin.ModelAdmin):
 # ------------------------------------------------------------------------------
 @admin.register(Subsystem)
 class SubsystemAdmin(admin.ModelAdmin):
+    """Admin class for the Subsystem model."""
+
     list_display = ["subsystem_name", "parent_team"]
 
 
@@ -74,6 +79,8 @@ class SubsystemAdmin(admin.ModelAdmin):
 # ------------------------------------------------------------------------------
 @admin.register(Record)
 class RecordAdmin(admin.ModelAdmin):
+    """Admin class for the Record model."""
+
     list_display = [
         "record_creation_time",
         "status",
@@ -96,6 +103,8 @@ class RecordAdmin(admin.ModelAdmin):
 # ------------------------------------------------------------------------------
 @admin.register(Comment)
 class CommentsAdmin(admin.ModelAdmin):
+    """Admin class for the Comment model."""
+
     list_display = [
         "comment_text",
         "commenter",
