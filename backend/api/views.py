@@ -1,7 +1,10 @@
+from re import search
+
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework import permissions, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.mixins import (
     CreateModelMixin,
     DestroyModelMixin,
@@ -33,7 +36,7 @@ User = get_user_model()
 
 
 class UserRegister(APIView):
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
         clean_data = register_validation(request.data)
@@ -46,10 +49,9 @@ class UserRegister(APIView):
 
 
 class UserLogin(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication,)
+    # permission_classes = (permissions.AllowAny,)
+    # authentication_classes = (SessionAuthentication,)
 
-    ##
     def post(self, request):
         data = request.data
         assert validate_email(data)
@@ -62,8 +64,8 @@ class UserLogin(APIView):
 
 
 class UserLogout(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    # permission_classes = (permissions.AllowAny,)
+    # authentication_classes = ()
 
     def post(self, request):
         logout(request)
@@ -87,6 +89,7 @@ class UserViewSet(
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "username"
+    filter_backends = [SearchFilter, OrderingFilter]
 
     # filter by user id
     # def get_queryset(self, *args, **kwargs):
@@ -94,10 +97,10 @@ class UserViewSet(
     #     return self.queryset.filter(id=self.request.user.id)
 
     # return current user
-    # @action(detail=False)
-    # def me(self, request):
-    #     serializer = UserSerializer(request.user, context={"request": request})
-    #     return Response(status=status.HTTP_200_OK, data=serializer.data)
+    @action(detail=False)
+    def me(self, request):
+        serializer = UserSerializer(request.user, context={"request": request})
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
 # Team Viewset
@@ -113,6 +116,7 @@ class TeamViewSet(
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"
+    filter_backends = [SearchFilter, OrderingFilter]
 
     # return team members
     @action(detail=True, methods=["get"])
@@ -156,6 +160,7 @@ class SubsystemViewSet(
     serializer_class = SubsystemSerializer
     queryset = Subsystem.objects.all()
     lookup_field = "subsystem_name"
+    filter_backends = [SearchFilter, OrderingFilter]
 
     # return subsystem's parent team
     @action(detail=True, methods=["get"])
@@ -178,6 +183,8 @@ class RecordViewSet(
     serializer_class = RecordSerializer
     queryset = Record.objects.all()
     lookup_field = "record_id"
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["record_creator__username", "record_creator__email"]
 
     # return all comments on a record
     @action(detail=True, methods=["get"])
@@ -203,6 +210,8 @@ class CommentViewSet(
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     lookup_field = "comment_id"
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["comment_text", "commenter__username"]
 
     # return comment's record
     @action(detail=True, methods=["get"])
