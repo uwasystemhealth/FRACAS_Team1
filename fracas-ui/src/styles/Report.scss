@@ -133,6 +133,16 @@ li {
             outline: none;
             margin-top: 16px;
         }
+
+        select {
+            width: 620px;
+            height: 48px;
+            margin-left: 10px;
+            font-size: 20px;
+            border: 1px solid #6d6d6d;
+            outline: none;
+            margin-top: 16px;
+        }
     }
 }
 
@@ -192,6 +202,7 @@ input::-webkit-input-placeholder {
 
     .right {
         float: right;
+        cursor: pointer;
     }
 }
 

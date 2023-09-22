@@ -1,20 +1,41 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.scss';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState(''); // Change username to email
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    if (username === "putong" && password === "pt123123") {
-      window.location.href = 'userdashboard.html';
-    } else if (username === "admin" && password === "123123") {
-      window.location.href = 'admin.html';
-    } else {
-      alert("Incorrect username or password");
+  const navigate = useNavigate();
+
+
+  const handleLogin = async () => {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            }),
+        });
+
+        if (response.status === 200) {
+            // If the response status code is 200, navigate to the dashboard
+            navigate('/userdashboard');
+        } else {
+            // Optionally, you can handle other status codes or get more detail from the response
+            const data = await response.json();
+            alert(data.message || "Incorrect email or password.");
+        }
+    } catch (error) {
+        console.error("Error during login:", error);
+        alert("An error occurred. Please try again.");
     }
-  };
+};
+
 
   return (
     <div style={{ marginBottom: '150px' }}>
@@ -30,15 +51,15 @@ const Login = () => {
         <p style={{ color: 'rgb(119, 119, 119)', textAlign: 'center', fontSize: '17px' }}>Sign in to your account</p>
         <div className="inpbox w">
           <div className="inp">
-            <span>Username</span>
-            <br />
-            <input 
-              type="text" 
-              placeholder="Please enter your name" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)}
-              required 
-            />
+          <span>Email</span>
+        <br />
+          <input 
+            type="text" 
+            placeholder="Please enter your email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)}
+            required 
+          />
           </div>
           <div className="inp">
             <span>Password</span>
