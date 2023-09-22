@@ -25,13 +25,12 @@ from .serializers import (
     UserSerializer,
 )
 from .validations import register_validation, validate_email, validate_password
+from .permissions import ReadOnlyPermission
 
 User = get_user_model()
 
 
-class ReadOnlyPermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS
+
 
 
 # API views
