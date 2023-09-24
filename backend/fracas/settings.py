@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "api.apps.ApiConfig",
     "rest_framework",
+    "rest_framework.authtoken",
     "django_extensions",
     "corsheaders",
     "django_filters",
@@ -123,6 +124,12 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": (
         "rest_framework.filters.SearchFilter",
         "django_filters.rest_framework.DjangoFilterBackend",
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+               'rest_framework.authentication.TokenAuthentication',
+    ),
+        'DEFAULT_PERMISSION_CLASSES':(
+                'rest_framework.permissions.IsAuthenticated',
     ),
 }
 # from old sessionid authentication
