@@ -199,3 +199,99 @@ class SubsystemViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected_data = TeamSerializer(self.team, context={'request': response.wsgi_request}).data
         self.assertEqual(response.data, expected_data)
+        
+
+class RecordViewSetTestCase(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.team = Team.objects.create(team_name='Test Team')
+        self.subsystem = Subsystem.objects.create(subsystem_name='Test Subsystem', parent_team=self.team)
+        self.record = Record.objects.create(
+            team=self.team,
+            subsystem=self.subsystem,
+            record_creator='Test Creator',
+            record_owner='Test Owner',
+            failure_title='Test Failure Title',
+            failure_description='Test Failure Description',
+            # ... Other fields
+        )
+        self.comment = Comment.objects.create(record_id=self.record, comment_text='Test Comment')
+
+    def test_create_record(self):
+        url = reverse('api:record-list')
+        data = {
+            'team': 'Test Team',
+            'subsystem': 'Test Subsystem',
+            'record_creator': 'New Creator',
+            'record_owner': 'New Owner',
+            'failure_title': 'New Failure Title',
+            'failure_description': 'New Failure Description',
+            'status': 'New Status',
+            'car_year': '2023',
+            # ... Other fields
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_retrieve_record(self):
+        url = reverse('api:record-detail', kwargs={'record_id': self.record.record_id})
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_record_comments(self):
+        url = reverse('api:record-comments', kwargs={'record_id': self.record.record_id})
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_data = CommentSerializer(
+            Comment.objects.filter(record_id=self.record).order_by("creation_time"),
+            many=True, context={'request': response.wsgi_request}
+        ).data
+        self.assertEqual(response.data, expected_data)
+
+class CommentViewSetTestCase(APITestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.team = Team.objects.create(team_name='Test Team')
+        self.subsystem = Subsystem.objects.create(subsystem_name='Test Subsystem', parent_team=self.team)
+        self.record = Record.objects.create(
+            team=self.team,
+            subsystem=self.subsystem,
+            record_creator='Test Creator',
+            record_owner='Test Owner',
+            failure_title='Test Failure Title',
+            failure_description='Test Failure Description',
+            # ... Other fields
+        )
+        self.user = User.objects.create_user(
+            first_name='John', 
+            last_name='Doe', 
+            email='john@example.com', 
+            password='test1234'
+        )
+        self.comment = Comment.objects.create(record_id=self.record, commenter=self.user, comment_text='Test Comment')
+
+    def test_create_comment(self):
+        url = reverse('api:comment-list')
+        data = {
+            'record_id': self.record.record_id,
+            'commenter': self.user.user_id,  # Assuming User model has a user_id field
+            'comment_text': 'New comment text',
+        }
+        self.client.login(username='testuser', password='testpass')  # Assumes authentication is required
+        response = self.client.post(url, data, format='json')
+        self.client.logout()
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_retrieve_comment(self):
+        url = reverse('api:comment-detail', kwargs={'comment_id': self.comment.comment_id})
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_comment_record(self):
+        url = reverse('api:comment-record', kwargs={'comment_id': self.comment.comment_id})
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_data = RecordSerializer(self.record, context={'request': response.wsgi_request}).data
+        self.assertEqual(response.data, expected_data)
