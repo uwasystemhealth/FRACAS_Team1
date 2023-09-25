@@ -62,9 +62,13 @@ DEBUG is turned on and the database is sqlite3 for now.
 TODO ???
 
 #### Authentication:
+By default, all APIs are protected with token authentication.
 
-TODO
-
+* Login: to login, send POST request to `api/login/` by supplying `<username>=<value>&<password>=<value>` to get a token.
+  * Example: `http://127.0.0.1:8000/api/records/username=123@qq.com&password=123`
+  * Example response: {"token":"ce710e88ab9fa90c5301224471b12c804354e7ac"}
+* Authentication: to use protected APIs, include `Authorization: Token <authentication_token>` in HTTP request header.
+  * Example: `curl -H "Authorization: Token ce710e88ab9fa90c5301224471b12c804354e7ac" http://localhost:8000/api/`
 ### Run for Production
 
 TODO
