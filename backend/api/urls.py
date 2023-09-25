@@ -1,13 +1,13 @@
 from django.conf import settings
 from django.urls import path
 from rest_framework.routers import DefaultRouter, SimpleRouter
-
+from rest_framework.authtoken import views
 from .views import (
     CommentViewSet,
     RecordViewSet,
     SubsystemViewSet,
     TeamViewSet,
-    UserLogin,
+    # UserLogin,
     UserLogout,
     UserRegister,
     UserViewSet,
@@ -30,7 +30,7 @@ router.register(r"comments", CommentViewSet, basename="comment")
 # authentication views
 urlpatterns = [
     path("register", UserRegister.as_view(), name="register"),
-    path("login", UserLogin.as_view(), name="login"),
+    path("login", views.obtain_auth_token, name="login"),
     path("logout", UserLogout.as_view(), name="logout"),
 ]
 

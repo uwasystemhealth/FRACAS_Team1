@@ -13,6 +13,8 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
 
 from .models import Comment, Record, Subsystem, Team
 from .serializers import (
@@ -32,14 +34,14 @@ User = get_user_model()
 
 
 
-
 # API views
 # ------------------------------------------------------------------------------
 class UserRegister(APIView):
     """View to register a new user."""
 
-    # permission_classes = (permissions.AllowAny,)
-
+    
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
     def post(self, request):
         clean_data = register_validation(request.data)
         serializer = UserRegisterSerializer(data=clean_data)
@@ -50,29 +52,19 @@ class UserRegister(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserLogin(APIView):
-    """View to login a user."""
-
-    def post(self, request):
-        data = request.data
-        assert validate_email(data)
-        assert validate_password(data)
-        serializer = UserLoginSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.check_user(data)
-            login(request, user)
-            return Response(status=status.HTTP_200_OK)
+# class UserLogin(APIView):
+# View is now using views.obtain_auth_token in urls.py
 
 
 class UserLogout(APIView):
     """View to logout a user."""
 
-    # permission_classes = (permissions.AllowAny,)
-    # authentication_classes = ()
-
+    permission_classes = (permissions.IsAuthenticated,)
+    
     def post(self, request):
-        logout(request)
-        return Response(status=status.HTTP_200_OK)
+        token, created = Token.objects.get_or_create(user=request.user)
+        token.delete()
+        return Response({'message': 'Logged out successfully'})
 
 
 # Viewsets
@@ -195,7 +187,7 @@ class RecordViewSet(
     GenericViewSet,
 ):
     """Viewset for the Record model."""
-
+    authentication_classes = [TokenAuthentication]
     serializer_class = RecordSerializer
     queryset = Record.objects.all()
     lookup_field = "record_id"
