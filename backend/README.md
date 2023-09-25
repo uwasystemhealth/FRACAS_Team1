@@ -5,7 +5,7 @@
 
 ### Run Locally
 
-#### How to get the backend running locally:
+#### How to get the backend running locally
 
 1. Install python3 and pip3 if not already done (and sqlite3).
 2. Install virtualenv: `pip3 install virtualenv`.
@@ -23,25 +23,25 @@
 
 DEBUG is turned on and the database is sqlite3 for now.
 
-#### Helpful tips / commands:  
+#### Helpful tips / commands
 
 * To show a list of all available endpoints: `python3 manage.py show_urls`
 * If you change the models, you'll need to make migrations: `python3 manage.py makemigrations` after that you'll need to migrate again: `python3 manage.py migrate` before you can run the server again `python3 manage.py runserver`.
 
-#### CRUD operations:
+#### CRUD operations
 
 * Create: `POST` to the endpoint.
 * Read: `GET` to the endpoint.
 * Update: `PUT` to the endpoint.
 * Delete: `DELETE` to the endpoint.
 
-#### API endpoints:
+#### API endpoints
 
 * Detail views are for a single object and list views are for a list of objects.
   * For example `http://127.0.0.1:8000/api/records/` is a list view for all records and `http://127.0.0.1:8000/api/records/1/` is a detail view for the record with the id of 1.
 * Send data in json format in the body of the request where applicable.
 
-#### Filtering and searching:
+#### Filtering and searching
 
 * To filter add `?<field>=<value>` to the end of the API url.
   * Example: `http://127.0.0.1:8000/api/records/?team__team_name=Suspension`
@@ -57,11 +57,16 @@ DEBUG is turned on and the database is sqlite3 for now.
   * Example: `http://127.0.0.1:8000/api/records/?team__team_name=Suspension&subsystem__subsystem_name=Shocks`
 * To change what fields can be searched or filtered you can edit `search_fields` or `filterset_fields` variables in views.py on a per view basis.
 
-#### Pagination:
+#### Pagination
 
-TODO ???
+* Pagination implemented using the django rest framework pagination class.
+* Default page size is currently 20, this can be changed by altering `PAGE_SIZE` in settings.py.
+* API calls now return a `next` and `previous` link in the response headers. As well as a `count` of the total number of objects.
+* Data is now returned in a `results` array.
+* Example: `http://127.0.0.1:8000/api/users/?page=2` will return the second page of users.
+* This can be combined with filtering and searching.
 
-#### Authentication:
+#### Authentication
 
 TODO
 
