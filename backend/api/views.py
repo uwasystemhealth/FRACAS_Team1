@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
 
 from .models import Comment, Record, Subsystem, Team
 from .serializers import (
@@ -58,12 +59,12 @@ class UserRegister(APIView):
 class UserLogout(APIView):
     """View to logout a user."""
 
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     
-
     def post(self, request):
-        logout(request)
-        return Response(status=status.HTTP_200_OK)
+        token, created = Token.objects.get_or_create(user=request.user)
+        token.delete()
+        return Response({'message': 'Logged out successfully'})
 
 
 # Viewsets
