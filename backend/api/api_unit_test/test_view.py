@@ -8,7 +8,7 @@ from api.serializers import UserSerializer, TeamSerializer, SubsystemSerializer,
 
 User = get_user_model()
 
-class YourAppTestCase(APITestCase):
+class UserTestCase(APITestCase):
 
     def setUp(self):
         self.team = Team.objects.create(team_name='Test Team')
