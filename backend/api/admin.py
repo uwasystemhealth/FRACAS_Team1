@@ -2,11 +2,16 @@ from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from rest_framework.authtoken.admin import TokenAdmin
 
 from .forms import UserChangeForm, UserCreationForm
 from .models import Comment, Record, Subsystem, Team
 
 User = get_user_model()
+
+# Allows manual modification of tokens from admin panel
+# https://www.django-rest-framework.org/api-guide/authentication/#With%20Django%20admin
+TokenAdmin.raw_id_fields = ['user']
 
 
 # A rewritten UserAdmin method to work with a customized AbstractBaseUser
