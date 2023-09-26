@@ -11,7 +11,7 @@ User = get_user_model()
 
 # Allows manual modification of tokens from admin panel
 # https://www.django-rest-framework.org/api-guide/authentication/#With%20Django%20admin
-TokenAdmin.raw_id_fields = ['user']
+TokenAdmin.raw_id_fields = ["user"]
 
 
 # A rewritten UserAdmin method to work with a customized AbstractBaseUser

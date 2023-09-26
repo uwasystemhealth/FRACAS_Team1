@@ -1,13 +1,13 @@
 from django.conf import settings
 from django.urls import path
-from rest_framework.routers import DefaultRouter, SimpleRouter
 from rest_framework.authtoken import views
+from rest_framework.routers import DefaultRouter, SimpleRouter
+
 from .views import (
     CommentViewSet,
     RecordViewSet,
     SubsystemViewSet,
     TeamViewSet,
-    # UserLogin,
     UserLogout,
     UserRegister,
     UserViewSet,

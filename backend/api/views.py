@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model, login, logout
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.mixins import (
@@ -13,25 +15,20 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.authtoken.models import Token
 
 from .models import Comment, Record, Subsystem, Team
+from .permissions import ReadOnlyPermission
 from .serializers import (
     CommentSerializer,
     RecordSerializer,
     SubsystemSerializer,
     TeamSerializer,
-    UserLoginSerializer,
     UserRegisterSerializer,
     UserSerializer,
 )
 from .validations import register_validation, validate_email, validate_password
-from .permissions import ReadOnlyPermission
 
 User = get_user_model()
-
-
 
 
 # API views
@@ -39,9 +36,9 @@ User = get_user_model()
 class UserRegister(APIView):
     """View to register a new user."""
 
-    
     authentication_classes = []
     permission_classes = [permissions.AllowAny]
+
     def post(self, request):
         clean_data = register_validation(request.data)
         serializer = UserRegisterSerializer(data=clean_data)
@@ -60,11 +57,11 @@ class UserLogout(APIView):
     """View to logout a user."""
 
     permission_classes = (permissions.IsAuthenticated,)
-    
+
     def post(self, request):
         token, created = Token.objects.get_or_create(user=request.user)
         token.delete()
-        return Response({'message': 'Logged out successfully'})
+        return Response({"message": "Logged out successfully"})
 
 
 # Viewsets
@@ -83,6 +80,7 @@ class UserViewSet(
 ):
     """Viewset for the User model."""
 
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "user_id"
@@ -110,6 +108,7 @@ class TeamViewSet(
 ):
     """Viewset for the Team model."""
 
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"
@@ -160,6 +159,7 @@ class SubsystemViewSet(
 ):
     """Viewset for the Subsystem model."""
 
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = SubsystemSerializer
     queryset = Subsystem.objects.all()
     lookup_field = "subsystem_name"
@@ -187,6 +187,8 @@ class RecordViewSet(
     GenericViewSet,
 ):
     """Viewset for the Record model."""
+
+    permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = [TokenAuthentication]
     serializer_class = RecordSerializer
     queryset = Record.objects.all()
@@ -240,6 +242,7 @@ class CommentViewSet(
 ):
     """Viewset for the Comment model."""
 
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     lookup_field = "comment_id"

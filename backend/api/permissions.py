@@ -24,6 +24,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         # username property can be changed to firstname + last name
         return obj.record_creator == request.user.username
 
+
 # Permission for record ReadOnlyPermission
 class ReadOnlyPermission(permissions.BasePermission):
     def has_permission(self, request, view):
