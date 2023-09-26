@@ -192,8 +192,14 @@ class RecordViewSet(
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = [
         "record_id",
+        "record_creator__user_id",
+        "record_creator_unlinked",
+        "record_owner__user_id",
+        "record_owner_unlinked",
         "team__team_name",
+        "team_unlinked",
         "subsystem__subsystem_name",
+        "subsystem_unlinked",
         "record_creation_time",
         "status",
         "failure_title",
@@ -207,8 +213,15 @@ class RecordViewSet(
     ]
     filterset_fields = [
         "record_id",
+        "record_creator__user_id",
+        "record_creator_unlinked",
+        "record_owner__user_id",
+        "record_owner_unlinked",
         "team__team_name",
+        "team_unlinked",
         "subsystem__subsystem_name",
+        "subsystem_unlinked",
+        "record_creation_time",
         "status",
         "car_year",
     ]
