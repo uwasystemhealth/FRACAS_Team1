@@ -15,6 +15,7 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Comment, Record, Subsystem, Team
 from .permissions import ReadOnlyPermission
@@ -237,6 +238,26 @@ class RecordViewSet(
             comments, many=True, context={"request": request}
         )
         return Response(status=status.HTTP_200_OK, data=serializer.data)
+    
+
+    # Record update method
+    def put(self, request, record_id = None):
+        """update an existing record with a given record_id"""
+        try:
+            record_id = request.query_params.get('record_id')
+        except:
+            return Response({"message": "A record_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            existing_record = Record.objects.get(record_id = record_id)
+        except:
+            return Response({"message": "Record does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+        # validate creator
+        if request.user == existing_record.record_creator:
+            request.data['record_id'] = record_id
+            return self.update(request)
+        else:
+            return Response({"detail": "You don't have permission to update this record."},
+                            status=status.HTTP_403_FORBIDDEN)
 
 
 # Comments Viewset

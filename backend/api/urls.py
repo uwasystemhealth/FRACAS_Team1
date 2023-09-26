@@ -32,6 +32,7 @@ urlpatterns = [
     path("register", UserRegister.as_view(), name="register"),
     path("login", views.obtain_auth_token, name="login"),
     path("logout", UserLogout.as_view(), name="logout"),
+    path("records/<int:record_id>/update/", RecordViewSet.as_view({'put': 'put'}), name="record_update"),
 ]
 
 urlpatterns += router.urls

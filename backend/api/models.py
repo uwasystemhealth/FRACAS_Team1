@@ -68,10 +68,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     def __str__(self):
-        if self.first_name and self.last_name:
-            name = f"{self.first_name} {self.last_name}"
-        else:
-            name = self.user_id
+        #if self.first_name and self.last_name:
+        #    name = f"{self.first_name} {self.last_name}"
+        #else:
+        #    name = self.user_id
+        name = self.user_id
         return str(name)
 
     @property

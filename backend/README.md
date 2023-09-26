@@ -35,6 +35,25 @@ DEBUG is turned on and the database is sqlite3 for now.
 * Update: `PUT` to the endpoint.
 * Delete: `DELETE` to the endpoint.
 
+* Update an existing record
+  * Api: `/api/records/<int:record_id>/update/?record_id=<record_id>`, where 2 record_id should be the same.
+  * Request details:
+    * Method: `PUT`
+    * Params: `record_id`, the id of an existing record.
+    * Headers: See Authentication header
+    * Body: the new record data structured in JSON like `{"record_creator": <user_id>, ...}`
+  * Example request:
+    * To update the 5th record in the database, use put method to send record data to `http://127.0.0.1:8000 /api/records/5/update/?record_id=5`.
+  * Response details:
+    * Success response: HTTP `200` with the modified record object as the returned value.
+    * Error conditions:
+      * `<int:record_id>` is provided but `?record_id` is missing: HTTP `400` with `{"message": "Record does not exist."}`
+      * If user does not have permission for provided `?record_id`: HTTP `403` with `{"detail": "You don't have permission to update this record."}`
+      * `<int:record_id>` is different from `?record_id`, and user has permission for provided `?record_id`: HTTP `404` with `{"detail": "Not found."}`
+      * New record data not valid: HTTP `403` with field-specific error message.
+
+
+
 #### API endpoints
 
 * Detail views are for a single object and list views are for a list of objects.
