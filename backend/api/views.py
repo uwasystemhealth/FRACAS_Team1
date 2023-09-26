@@ -80,7 +80,6 @@ class UserViewSet(
 ):
     """Viewset for the User model."""
 
-    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "user_id"
@@ -108,7 +107,6 @@ class TeamViewSet(
 ):
     """Viewset for the Team model."""
 
-    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"
@@ -159,7 +157,6 @@ class SubsystemViewSet(
 ):
     """Viewset for the Subsystem model."""
 
-    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = SubsystemSerializer
     queryset = Subsystem.objects.all()
     lookup_field = "subsystem_name"
@@ -188,7 +185,6 @@ class RecordViewSet(
 ):
     """Viewset for the Record model."""
 
-    permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = [TokenAuthentication]
     serializer_class = RecordSerializer
     queryset = Record.objects.all()
@@ -242,7 +238,6 @@ class CommentViewSet(
 ):
     """Viewset for the Comment model."""
 
-    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     lookup_field = "comment_id"
