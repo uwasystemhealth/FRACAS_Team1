@@ -103,7 +103,7 @@ class Subsystem(models.Model):
     subsystem_id = models.AutoField(primary_key=True)
     subsystem_name = models.CharField(unique=True, max_length=100)
     parent_team = models.ForeignKey(
-        Team, null=True, blank=True, default=None, on_delete=models.CASCADE
+        Team, null=True, blank=True, on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -123,7 +123,6 @@ class Record(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        default=None,
         related_name="created",
     )
     record_creator_unlinked = models.TextField(null=True, blank=True)
@@ -132,20 +131,16 @@ class Record(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        default=None,
         related_name="owns",
     )
     record_owner_unlinked = models.TextField(null=True, blank=True)
-    team = models.ForeignKey(
-        Team, on_delete=models.SET_NULL, null=True, blank=True, default=None
-    )
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
     team_unlinked = models.TextField(blank=True, null=True)
     subsystem = models.ForeignKey(
         Subsystem,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        default=None,
     )
     subsystem_unlinked = models.TextField(blank=True, null=True)
     car_year = models.TextField(blank=True, null=True)
@@ -202,7 +197,9 @@ class Comment(models.Model):
     parent_comment_id = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE
     )
-    commenter = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    commenter = models.ForeignKey(
+        User, null=True, blank=True, on_delete=models.SET_NULL
+    )
     creation_time = models.DateTimeField(default=timezone.now)
     comment_text = models.TextField()
 
