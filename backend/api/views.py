@@ -18,7 +18,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAdminUser
 
 from .models import Comment, Record, Subsystem, Team
-from .permissions import ReadOnlyPermission, IsRecordCreatorOrAdmin, IsCommenterOrAdmin
+from .permissions import ReadOnlyPermission, IsUserCreatorOrAdmin,  IsRecordCreatorOrAdmin, IsCommenterOrAdmin
 from .serializers import (
     CommentSerializer,
     RecordSerializer,
@@ -80,7 +80,7 @@ class UserViewSet(
     GenericViewSet,
 ):
     """Viewset for the User model."""
-
+    permission_classes = [IsUserCreatorOrAdmin]
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "user_id"
@@ -107,7 +107,7 @@ class TeamViewSet(
     GenericViewSet,
 ):
     """Viewset for the Team model."""
-
+    permission_classes = [ReadOnlyPermission]
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"
@@ -157,7 +157,7 @@ class SubsystemViewSet(
     GenericViewSet,
 ):
     """Viewset for the Subsystem model."""
-
+    permission_classes = [ReadOnlyPermission]
     serializer_class = SubsystemSerializer
     queryset = Subsystem.objects.all()
     lookup_field = "subsystem_name"

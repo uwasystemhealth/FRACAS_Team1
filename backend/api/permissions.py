@@ -6,12 +6,16 @@ from rest_framework import permissions
 # Use permissions.IsAuthenticated
 
 
-# Permission for team lead
-class IsLeadPermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        # Check if the user is authenticated and has is_staff set to True
-        return request.user.is_authenticated and request.user.is_staff
+# Permission for User
+class IsUserCreatorOrAdmin(permissions.BasePermission):
+    """Object-level permission to only allow the creator of a User object or an admin to edit it."""
 
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # request.user calls 
+        return obj == request.user or request.user.is_staff
 
 # Permission for record permission control
 class IsRecordCreatorOrAdmin(permissions.BasePermission):
@@ -35,7 +39,9 @@ class IsCommenterOrAdmin(permissions.BasePermission):
         # request.user calls 
         return obj.commenter == request.user or request.user.is_staff
 
-# Permission for record ReadOnlyPermission
+# Permission for all ReadOnlyPermission, allow all admins by default
 class ReadOnlyPermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS
+        if request.user.is_staff:
+            return True
+        return request.method in permissions.SAFE_METHODS 
