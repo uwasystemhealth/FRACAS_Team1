@@ -303,21 +303,24 @@ class CommentViewSetTestCase(APITestCase):
         self.subsystem = Subsystem.objects.create(
             subsystem_name="Test Subsystem", parent_team=self.team
         )
-        self.record = Record.objects.create(
-            team=self.team,
-            subsystem=self.subsystem,
-            record_creator="Test Creator",
-            record_owner="Test Owner",
-            failure_title="Test Failure Title",
-            failure_description="Test Failure Description",
-            # ... Other fields
-        )
+        
         self.user = User.objects.create_user(
             first_name="John",
             last_name="Doe",
             email="john@example.com",
             password="test1234",
         )
+        
+        self.record = Record.objects.create(
+            team=self.team,
+            subsystem=self.subsystem,
+            record_creator=self.user,  # Pass User instance instead of string
+            record_owner=self.user,
+            failure_title="Test Failure Title",
+            failure_description="Test Failure Description",
+            # ... Other fields
+        )
+    
         self.comment = Comment.objects.create(
             record_id=self.record, commenter=self.user, comment_text="Test Comment"
         )
@@ -331,9 +334,6 @@ class CommentViewSetTestCase(APITestCase):
             "commenter": self.user.user_id,  # Assuming User model has a user_id field
             "comment_text": "New comment text",
         }
-        self.client.login(
-            username="testuser", password="testpass"
-        )  # Assumes authentication is required
         response = self.client.post(url, data, format="json")
         self.client.logout()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
