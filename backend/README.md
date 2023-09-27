@@ -33,6 +33,22 @@ DEBUG is turned on and the database is sqlite3 for now.
 * Create: `POST` to the endpoint.
 * Read: `GET` to the endpoint.
 * Update: `PUT` to the endpoint.
+  * Record update
+    * Endpoint: `/api/records/<int:record_id>/`, where record_id refers to the record object to be updated. e.g. `http://127.0.0.1:8000/api/records/8/`
+    * Header: see Authentication header.
+    * Body: new record content in JSON format like `{"record_creator": 1, ...}`.
+    * Response
+      * Success: HTTP `200` with an updated record in JSON format.
+      * Field value error: HTTP `400` with field-specific error message.
+      * Permission denied: HTTP `403` with response `{"detail": "You do not have permission to perform this action."}`
+  * Comment update
+    * Endpoint: `/api/comments/<int:comment_id>/`, where comment_id refers to the comment object to be updated. e.g. `http://127.0.0.1:8000/api/comments/1/`
+    * Header: see Authentication header.
+    * Body: new record content in JSON format like `{"comment_text": "233", ...}`.
+    * Response
+      * Success: HTTP `200` with an updated comment in JSON format.
+      * Field value error: HTTP `400` with field-specific error message.
+      * Permission denied: HTTP `403` with response `{"detail": "You do not have permission to perform this action."}`
 * Delete: `DELETE` to the endpoint.
 
 #### API endpoints
