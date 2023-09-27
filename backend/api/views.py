@@ -15,9 +15,10 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.permissions import IsAdminUser
 
 from .models import Comment, Record, Subsystem, Team
-from .permissions import ReadOnlyPermission, IsRecordCreator, IsCommenter
+from .permissions import ReadOnlyPermission, IsRecordCreatorOrAdmin, IsCommenterOrAdmin
 from .serializers import (
     CommentSerializer,
     RecordSerializer,
@@ -186,7 +187,7 @@ class RecordViewSet(
     """Viewset for the Record model."""
 
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsRecordCreator]
+    permission_classes = [IsRecordCreatorOrAdmin]
     serializer_class = RecordSerializer
     queryset = Record.objects.all()
     lookup_field = "record_id"
@@ -251,7 +252,7 @@ class CommentViewSet(
     GenericViewSet,
 ):
     """Viewset for the Comment model."""
-    permission_classes = [IsCommenter]
+    permission_classes = [IsCommenterOrAdmin]
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     lookup_field = "comment_id"

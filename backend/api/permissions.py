@@ -14,26 +14,26 @@ class IsLeadPermission(permissions.BasePermission):
 
 
 # Permission for record permission control
-class IsRecordCreator(permissions.BasePermission):
-    """Object-level permission to only allow the creator of a record object to edit it."""
+class IsRecordCreatorOrAdmin(permissions.BasePermission):
+    """Object-level permission to only allow the creator of a record object or an admin to edit it."""
 
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         if request.method in permissions.SAFE_METHODS:
             return True
         # request.user calls 
-        return obj.record_creator == request.user
+        return obj.record_creator == request.user or request.user.is_staff
 
 # Permission for comment permission control
-class IsCommenter(permissions.BasePermission):
-    """Object-level permission to only allow the commenter of a comment object to edit it."""
+class IsCommenterOrAdmin(permissions.BasePermission):
+    """Object-level permission to only allow the commenter of a comment object or an admin to edit it."""
 
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         if request.method in permissions.SAFE_METHODS:
             return True
         # request.user calls 
-        return obj.commenter == request.user
+        return obj.commenter == request.user or request.user.is_staff
 
 # Permission for record ReadOnlyPermission
 class ReadOnlyPermission(permissions.BasePermission):
