@@ -14,16 +14,26 @@ class IsLeadPermission(permissions.BasePermission):
 
 
 # Permission for record permission control
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    """Object-level permission to only allow the creator a record object to edit it."""
+class IsRecordCreator(permissions.BasePermission):
+    """Object-level permission to only allow the creator of a record object to edit it."""
 
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         if request.method in permissions.SAFE_METHODS:
             return True
-        # username property can be changed to firstname + last name
-        return obj.record_creator == request.user.username
+        # request.user calls 
+        return obj.record_creator == request.user
 
+# Permission for comment permission control
+class IsCommenter(permissions.BasePermission):
+    """Object-level permission to only allow the commenter of a comment object to edit it."""
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # request.user calls 
+        return obj.commenter == request.user
 
 # Permission for record ReadOnlyPermission
 class ReadOnlyPermission(permissions.BasePermission):

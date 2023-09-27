@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from .models import Comment, Record, Subsystem, Team
-from .permissions import ReadOnlyPermission
+from .permissions import ReadOnlyPermission, IsRecordCreator, IsCommenter
 from .serializers import (
     CommentSerializer,
     RecordSerializer,
@@ -186,6 +186,7 @@ class RecordViewSet(
     """Viewset for the Record model."""
 
     authentication_classes = [TokenAuthentication]
+    permission_classes = [IsRecordCreator]
     serializer_class = RecordSerializer
     queryset = Record.objects.all()
     lookup_field = "record_id"
@@ -250,7 +251,7 @@ class CommentViewSet(
     GenericViewSet,
 ):
     """Viewset for the Comment model."""
-
+    permission_classes = [IsCommenter]
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     lookup_field = "comment_id"
