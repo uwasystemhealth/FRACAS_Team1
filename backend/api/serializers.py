@@ -21,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer[User]):
 
     class Meta:
         model = User
+        slugfield = "user_id"
         fields = ["user_id", "first_name", "last_name", "email", "team", "url"]
 
         extra_kwargs = {
@@ -100,6 +101,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
+        slugfield = "team_name"
         fields = ["team_name", "team_lead", "url"]
 
     extra_kwargs = {
@@ -163,6 +165,7 @@ class RecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Record
+        SlugField = "record_id"
         fields = "__all__"
 
 
@@ -183,4 +186,5 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
+        slug_field = "comment_id"
         fields = "__all__"
