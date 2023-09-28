@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-mrl%^m)*g*v%#9k8m09*%g(uj^es4q@$()fa-5axl-#gq15(_&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["1.0.0.127.in-addr.arpa", "127.0.0.1"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "api.apps.ApiConfig",
     "rest_framework",
+    "rest_framework.authtoken",
     "django_extensions",
     "corsheaders",
     "django_filters",
@@ -124,14 +125,13 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "django_filters.rest_framework.DjangoFilterBackend",
     ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
 }
-# from old sessionid authentication
-# REST_FRAMEWORK = {
-#     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-#     "DEFAULT_AUTHENTICATION_CLASSES": (
-#         "rest_framework.authentication.SessionAuthentication",
-#     ),
-# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

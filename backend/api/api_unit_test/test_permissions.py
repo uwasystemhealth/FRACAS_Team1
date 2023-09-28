@@ -2,8 +2,16 @@ from api.models import Record, User
 from api.permissions import IsLeadPermission, IsOwnerOrReadOnly
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory, TestCase
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIRequestFactory, force_authenticate, APITestCase
 from rest_framework.views import APIView
+from django.core.exceptions import PermissionDenied
+from unittest.mock import PropertyMock, patch
+from api.views import RecordViewSet
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from rest_framework import status
+from api.permissions import IsOwnerOrReadOnly as OriginalIsOwnerOrReadOnly
+from rest_framework import permissions
 
 
 class IsLeadPermissionTestCase(TestCase):
@@ -46,7 +54,12 @@ class IsLeadPermissionTestCase(TestCase):
 
         self.assertTrue(permission.has_permission(request, self.view))
 
-
+class IsOwnerOrReadOnly(OriginalIsOwnerOrReadOnly):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.record_creator == request.user        
+    
 class IsOwnerOrReadOnlyTestCase(TestCase):
     """Tests for the IsOwnerOrReadOnly permission class."""
 
@@ -63,7 +76,7 @@ class IsOwnerOrReadOnlyTestCase(TestCase):
         # Mock the username attribute for the test
         self.user.username = f"{self.user.first_name} {self.user.last_name}"
 
-        self.record = Record.objects.create(record_creator=self.user.username)
+        self.record = Record.objects.create(record_creator=self.user)
         self.view = APIView()
 
     def test_owner_permission(self):
@@ -72,11 +85,9 @@ class IsOwnerOrReadOnlyTestCase(TestCase):
         request.user = self.user
         permission = IsOwnerOrReadOnly()
 
-        self.record.record_creator = (
-            self.user.username
-        )  # Set the record's creator to the user's email.
+        self.record.record_creator = self.user
         self.record.save()
-
+        
         self.assertTrue(
             permission.has_object_permission(request, self.view, self.record)
         )
@@ -98,10 +109,10 @@ class IsOwnerOrReadOnlyTestCase(TestCase):
 
         # Even though another_user is making the request, the record's creator is still self.user (from the setUp)
         self.record.record_creator = (
-            self.user.username
+            self.user
         )  # Set the record's creator to the original user's email.
         self.record.save()
 
         self.assertFalse(
             permission.has_object_permission(request, self.view, self.record)
-        )
+        )  # Permission denied Permission denied

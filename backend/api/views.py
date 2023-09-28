@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model, login, logout
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.mixins import (
@@ -10,17 +12,24 @@ from rest_framework.mixins import (
     RetrieveModelMixin,
     UpdateModelMixin,
 )
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from .models import Comment, Record, Subsystem, Team
+from .models import Car, Comment, Record, Subsystem, Team
+from .permissions import (
+    IsCommenterOrAdmin,
+    IsRecordCreatorOrAdmin,
+    IsUserCreatorOrAdmin,
+    ReadOnlyPermission,
+)
 from .serializers import (
+    CarSerializer,
     CommentSerializer,
     RecordSerializer,
     SubsystemSerializer,
     TeamSerializer,
-    UserLoginSerializer,
     UserRegisterSerializer,
     UserSerializer,
 )
@@ -29,17 +38,13 @@ from .validations import register_validation, validate_email, validate_password
 User = get_user_model()
 
 
-class ReadOnlyPermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS
-
-
 # API views
 # ------------------------------------------------------------------------------
 class UserRegister(APIView):
     """View to register a new user."""
 
-    # permission_classes = (permissions.AllowAny,)
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request):
         clean_data = register_validation(request.data)
@@ -51,29 +56,19 @@ class UserRegister(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserLogin(APIView):
-    """View to login a user."""
-
-    def post(self, request):
-        data = request.data
-        assert validate_email(data)
-        assert validate_password(data)
-        serializer = UserLoginSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.check_user(data)
-            login(request, user)
-            return Response(status=status.HTTP_200_OK)
+# class UserLogin(APIView):
+# View is now using views.obtain_auth_token in urls.py
 
 
 class UserLogout(APIView):
     """View to logout a user."""
 
-    # permission_classes = (permissions.AllowAny,)
-    # authentication_classes = ()
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
-        logout(request)
-        return Response(status=status.HTTP_200_OK)
+        token, created = Token.objects.get_or_create(user=request.user)
+        token.delete()
+        return Response({"message": "Logged out successfully"})
 
 
 # Viewsets
@@ -92,6 +87,7 @@ class UserViewSet(
 ):
     """Viewset for the User model."""
 
+    permission_classes = [IsUserCreatorOrAdmin]
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "user_id"
@@ -102,7 +98,7 @@ class UserViewSet(
 
     @action(detail=False, methods=["get"], permission_classes=[ReadOnlyPermission])
     def me(self, request):
-        """return current user"""
+        """additional API route to return current user"""
         serializer = UserSerializer(request.user, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
@@ -119,6 +115,7 @@ class TeamViewSet(
 ):
     """Viewset for the Team model."""
 
+    permission_classes = [ReadOnlyPermission]
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"
@@ -129,7 +126,7 @@ class TeamViewSet(
 
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def members(self, request, team_name=None):
-        "return team members"
+        "additional API route to return team members"
         team = self.get_object()
         members = User.objects.filter(team=team)
         serializer = UserSerializer(members, many=True, context={"request": request})
@@ -137,7 +134,7 @@ class TeamViewSet(
 
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def lead(self, request, team_name=None):
-        """return team lead"""
+        """additional API route to return team lead"""
         team = self.get_object()
         lead = team.team_lead
         user = User.objects.filter(user_id=lead.user_id)
@@ -146,7 +143,7 @@ class TeamViewSet(
 
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def subsystems(self, request, team_name=None):
-        """return all subsystems in a team"""
+        """additional API route to return all subsystems in a team"""
         team = self.get_object()
         subsystems = Subsystem.objects.filter(parent_team=team).order_by(
             "subsystem_name"
@@ -169,6 +166,7 @@ class SubsystemViewSet(
 ):
     """Viewset for the Subsystem model."""
 
+    permission_classes = [ReadOnlyPermission]
     serializer_class = SubsystemSerializer
     queryset = Subsystem.objects.all()
     lookup_field = "subsystem_name"
@@ -179,9 +177,38 @@ class SubsystemViewSet(
 
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def parent(self, request, subsystem_name=None):
-        """return subsystem's parent team"""
+        """additional API route to return subsystem's parent team"""
         subsystem = self.get_object()
         serializer = TeamSerializer(subsystem.parent_team, context={"request": request})
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
+
+
+# Car Viewset
+# ------------------------------------------------------------------------------
+class CarViewSet(
+    CreateModelMixin,
+    RetrieveModelMixin,
+    ListModelMixin,
+    UpdateModelMixin,
+    DestroyModelMixin,
+    GenericViewSet,
+):
+    """Viewset for the Car model."""
+
+    permission_classes = [ReadOnlyPermission]
+    serializer_class = CarSerializer
+    queryset = Car.objects.all()
+    lookup_field = "car_year"
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
+    search_fields = ["car_year", "car_nickname"]
+    filterset_fields = ["car_year", "car_nickname"]
+    ordering_fields = ["car_year"]
+
+    @action(detail=False, methods=["get"], permission_classes=[ReadOnlyPermission])
+    def current(self, request):
+        """additional API route to return highest car year as current car"""
+        car = Car.objects.order_by("-car_year").first()
+        serializer = CarSerializer(car, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
@@ -197,14 +224,22 @@ class RecordViewSet(
 ):
     """Viewset for the Record model."""
 
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsRecordCreatorOrAdmin]
     serializer_class = RecordSerializer
     queryset = Record.objects.all()
     lookup_field = "record_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = [
         "record_id",
+        "record_creator__user_id",
+        "record_creator_unlinked",
+        "record_owner__user_id",
+        "record_owner_unlinked",
         "team__team_name",
+        "team_unlinked",
         "subsystem__subsystem_name",
+        "subsystem_unlinked",
         "record_creation_time",
         "status",
         "failure_title",
@@ -218,17 +253,24 @@ class RecordViewSet(
     ]
     filterset_fields = [
         "record_id",
+        "record_creator__user_id",
+        "record_creator_unlinked",
+        "record_owner__user_id",
+        "record_owner_unlinked",
         "team__team_name",
+        "team_unlinked",
         "subsystem__subsystem_name",
+        "subsystem_unlinked",
+        "record_creation_time",
         "status",
         "car_year",
     ]
 
     ordering_fields = ["record_creation_time"]
 
-    @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
+    @action(detail=False, methods=["get"], permission_classes=[ReadOnlyPermission])
     def comments(self, request, record_id=None):
-        """return all comments on a record"""
+        """additional API route to return all comments on a record"""
         record = self.get_object()
         comments = Comment.objects.filter(record_id=record).order_by("creation_time")
         serializer = CommentSerializer(
@@ -249,6 +291,7 @@ class CommentViewSet(
 ):
     """Viewset for the Comment model."""
 
+    permission_classes = [IsCommenterOrAdmin]
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     lookup_field = "comment_id"
@@ -259,7 +302,7 @@ class CommentViewSet(
 
     @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
     def record(self, request, comment_id=None):
-        """return comment's record"""
+        """additional API route to return comment's record"""
         comment = self.get_object()
         serializer = RecordSerializer(comment.record_id, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)

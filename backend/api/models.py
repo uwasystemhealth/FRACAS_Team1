@@ -103,11 +103,28 @@ class Subsystem(models.Model):
     subsystem_id = models.AutoField(primary_key=True)
     subsystem_name = models.CharField(unique=True, max_length=100)
     parent_team = models.ForeignKey(
-        Team, null=True, blank=True, default=None, on_delete=models.CASCADE
+        Team, null=True, blank=True, on_delete=models.CASCADE
     )
 
     def __str__(self):
         return str(self.subsystem_name)
+
+
+# car model
+# ------------------------------------------------------------------------------
+class Car(models.Model):
+    """Model for cars"""
+
+    car_id = models.AutoField(primary_key=True)
+    car_year = models.IntegerField(unique=True)
+    car_nickname = models.CharField(blank=True, null=True, max_length=100)
+
+    def __str__(self):
+        if self.car_year and self.car_nickname:
+            name = f"{self.car_year} '{self.car_nickname}'"
+        else:
+            name = self.car_year
+        return str(name)
 
 
 # record model
@@ -118,19 +135,32 @@ class Record(models.Model):
     record_id = models.AutoField(primary_key=True)
     is_deleted = models.BooleanField(default=False, blank=True, null=True)
     status = models.TextField(blank=True, null=True)
-    record_creator = models.TextField(null=True, blank=True)
-    record_owner = models.TextField(null=True, blank=True)
-    team = models.ForeignKey(
-        Team, on_delete=models.SET_NULL, null=True, blank=True, default=None
+    record_creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created",
     )
+    record_creator_unlinked = models.TextField(null=True, blank=True)
+    record_owner = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="owns",
+    )
+    record_owner_unlinked = models.TextField(null=True, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    team_unlinked = models.TextField(blank=True, null=True)
     subsystem = models.ForeignKey(
         Subsystem,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        default=None,
     )
-    car_year = models.TextField(blank=True, null=True)
+    subsystem_unlinked = models.TextField(blank=True, null=True)
+    car_year = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True, blank=True)
     failure_time = models.DateTimeField(default=timezone.now, blank=True, null=True)
     failure_title = models.TextField(blank=True, null=True)
     failure_description = models.TextField(blank=True, null=True)
@@ -150,6 +180,26 @@ class Record(models.Model):
     is_correction_validated = models.BooleanField(blank=True, null=True, default=False)
     is_reviewed = models.BooleanField(blank=True, null=True, default=False)
 
+    def save(self, *args, **kwargs):
+        """
+        when creating a new record save the unlinked fields as strings of their foreign table counterparts
+        """
+        creating = self._state.adding
+        if creating:
+            if self.record_creator:
+                self.record_creator_unlinked = str(self.record_creator)
+            if self.record_owner:
+                self.record_owner_unlinked = str(self.record_owner)
+            if self.team:
+                self.team_unlinked = str(self.team)
+            if self.subsystem:
+                self.subsystem_unlinked = str(self.subsystem)
+            # also fill in team lead based on selected team
+            if self.team:
+                self.team_lead = str(self.team.team_lead)
+
+        super(Record, self).save(*args, **kwargs)
+
     def __str__(self):
         return str(self.record_id)
 
@@ -164,7 +214,9 @@ class Comment(models.Model):
     parent_comment_id = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE
     )
-    commenter = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    commenter = models.ForeignKey(
+        User, null=True, blank=True, on_delete=models.SET_NULL
+    )
     creation_time = models.DateTimeField(default=timezone.now)
     comment_text = models.TextField()
 

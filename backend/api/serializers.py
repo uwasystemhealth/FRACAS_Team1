@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
-from .models import Comment, Record, Subsystem, Team
+from .models import Car, Comment, Record, Subsystem, Team
 
 User = get_user_model()
 
@@ -21,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer[User]):
 
     class Meta:
         model = User
+        slugfield = "user_id"
         fields = ["user_id", "first_name", "last_name", "email", "team", "url"]
 
         extra_kwargs = {
@@ -100,6 +101,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
+        slugfield = "team_name"
         fields = ["team_name", "team_lead", "url"]
 
     extra_kwargs = {
@@ -128,11 +130,38 @@ class SubsystemSerializer(serializers.ModelSerializer):
         fields = ["subsystem_name", "parent_team", "url"]
 
 
+# car serializer
+# ------------------------------------------------------------------------------
+class CarSerializer(serializers.ModelSerializer):
+    """Serializes the Car model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="api:car-detail", lookup_field="car_year"
+    )
+
+    class Meta:
+        model = Car
+        slug_field = "car_year"
+        fields = ["car_year", "car_nickname", "url"]
+
+
 # record serializer
 # ------------------------------------------------------------------------------
 class RecordSerializer(serializers.ModelSerializer):
     """Serializes the Record model."""
 
+    record_creator = serializers.SlugRelatedField(
+        slug_field="user_id",
+        queryset=User.objects.all(),
+        allow_null=True,
+        required=False,
+    )
+    record_owner = serializers.SlugRelatedField(
+        slug_field="user_id",
+        queryset=User.objects.all(),
+        allow_null=True,
+        required=False,
+    )
     team = serializers.SlugRelatedField(
         slug_field="team_name",
         queryset=Team.objects.all(),
@@ -145,12 +174,19 @@ class RecordSerializer(serializers.ModelSerializer):
         allow_null=True,
         required=False,
     )
+    car_year = serializers.SlugRelatedField(
+        slug_field="car_year",
+        queryset=Car.objects.all(),
+        allow_null=True,
+        required=False,
+    )
     url = serializers.HyperlinkedIdentityField(
         view_name="api:record-detail", lookup_field="record_id"
     )
 
     class Meta:
         model = Record
+        SlugField = "record_id"
         fields = "__all__"
 
 
@@ -171,4 +207,5 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
+        slug_field = "comment_id"
         fields = "__all__"
