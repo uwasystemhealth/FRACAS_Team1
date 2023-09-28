@@ -1,14 +1,5 @@
-* {
-    padding: 0;
-    margin: 0;
-}
-
-// body {
-//    height: 2200px;
-// }
-
 .w {
-    width: 1100px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
@@ -19,7 +10,7 @@ li {
 .topimg {
     height: 100px;
     background-image: linear-gradient(to right, #032D5F, rgb(255, 255, 255));
-
+    
     h1 {
         color: white;
         margin-left: 90px;
@@ -31,7 +22,8 @@ li {
 .mainbox {
     position: relative;
     margin-top: 30px;
-    height: 1450px;
+    margin-bottom: 30px;
+    height: auto;
     background-color: rgb(221, 221, 221);
 
     h4 {
@@ -42,25 +34,38 @@ li {
     }
 
     ul {
+        display: inline-block;
         margin-top: 20px;
-        width: 600px;
-        height: 50px;
-        // background-color: aliceblue;
+        max-width: 600px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
 
         li {
             width: 60px;
-            height: 100%;
+            height: 50px;
             background-color: #e4e4e4;
-            margin: 0 45px;
+            margin: 20px 45px;
             float: left;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex;  
+            justify-content: center;  
+            align-items: center;  
             cursor: pointer;
             position: relative;
 
+            &:nth-child(1) {
+                background-color: rgb(253, 125, 125);
+            }
+
+            &:nth-child(2) {
+                background-color: rgb(153, 248, 150);
+            }
+
+            &:nth-child(3) {
+                background-color: rgb(253, 125, 125);
+            }
+
             span {
-                // display: block;
                 width: 45px;
                 height: 40px;
                 background-color: rgba(109, 109, 109,0.4);
@@ -77,34 +82,12 @@ li {
                 right: -19px;
             }
 
-            &.licolor {
-                background-color: rgb(153, 248, 150);
-            }
-
-            &.spancolor {
-                background-color: rgba(8, 114, 4, 0.5);
-            }
-
-            &:nth-child(1) {
-                background-color: rgb(253, 125, 125);
-            }
-
             #s1 {
                 background-color: rgba(168, 42, 42,0.5);
             }
 
-            // ----
-            &:nth-child(2) {
-                background-color: rgb(153, 248, 150);
-            }
-
             #s2 {
                 background-color: rgba(8, 114, 4, 0.5);
-            }
-
-            // ----
-            &:nth-child(3) {
-                background-color: rgb(253, 125, 125);
             }
 
             #s3 {
@@ -112,18 +95,24 @@ li {
             }
         }
     }
+
+    .licolor {
+        background-color: rgb(153, 248, 150);
+    }
+
+    .spancolor {
+        background-color: rgba(8, 114, 4, 0.5);
+    }
 }
 
 .inpbox {
-    height: 1260px;
-    // background-color: #ffe1e1;
+    max-height: 1260px;
     margin-top: 20px;
 
     div {
+        display: flex;
         width: 90%;
         height: 80px;
-        // background-color: #032D5F;
-        margin-top: 30px;
         margin-left: 5%;
 
         u {
@@ -144,6 +133,16 @@ li {
             outline: none;
             margin-top: 16px;
         }
+
+        select {
+            width: 620px;
+            height: 48px;
+            margin-left: 10px;
+            font-size: 20px;
+            border: 1px solid #6d6d6d;
+            outline: none;
+            margin-top: 16px;
+        }
     }
 }
 
@@ -154,9 +153,9 @@ input::-webkit-input-placeholder {
 
 .shoubox {
     width: 100%;
-    height: 95px;
+    min-height: 95px;
     background-color: #8b8b8b;
-    // margin-bottom: 30px;
+    margin: 50px 0;
 
     h4 {
         text-align: center;
@@ -165,9 +164,9 @@ input::-webkit-input-placeholder {
 
     span {
         display: block;
-        width: 0;
-        height: 0;
-        border-top: 30px solid transparent;
+        width: 0;  
+        height: 0;  
+        border-top: 30px solid transparent;  
         border-left: 40px solid transparent;
         border-right: 40px solid transparent;
         border-bottom: 30px solid #dbdbdb;
@@ -187,8 +186,6 @@ input::-webkit-input-placeholder {
     width: 80%;
     margin-left: 10%;
     height: 70px;
-    // background-color: #032D5F;
-    float: left;
 
     div {
         width: 228px;
@@ -197,25 +194,27 @@ input::-webkit-input-placeholder {
         text-align: center;
         font-size: 18px;
         line-height: 70px;
+    }
 
-        &.left {
-            float: left;
-        }
+    .left {
+        float: left;
+    }
 
-        &.right {
-            float: right;
-        }
+    .right {
+        float: right;
+        cursor: pointer;
     }
 }
 
 .details {
-    position: relative;
     position: absolute;
-    width: 320px;
-    height: 130px;
+    max-width: 320px;
+    height: auto;
+    padding: 20px;
     background-color: rgba(31, 31, 31, 0.7);
-    left: 400px;
-    top: 160px;
+    left: 50%;
+    top: 130px;
+    transform: translate(-50%,-50%);
     display: none;
 
     .x {
@@ -233,11 +232,51 @@ input::-webkit-input-placeholder {
     }
 
     div {
-        width: 90%;
         height: 30px;
-        // background-color: #dbdbdb;
-        margin-top: 20px;
     }
 }
 
+@media screen and (max-width: 1024px) {
+    .mainbox {
+        height: auto;
 
+        .inpbox {
+            height: auto;
+
+            div {
+                width: 90%;
+                margin: 40px auto;
+                display: grid;
+                grid-template-columns: repeat(1,1fr);
+
+                u {
+                    line-height: 30px;
+                }
+
+                input {
+                    margin: 0;
+                    width: 100%;
+                }
+            }
+        }
+
+        .shoubox {
+            margin-top: 140px;
+        }
+
+        .btnbox {
+            width: 100%;
+
+            .botbtn {
+                width: 100%;
+                margin: 0%;
+                display: grid;
+                grid-template-columns: repeat(2,1fr);
+
+                div {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
