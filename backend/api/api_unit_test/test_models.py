@@ -1,6 +1,6 @@
+from api.models import Comment, Record, Subsystem, Team, User
 from django.test import TestCase
 from django.utils import timezone
-from api.models import User, Team, Subsystem, Record, Comment
 
 
 class CustomUserManagerTestCase(TestCase):
@@ -9,16 +9,24 @@ class CustomUserManagerTestCase(TestCase):
     def test_create_user(self):
         """Test creating a user."""
         user = User.objects.create_user(
-            first_name='John', last_name='Doe', email='john@example.com', password='test1234')
+            first_name="John",
+            last_name="Doe",
+            email="john@example.com",
+            password="test1234",
+        )
         self.assertIsNotNone(user)
-        self.assertEqual(user.first_name, 'John')
-        self.assertEqual(user.last_name, 'Doe')
-        self.assertTrue(user.check_password('test1234'))
+        self.assertEqual(user.first_name, "John")
+        self.assertEqual(user.last_name, "Doe")
+        self.assertTrue(user.check_password("test1234"))
 
     def test_create_superuser(self):
         """Test creating a superuser."""
         user = User.objects.create_superuser(
-            first_name='Admin', last_name='User', email='admin@example.com', password='admin1234')
+            first_name="Admin",
+            last_name="User",
+            email="admin@example.com",
+            password="admin1234",
+        )
         self.assertIsNotNone(user)
         self.assertTrue(user.is_admin)
         self.assertTrue(user.is_superuser)
@@ -29,11 +37,15 @@ class UserTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            first_name='John', last_name='Doe', email='john@example.com', password='test1234')
+            first_name="John",
+            last_name="Doe",
+            email="john@example.com",
+            password="test1234",
+        )
 
     def test_str_method(self):
         """Test __str__ method."""
-        self.assertEqual(str(self.user), 'John Doe')
+        self.assertEqual(str(self.user), "John Doe")
 
     def test_is_staff_property(self):
         """Test is_staff property."""
@@ -46,23 +58,25 @@ class TeamTestCase(TestCase):
     """Tests for the Team model."""
 
     def setUp(self):
-        self.team = Team.objects.create(team_name='Team A')
+        self.team = Team.objects.create(team_name="Team A")
 
     def test_str_method(self):
         """Test __str__ method."""
-        self.assertEqual(str(self.team), 'Team A')
+        self.assertEqual(str(self.team), "Team A")
 
 
 class SubsystemTestCase(TestCase):
     """Tests for the Subsystem model."""
 
     def setUp(self):
-        self.team = Team.objects.create(team_name='Team A')
-        self.subsystem = Subsystem.objects.create(subsystem_name='Subsystem A', parent_team=self.team)
+        self.team = Team.objects.create(team_name="Team A")
+        self.subsystem = Subsystem.objects.create(
+            subsystem_name="Subsystem A", parent_team=self.team
+        )
 
     def test_str_method(self):
         """Test __str__ method."""
-        self.assertEqual(str(self.subsystem), 'Subsystem A')
+        self.assertEqual(str(self.subsystem), "Subsystem A")
 
 
 class RecordTestCase(TestCase):
@@ -81,9 +95,15 @@ class CommentTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            first_name='John', last_name='Doe', email='john@example.com', password='test1234')
+            first_name="John",
+            last_name="Doe",
+            email="john@example.com",
+            password="test1234",
+        )
         self.record = Record.objects.create()
-        self.comment = Comment.objects.create(record_id=self.record, commenter=self.user, comment_text='Test comment.')
+        self.comment = Comment.objects.create(
+            record_id=self.record, commenter=self.user, comment_text="Test comment."
+        )
 
     def test_str_method(self):
         """Test __str__ method."""
