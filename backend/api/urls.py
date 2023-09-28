@@ -4,6 +4,7 @@ from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
 from .views import (
+    CarViewSet,
     CommentViewSet,
     RecordViewSet,
     SubsystemViewSet,
@@ -24,8 +25,10 @@ app_name = "api"
 router.register(r"users", UserViewSet, basename="user")
 router.register(r"teams", TeamViewSet, basename="team")
 router.register(r"subsystems", SubsystemViewSet, basename="subsystem")
+router.register(r"cars", CarViewSet, basename="car")
 router.register(r"records", RecordViewSet, basename="record")
 router.register(r"comments", CommentViewSet, basename="comment")
+
 
 # authentication views
 urlpatterns = [

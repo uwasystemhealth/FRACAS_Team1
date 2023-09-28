@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
-from .models import Comment, Record, Subsystem, Team
+from .models import Car, Comment, Record, Subsystem, Team
 
 User = get_user_model()
 
@@ -130,6 +130,21 @@ class SubsystemSerializer(serializers.ModelSerializer):
         fields = ["subsystem_name", "parent_team", "url"]
 
 
+# car serializer
+# ------------------------------------------------------------------------------
+class CarSerializer(serializers.ModelSerializer):
+    """Serializes the Car model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="api:car-detail", lookup_field="car_year"
+    )
+
+    class Meta:
+        model = Car
+        slug_field = "car_year"
+        fields = ["car_year", "car_nickname", "url"]
+
+
 # record serializer
 # ------------------------------------------------------------------------------
 class RecordSerializer(serializers.ModelSerializer):
@@ -156,6 +171,12 @@ class RecordSerializer(serializers.ModelSerializer):
     subsystem = serializers.SlugRelatedField(
         slug_field="subsystem_name",
         queryset=Subsystem.objects.all(),
+        allow_null=True,
+        required=False,
+    )
+    car_year = serializers.SlugRelatedField(
+        slug_field="car_year",
+        queryset=Car.objects.all(),
         allow_null=True,
         required=False,
     )

@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from rest_framework.authtoken.admin import TokenAdmin
 
 from .forms import UserChangeForm, UserCreationForm
-from .models import Comment, Record, Subsystem, Team
+from .models import Car, Comment, Record, Subsystem, Team
 
 User = get_user_model()
 
@@ -78,6 +78,15 @@ class SubsystemAdmin(admin.ModelAdmin):
     """Admin class for the Subsystem model."""
 
     list_display = ["subsystem_name", "parent_team"]
+
+
+# car admin
+# ------------------------------------------------------------------------------
+@admin.register(Car)
+class CarAdmin(admin.ModelAdmin):
+    """Admin class for the Car model."""
+
+    list_display = ["car_year", "car_nickname"]
 
 
 # record admin

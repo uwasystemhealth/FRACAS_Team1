@@ -110,6 +110,23 @@ class Subsystem(models.Model):
         return str(self.subsystem_name)
 
 
+# car model
+# ------------------------------------------------------------------------------
+class Car(models.Model):
+    """Model for cars"""
+
+    car_id = models.AutoField(primary_key=True)
+    car_year = models.IntegerField(unique=True)
+    car_nickname = models.CharField(blank=True, null=True, max_length=100)
+
+    def __str__(self):
+        if self.car_year and self.car_nickname:
+            name = f"{self.car_year} '{self.car_nickname}'"
+        else:
+            name = self.car_year
+        return str(name)
+
+
 # record model
 # ------------------------------------------------------------------------------
 class Record(models.Model):
@@ -143,7 +160,7 @@ class Record(models.Model):
         blank=True,
     )
     subsystem_unlinked = models.TextField(blank=True, null=True)
-    car_year = models.TextField(blank=True, null=True)
+    car_year = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True, blank=True)
     failure_time = models.DateTimeField(default=timezone.now, blank=True, null=True)
     failure_title = models.TextField(blank=True, null=True)
     failure_description = models.TextField(blank=True, null=True)
