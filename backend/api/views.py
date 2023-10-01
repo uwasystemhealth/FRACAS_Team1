@@ -249,7 +249,8 @@ class RecordViewSet(
         "failure_mechanism",
         "corrective_action_plan",
         "team_lead",
-        "car_year",
+        "car_year__car_year",
+        "car_year__car_nickname",
     ]
     filterset_fields = [
         "record_id",
@@ -263,7 +264,8 @@ class RecordViewSet(
         "subsystem_unlinked",
         "record_creation_time",
         "status",
-        "car_year",
+        "car_year__car_year",
+        "car_year__car_nickname",
     ]
 
     ordering_fields = ["record_creation_time"]
