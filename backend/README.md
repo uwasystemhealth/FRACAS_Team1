@@ -37,6 +37,90 @@ A normal user can:
 - read all existing objects.
 
 - Create: `POST` to the endpoint.
+<details>
+ <summary><code>POST</code> <code><b>/api/records/</b></code> <code>(creates a new record)</code></summary>
+
+##### Parameters
+
+> None
+
+##### Request body
+
+data format: JSON object
+
+> | field name              | type         | data type    | data format/range    | default value if not specified | description                        |
+> | ----------------------- | ------------ | ------------ | -------------------- | ------------------------------ | ---------------------------------- |
+> | record_creator          | not required | int / string | a positive integer   | null                           | user_id of the record creator      |
+> | record_owner            | not required | int / string | a positive integer   | null                           | user_id of the record owner        |
+> | team                    | not required | string       |                      | null                           | team name                          |
+> | subsystem               | not required | string       |                      | null                           | subsystem name                     |
+> | car_year                | not required | int / string |                      | null                           | car year                           |
+> | is_deleted              | not required | boolean      | ture/false           | false                          | deletion status                    |
+> | status                  | not required | string       |                      | null                           | status string                      |
+> | failure_time            | not required | string       | ISO 8601 time format | request submission time        | failure time                       |
+> | failure_title           | not required | string       |                      | null                           | failure title                      |
+> | failure_impact          | not required | string       |                      | null                           | failure impact                     |
+> | failure_cause           | not required | string       |                      | null                           | failure cause                      |
+> | failure_mechanism       | not required | string       |                      | null                           | failure mechanism                  |
+> | corrective_action_plan  | not required | string       |                      | null                           | corrective action plan             |
+> | record_creation_time    | not required | string       | ISO 8601 time format | request submission time        | record creation time               |
+> | due_date                | not required | string       | ISO 8601 time format | null                           | record due date                    |
+> | resolve_date            | not required | string       | ISO 8601 time format | null                           | record resolve date                |
+> | resolution_status       | not required | string       |                      | null                           | record resolve status              |
+> | review_date             | not required | string       |                      | null                           | record review date                 |
+> | is_resolved             | not required | boolean      | true/false           | false                          | record resolve status flag         |
+> | is_record_validated     | not required | boolean      | true/false           | false                          | record validation status flag      |
+> | is_analysis_validated   | not required | boolean      | true/false           | false                          | analysis validation status flag    |
+> | is_correction_validated | not required | boolean      | true/false           | false                          | correction validation status flag  |
+> | is_reviewed             | not required | boolean      | true/false           | false                          | review status flag                 |
+
+<details>
+<summary>Example</summary>
+
+```json
+{
+  "record_creator": 2,
+  "record_owner": 3,
+  "team": "Team 1",
+  "subsystem": "AL",
+  "car_year": 2022,
+  "is_deleted": false,
+  "status": "Record created.",
+  "failure_time": "2023-10-03T03:45:35+08:00",
+  "failure_title": "Test failure title",
+  "failure_description": "Test failure description",
+  "failure_impact": "Test failure impact",
+  "failure_cause": "Test failure cause",
+  "failure_mechanism": "Test failure cause",
+  "corrective_action_plan": "Test corrective action plan",
+  "record_creation_time": "2023-10-03T03:45:35+08:00",
+  "due_date": "2023-10-03T03:48:10+08:00",
+  "resolve_date": "2023-10-03T03:48:14+08:00",
+  "resolution_status": "Resolved and correction validated, without analysis and review.",
+  "review_date": "2023-10-03T03:48:53+08:00",
+  "is_resolved": true,
+  "is_record_validated": false,
+  "is_analysis_validated": false,
+  "is_correction_validated": true,
+  "is_reviewed": false
+}
+```
+
+</details>
+
+##### Responses
+
+> | http code | content-type       | response content              | 
+> | --------- | ------------------ | ----------------------------- |
+> | `201`     | `application/json` | Created record object.          |
+> | `400`     | `application/json` | Field-specific error message. |
+> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
+> | `500`     | `text/html`        | Field-specific error message. |
+
+
+</details>
+
+---
 
 - Read: `GET` to the endpoint.
 - Update: `PUT` to the endpoint.
@@ -133,7 +217,7 @@ data format: JSON object
 
 > | http code | content-type       | response content              |
 > | --------- | ------------------ | ----------------------------- |
-> | `201`     | `applicatoin/json` | Created user object.          |
+> | `201`     | `application/json` | Created user object.          |
 > | `500`     | `text/html`        | Field-specific error message. |
 
 </details>
@@ -172,8 +256,8 @@ data format: JSON object
 
 > | http code | content-type       | response content              |
 > | --------- | ------------------ | ----------------------------- |
-> | `200`     | `applicatoin/json` | `{"token": <token_string>}`   |
-> | `400`     | `applicatoin/json` | Field-specific error message. |
+> | `200`     | `application/json` | `{"token": <token_string>}`   |
+> | `400`     | `application/json` | Field-specific error message. |
 
 </details>
 
@@ -200,9 +284,9 @@ None
 
 > | http code | content-type       | response content                                             |
 > | --------- | ------------------ | ------------------------------------------------------------ |
-> | `200`     | `applicatoin/json` | `{"message": "Logged out successfully"}`                     |
-> | `401`     | `applicatoin/json` | `{"detail":"Invalid token."}`                                |
-> | `401`     | `applicatoin/json` | `{"detail":"Authentication credentials were not provided."}` |
+> | `200`     | `application/json` | `{"message": "Logged out successfully"}`                     |
+> | `401`     | `application/json` | `{"detail":"Invalid token."}`                                |
+> | `401`     | `application/json` | `{"detail":"Authentication credentials were not provided."}` |
 
 </details>
 
