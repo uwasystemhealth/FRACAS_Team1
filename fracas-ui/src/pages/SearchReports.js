@@ -4,8 +4,10 @@ import '../styles/SearchReports.scss';
 import { useNavigate } from 'react-router-dom';
 
 const SearchReports = () => {
-    const [formData, setFormData] = useState({ team: '' });
+    const [formData, setFormData] = useState({ team: '', subsystem: '', carYear: '' });
     const [teams, setTeams] = useState([]);
+    const [subsystems, setSubsystems] = useState([]);
+    const [carYears, setCarYears] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [results, setResults] = useState([]);
     const token = localStorage.getItem('token');
@@ -25,6 +27,18 @@ const SearchReports = () => {
                     }
                 });
                 setTeams(teamResponse.data.results);
+                const subsystemResponse = await axios.get("http://127.0.0.1:8000/api/subsystems/", {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setSubsystems(subsystemResponse.data.results);
+                const carYearResponse = await axios.get("http://127.0.0.1:8000/api/cars/", {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setCarYears(carYearResponse.data.results);
             } catch (error) {
                 console.error(error);
             }
@@ -36,6 +50,8 @@ const SearchReports = () => {
         try {
             let url = `http://127.0.0.1:8000/api/records/?search=${searchQuery}`;
             if (formData.team) url += `&team__team_name=${formData.team}`;
+            if (formData.subsystem) url += `&subsystem__subsystem_name=${formData.subsystem}`;
+            if (formData.carYear) url += `&car_year__car_year=${formData.carYear}`;
 
             const response = await axios.get(url, {
                 headers: {
@@ -81,6 +97,32 @@ const SearchReports = () => {
                             {teams.map((team, index) => (
                                 <option key={index} value={team.team_name}>
                                     {team.team_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='filter'>
+                        <span>Subsystem:</span>
+                        <select 
+                            value={formData.subsystem} 
+                            onChange={(e) => handleInputChange(e, 'subsystem')}>
+                            <option value="">Select a subsystem</option>
+                            {subsystems.map((subsystem, index) => (
+                                <option key={index} value={subsystem.subsystem_name}>
+                                    {subsystem.subsystem_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='filter'>
+                        <span>Car Year:</span>
+                        <select 
+                            value={formData.carYear} 
+                            onChange={(e) => handleInputChange(e, 'carYear')}>
+                            <option value="">Select a car year</option>
+                            {carYears.map((year, index) => (
+                                <option key={index} value={year.car_year}>
+                                    {year.car_year}
                                 </option>
                             ))}
                         </select>
