@@ -57,8 +57,14 @@ li {
     .top {
       width: auto;
     }
-
+  
     
+  }
+
+  .pagination-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
@@ -107,9 +113,12 @@ li {
     }
 }
 
+
+
 .results {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // Two equal-width columns
+  grid-gap: 5px; // Adjust the gap between items as needed
 
   button {
     background: transparent;

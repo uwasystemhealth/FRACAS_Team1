@@ -10,6 +10,10 @@ const SearchReports = () => {
     const [carYears, setCarYears] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [results, setResults] = useState([]);
+    const [pagination, setPagination] = useState({
+        next: null, // URL for the next page
+        previous: null, // URL for the previous page
+    });
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
 
@@ -59,6 +63,54 @@ const SearchReports = () => {
                 }
             });
             setResults(response.data.results);
+            setPagination({
+                next: response.data.next,
+                previous: response.data.previous,
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Fetch results for previous page
+    const handlePreviousPage = async () => {
+        try {
+            if (pagination.previous){
+                let url = pagination.previous
+                const response = await axios.get(url, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setResults(response.data.results);
+                setPagination({
+                    next: response.data.next,
+                    previous: response.data.previous,
+                });
+            }
+            
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Fetch results for next page
+    const handleNextPage = async () => {
+        try {
+            if (pagination.next){
+                let url = pagination.next
+                const response = await axios.get(url, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setResults(response.data.results);
+                setPagination({
+                    next: response.data.next,
+                    previous: response.data.previous,
+                });
+            }
+            
         } catch (error) {
             console.error(error);
         }
@@ -134,6 +186,13 @@ const SearchReports = () => {
                         {result.failure_title || "[no_title]"}
                     </button>
                     ))}
+                
+                </div>
+
+
+                <div className='pagination-container'>
+                    <button onClick={handlePreviousPage}>&lt; Previous</button>
+                    <button onClick={handleNextPage}>Next &gt;</button>
                 </div>
             </div>
         </>
