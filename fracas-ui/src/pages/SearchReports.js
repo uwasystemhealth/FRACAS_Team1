@@ -131,7 +131,7 @@ const SearchReports = () => {
                 <div className='results'>
                     {results.map((result, index) => (
                         <button onClick={() => handleViewClick(result)}>
-                        {result.failure_title}
+                        {result.failure_title || "[no_title]"}
                     </button>
                     ))}
                 </div>
