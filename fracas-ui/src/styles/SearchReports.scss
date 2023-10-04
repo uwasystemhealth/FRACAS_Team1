@@ -49,112 +49,6 @@ li {
     }
   }
 
-  .searchmain {
-    position: relative;
-    width: 100%;
-    height: 80px;
-    border-bottom: 1px solid $border-color;
-
-    .span1 {
-      font-weight: 600;
-      line-height: 80px;
-      margin-left: 45px;
-    }
-
-    .list {
-      width: 670px;
-      height: 30px;
-      position: absolute;
-      top: 30px;
-      margin-left: 160px;
-
-      div {
-        float: left;
-      }
-    }
-
-    .box {
-      width: 95%;
-      height: 370px;
-      position: absolute;
-      left: 4%;
-      margin-top: 20px;
-
-      .left, .right {
-        float: left;
-
-        &.left {
-          width: 660px;
-
-          .title {
-            display: block;
-            font-size: 18px;
-            color: $grey-text;
-          }
-
-          .xuanze {
-            width: 100%;
-            height: 180px;
-            margin-top: 20px;
-
-            div {
-              width: 100%;
-              height: 26px;
-              margin-bottom: 50px;
-
-              select {
-                display: block;
-                width: 120px;
-                height: 26px;
-                border: 0px solid transparent;
-                background-color: transparent;
-                border-bottom: 1px solid $border-color;
-                outline: none;
-                margin-right: 20px;
-                float: left;
-              }
-
-              input {
-                width: 360px;
-                height: 30px;
-                border: 0;
-                border-bottom: 1px solid $border-color;
-                outline: none;
-                background-color: transparent;
-              }
-            }
-          }
-        }
-
-        &.right {
-          width: 354px;
-
-          .s1 {
-            display: block;
-            width: 100%;
-            margin: 10px;
-            color: $grey-text;
-          }
-
-          select {
-            width: 100%;
-            background-color: transparent;
-            border: 0;
-            border-bottom: 1px solid $border-color;
-            font-size: 15px;
-            outline: none;
-
-            &.sel2 {
-              margin-left: 15px;
-              width: 100px;
-              float: left;
-            }
-          }
-        }
-      }
-    }
-  }
-
   @media screen and (max-width: 920px) {
     width: 90%;
     height: 650px;
@@ -164,41 +58,80 @@ li {
       width: auto;
     }
 
-    .searchmain {
-      border-bottom: none;
+    
+  }
+}
 
-      .list {
-        height: auto;
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
+.searchmain {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 2%;
+  padding-top: 2%;
+
+  .searchfield {
+    width: 80%;
+    border-radius: 10px;
+    height: 35px;
+  }
+
+  button {
+    height: 30px;
+    width: 10%; 
+    background-color: rgb(245, 211, 59);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+}
+
+.filters {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 2%;
+
+    .filter {
+      width: 50%;
+      display: flex;
+      justify-content: center;
+
+      span {
+        margin: 1%;
       }
 
-      .left {
-        width: 100%;
-      }
-
-      .box {
-        height: auto;
-      }
-
-      .xuanze {
-        border-bottom: none;
-
-        div {
-          width: 100%;
-          flex-wrap: wrap;
-
-          input {
-            width: 200px;
-          }
-        }
-      }
-
-      .right {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+      select {
+        width: 30%;
+        height: 30px;
+        border-radius: 10px;
       }
     }
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+
+  button {
+    background: transparent;
+    border: transparent;
+    cursor: pointer;
+    margin: 1%;
+    font-size: large;
+    color: blue;
+  }
+  button:hover {
+    color: rgba(139, 1, 1, 0.6);
+  }
+}
+
+.usertopimg {
+  max-height: 200px;
+  background-image: linear-gradient(to right, #032D5F, rgb(255, 255, 255));
+
+  h1 {
+    color: white;
+    margin-left: 90px;
+    padding-top: 24px;
+    font-size: 34px;
   }
 }

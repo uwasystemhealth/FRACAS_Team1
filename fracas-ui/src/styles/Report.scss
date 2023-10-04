@@ -182,27 +182,22 @@ input::-webkit-input-placeholder {
     height: 880px;
 }
 
-.botbtn {
-    width: 80%;
-    margin-left: 10%;
-    height: 70px;
+.btnbox {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 
-    div {
-        width: 228px;
-        height: 100%;
-        background-color: rgb(245, 211, 59);
-        text-align: center;
-        font-size: 18px;
-        line-height: 70px;
-    }
-
-    .left {
-        float: left;
-    }
-
-    .right {
-        float: right;
-        cursor: pointer;
+    .botbtn {
+        margin-bottom: 1%;
+        
+        div {
+            width: 228px;
+            height: 100%;
+            background-color: rgb(245, 211, 59);
+            text-align: center;
+            font-size: 18px;
+            line-height: 70px;
+        }
     }
 }
 

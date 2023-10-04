@@ -3,15 +3,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Signup.scss';
 
 const SignUpPage = () => {
-    const [username, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [team, setTeam] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
-        if (!username || !email || !password) {
+        if (!firstName || !lastName || !team || !email || !password || !confirmPassword) {
             alert("Please fill in the registration information");
+        } else if (password !== confirmPassword) {
+            alert("Passwords do not match");
         } else {
             try {
                 const response = await fetch("http://127.0.0.1:8000/api/register", {
@@ -20,19 +25,21 @@ const SignUpPage = () => {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        username: username,
+                        first_name: firstName,
+                        last_name: lastName,
                         email: email,
-                        password: password,
+                        team: team,
+                        password1: password,
+                        password2: confirmPassword,
                     }),
                 });
 
                 const data = await response.json();
 
-                if (response.status === 201) { // Assuming 201 is a successful registration status
+                if (response.status === 201) {
                     alert("Registration successful! Please login.");
                     navigate('/login');
                 } else {
-                    // Handle any potential errors received from the server
                     alert(data.error || "An error occurred while registering.");
                 }
             } catch (error) {
@@ -56,24 +63,33 @@ const SignUpPage = () => {
                 <p style={{ color: 'rgb(119, 119, 119)', textAlign: 'center', fontSize: '17px' }}>Create a new account</p>
                 <div className="inpbox w">
                     <div className="inp">
-                        <span>User Name</span>
-                        <br />
-                        <input type="text" placeholder="Please enter your username" value={username} onChange={(e) => setName(e.target.value)} />
+                        <span>First Name</span>
+                        <input type="text" placeholder="Please enter your First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                     </div>
                     <div className="inp">
-                        <span>E-mail</span>
-                        <br />
+                        <span>Last Name</span>
+                        <input type="text" placeholder="Please enter your Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                    </div>
+                    <div className="inp">
+                        <span>Team</span>
+                        <input type="text" placeholder="Please enter your Team" value={team} onChange={(e) => setTeam(e.target.value)} />
+                    </div>
+                    <div className="inp">
+                        <span>Email</span>
                         <input type="text" placeholder="Please enter your Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className="inp">
                         <span>Password</span>
-                        <br />
                         <input type="password" placeholder="Please enter your Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    </div>
+                    <div className="inp">
+                        <span>Confirm Password</span>
+                        <input type="password" placeholder="Please re-enter your Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                     </div>
                     <button onClick={handleSubmit}>Register</button>
                     <span className="s1">Forgot password?</span>
                     <span className="s2">
-                        <Link to="/login">Already have an account? Sign In</Link> 
+                        <Link to="/login">Already have an account? Sign In</Link>
                     </span>
                 </div>
             </div>

@@ -1,60 +1,100 @@
-import React from 'react';
-import '../styles/SearchReports.scss'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import '../styles/SearchReports.scss';
+import { useNavigate } from 'react-router-dom';
 
 const SearchReports = () => {
+    const [formData, setFormData] = useState({ team: '' });
+    const [teams, setTeams] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [results, setResults] = useState([]);
+    const token = localStorage.getItem('token');
+    const navigate = useNavigate();
+
+    const handleViewClick = (result) => {
+        console.log("result--->", result)
+        navigate('/view', { state: { result } });
+      };
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            try {
+                const teamResponse = await axios.get("http://127.0.0.1:8000/api/teams/", {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setTeams(teamResponse.data.results);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchInitialData();
+    }, []);
+
+    const handleSearch = async () => {
+        try {
+            let url = `http://127.0.0.1:8000/api/records/?search=${searchQuery}`;
+            if (formData.team) url += `&team__team_name=${formData.team}`;
+
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            });
+            setResults(response.data.results);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleInputChange = (e, field) => {
+        setFormData({
+            ...formData,
+            [field]: e.target.value,
+        });
+    };
+
     return (
-        <div className="searchmainbox searchw">
-            <div className="top">
-                <span>SearchReports</span>
+        <>
+            <div className="usertopimg">
+                <h1>SEARCH<br />REPORTS</h1>
             </div>
-            <div className="searchmain">
-                <span className="span1">Search for:</span>
-                <div className="list">
-                    {['Your Reports', 'Others Reports', 'All'].map((report, index) => (
-                        <div key={index} style={{ width: '155px', height: '100%' }}>
-                            <input type="radio" id={`radio${index}`} />
-                            <label htmlFor={`radio${index}`} style={{ color: 'rgb(71, 71, 71)' }}>
-                                &nbsp;&nbsp;{report}
-                            </label>
-                        </div>
+            <div className='searchmainbox searchw'>
+                <div className='searchmain'>
+                    <input 
+                        className='searchfield'
+                        type="text" 
+                        placeholder="Search..." 
+                        value={searchQuery} 
+                        onChange={(e) => setSearchQuery(e.target.value)} 
+                    />
+                    <button onClick={handleSearch}>Search</button>
+                </div>
+                <div className='filters'>
+                    <div className='filter'>
+                        <span>Team:</span>
+                        <select 
+                            value={formData.team} 
+                            onChange={(e) => handleInputChange(e, 'team')}>
+                            <option value="">Select a team</option>
+                            {teams.map((team, index) => (
+                                <option key={index} value={team.team_name}>
+                                    {team.team_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                <div className='results'>
+                    {results.map((result, index) => (
+                        <button onClick={() => handleViewClick(result)}>
+                        {result.failure_title}
+                    </button>
                     ))}
                 </div>
-                <div className="box">
-                    <div className="left">
-                        <span className="title">Search filters</span>
-                        <div className="xuanze">
-                            {Array(2).fill(null).map((_, index) => (
-                                <div key={index}>
-                                    <select name="" id="">
-                                        <option value="123">Any field</option>
-                                    </select>
-                                    <select name="" id="">
-                                        <option value="123">{index === 0 ? 'containsEnter' : 'contains'}</option>
-                                    </select>
-                                    <input
-                                        type="text"
-                                        placeholder="&nbsp;&nbsp;&nbsp;Enter a search term"
-                                        style={index === 1 ? { width: '200px' } : {}}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="right">
-                        {['Tech Team', 'Car Year', 'Start Date:', 'End Date:'].map((label, index) => (
-                            <React.Fragment key={index}>
-                                <span className="s1">{label}</span>
-                                {['All Teams', 'Any Year', 'Day', 'Month', 'Start Year'].map((option, idx) => (
-                                    <select key={idx} className={index > 1 ? 'sel2' : ''}>
-                                        <option value="">{option}</option>
-                                    </select>
-                                ))}
-                            </React.Fragment>
-                        ))}
-                    </div>
-                </div>
             </div>
-        </div>
+        </>
     );
 };
 

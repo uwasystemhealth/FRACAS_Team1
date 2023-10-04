@@ -1,21 +1,74 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    // Check if the user is authenticated.
+    const isAuthenticated = localStorage.getItem('token') !== null;
+
+    const navigate = useNavigate();
+
+    const goBackHandler = () => {
+        navigate(-1); // This will navigate back to the previous page.
+    };
+
+    const handleLogout = async () => {
+        try {
+        const token = localStorage.getItem('token');
+        const response = await fetch("http://127.0.0.1:8000/api/logout", {
+            method: "POST", 
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`,
+            },
+        });
+
+        if (response.status === 200) {
+            localStorage.removeItem('token'); // Remove the token from localStorage
+            navigate('/'); // Navigate to the root upon successful logout.
+        } else {
+            const data = await response.json();
+            alert(data.message || "Error logging out. Please try again.");
+        }
+        } catch (error) {
+            alert("An error occurred while logging out. Please try again.");
+        }
+    };
+
     return (
         <div className="topnav">
             <header>
                 <nav>
                     <div className="nav-left">
+                        {/* {isAuthenticated && (
+                            <button onClick={goBackHandler}>Back</button>
+                        )} */}
                         <img src="/images/UWAM-Logo-2023-(colour).png" alt="UWAM Logo" />
                     </div>
-                    {/* <input type="checkbox" id="nav-checkbox" />
-                    <label htmlFor="nav-checkbox">&#9776;</label> */}
                     <div className="nav-right">
                         <ul>
                             <li><Link to="/">Home</Link></li>
-                            <li><Link to="/login">Log in</Link></li>
-                            <li><Link to="/signup">Sign up</Link></li>
+                            {/* Conditionally render Log in and Sign up links */}
+                            {!isAuthenticated && (
+                                <>
+                                    <li><Link to="/login">Log in</Link></li>
+                                    <li><Link to="/signup">Sign up</Link></li>
+                                </>
+                            )}
+                            {isAuthenticated && (
+                                <>
+                                    <li><Link to="/userdashboard">User Dashboard</Link></li>
+                                    <li>
+                                        <div 
+                                            role="button" 
+                                            tabIndex={0} // to make the div focusable
+                                            onClick={handleLogout} 
+                                            style={{ cursor: 'pointer', color: 'black', textDecoration: 'underline', fontSize: '20px' }}
+                                        >
+                                            Logout
+                                        </div>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                         <div className="topright">
                             <a href="https://www.instagram.com/uwamotorsport/">

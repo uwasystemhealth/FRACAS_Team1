@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/UserDashboard.scss';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../components/useAuth';
 
 const UserDashboard = () => {
     const navigate = useNavigate();
@@ -13,16 +14,20 @@ const UserDashboard = () => {
         navigate("/report");
     }
 
+    const auth = useAuth();
     const handleLogout = async () => {
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch("http://127.0.0.1:8000/api/logout", {
                 method: "POST", // Assuming it's a POST request. Adjust if necessary.
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`,
                 },
             });
     
             if (response.status === 200) {
+                auth.signout();
                 navigate('/');  // Navigate to the root upon successful logout.
             } else {
                 // Optionally, handle other status codes or display an error message.
@@ -45,7 +50,7 @@ const UserDashboard = () => {
 
             <div className="usermainbox">
                 <p style={{ height: '10px' }}></p>
-                <div style={{ cursor: 'pointer' }} onClick={handleClosedClick}>Submit & Modify Reports</div>
+                <div style={{ cursor: 'pointer' }} onClick={handleClosedClick}>Submit Report</div>
                 <div style={{ cursor: 'pointer' }} id="myDiv2" onClick={handleSearchReportsClick}>Search Reports</div>
                 <div style={{ cursor: 'pointer' }} onClick={handleLogout}>Log out</div>
             </div>
