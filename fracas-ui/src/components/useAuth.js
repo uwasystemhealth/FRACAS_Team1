@@ -17,6 +17,7 @@ function useProvideAuth() {
   };
 
   const signout = () => {
+    localStorage.removeItem('is_admin');
     localStorage.removeItem('token');
     setIsAuthenticated(false);
   };

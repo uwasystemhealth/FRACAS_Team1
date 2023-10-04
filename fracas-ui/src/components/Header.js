@@ -4,9 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 const Header = () => {
     // Check if the user is authenticated.
     const isAuthenticated = localStorage.getItem('token') !== null;
-
+    const isAdmin = localStorage.getItem('is_admin') === 'true';
     const navigate = useNavigate();
-
     const goBackHandler = () => {
         navigate(-1); // This will navigate back to the previous page.
     };
@@ -21,9 +20,9 @@ const Header = () => {
                 "Authorization": `Token ${token}`,
             },
         });
-
+        localStorage.removeItem('is_admin'); // Remove the is_admin from localStorage
+        localStorage.removeItem('token'); // Remove the token from localStorage
         if (response.status === 200) {
-            localStorage.removeItem('token'); // Remove the token from localStorage
             navigate('/'); // Navigate to the root upon successful logout.
         } else {
             const data = await response.json();
@@ -69,6 +68,16 @@ const Header = () => {
                                     </li>
                                 </>
                             )}
+                            {isAdmin && (
+                                <>
+                                    <li>
+                                        <a href="http://127.0.0.1:8000/admin/">
+                                            Admin Dashboard (External)
+                                        </a>
+                                    </li>
+                                </>
+                            )}
+                            
                         </ul>
                         <div className="topright">
                             <a href="https://www.instagram.com/uwamotorsport/">
