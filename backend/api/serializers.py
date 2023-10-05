@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer[User]):
     class Meta:
         model = User
         slugfield = "user_id"
-        fields = ["user_id", "first_name", "last_name", "email", "team", "url"]
+        fields = ["user_id", "first_name", "last_name", "email", "team", "url", "is_admin"]
 
         extra_kwargs = {
             "url": {"view_name": "api:user-detail", "lookup_field": "user_id"},

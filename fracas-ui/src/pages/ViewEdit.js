@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Report.scss'
 
-const Report = () => {
+const ViewEdit = () => {
+    const location = useLocation();
+    const result = location.state?.result || {};
     const [showDetails, setShowDetails] = useState(false);
     const [detailInfo, setDetailInfo] = useState({});
     const [showAdditionalData, setShowAdditionalData] = useState(false);
@@ -40,30 +42,36 @@ const Report = () => {
         setDetailInfo(detailsMapping[iconId]);
     };
 
+    const formatDateTime = (dateTime) => {
+        return dateTime ? dateTime.slice(0, 16) : '';
+      };
+
+      const record_creator_id = result.record_creator
+
     const [formData, setFormData] = useState({
-        record_creator: '',
-        record_owner: '',
-        team: '',
-        subsystem: '',
-        car_year: '',
-        failure_time: '',
-        failure_title: '',
-        failure_description: '',
-        failure_impact: '',
-        failure_cause: '',
-        failure_mechanism: '',
-        corrective_action_plan: '',
-        team_lead: '',
+        record_creator: result.record_creator,
+        record_owner: result.record_owner,
+        team: result.team,
+        subsystem: result.subsystem,
+        car_year: result.car_year,
+        failure_time: formatDateTime(result.failure_time),
+        failure_title: result.failure_title,
+        failure_description: result.failure_description,
+        failure_impact: result.failure_impact,
+        failure_cause: result.failure_cause,
+        failure_mechanism: result.failure_mechanism,
+        corrective_action_plan: result.corrective_action_plan,
+        team_lead: result.team_lead,
         record_creation_time: getCurrentDate(),
         due_date: getCurrentDate(),
         resolve_date: getCurrentDate(),
-        resolution_status: '',
+        resolution_status: result.resolution_status,
         // review_date: '',
-        is_resolved: false,
-        is_record_validated: false,
-        is_analysis_validated: false,
-        is_correction_validated: false,
-        is_reviewed: false
+        is_resolved: result.is_resolved,
+        is_record_validated: result.is_record_validated,
+        is_analysis_validated: result.is_analysis_validated,
+        is_correction_validated: result.is_correction_validated,
+        is_reviewed: result.is_reviewed
     });
 
     const [users, setUsers] = useState([]);
@@ -74,30 +82,6 @@ const Report = () => {
             [field]: e.target.value
         }));
     }
-
-    const handleSubmit = async () => {
-        try {
-            const payload = {
-                ...formData,
-                record_creator: users.user_id,
-                record_owner: users.user_id,
-            }
-            const config = {
-                headers: {
-                    'Authorization': `Token ${token}`
-                }
-            };
-            const response = await axios.post(
-                'http://127.0.0.1:8000/api/records/',
-                payload,
-                config
-            );
-            navigate('/userdashboard');
-        } catch (error) {
-            console.error("Error submitting data:", error);
-        }
-    };
-    
 
     useEffect(() => {
         const fetchData = async () => {
@@ -135,12 +119,16 @@ const Report = () => {
         fetchData();
       }, [token]);
 
-      if(users.length !== 0) {
-        formData.record_creator = users.first_name + ' ' + users.last_name;
-        formData.record_owner = users.first_name + ' ' + users.last_name;
-      }
+    if (allUsers.length !== 0) {
+        allUsers.results.map((data) => {
+            if (data.user_id === result.record_creator) {
+                formData.record_creator = data.first_name + ' ' + data.last_name;
+                formData.record_owner = data.first_name + ' ' + data.last_name;
+            }
+        })
+    }
 
-      const [teams, setTeams] = useState([]);
+    const [teams, setTeams] = useState([]);
 
       useEffect(() => {
         const fetchTeams = async () => {
@@ -179,7 +167,7 @@ const Report = () => {
     }, [token]);
 
     const filteredSubsystems = formData.team
-    ? subsystems.results.filter(
+    ? subsystems?.results?.filter(
         (subsystem) => subsystem.parent_team === formData.team
       )
     : [];
@@ -215,6 +203,46 @@ const Report = () => {
         };
         fetchData();
     }, [token]);
+
+    const isUserAllowedToEdit = (users.first_name + ' ' + users.last_name) === formData.record_owner
+
+    const handleSubmit = async () => {
+        if (!isUserAllowedToEdit) {
+            alert("You do not have permission to edit this record.");
+            return;
+        }
+        try {
+            const recordId = result.record_id; // Assume you have record id in the result object
+            const payload = {
+                ...formData,
+                record_creator: record_creator_id,
+                record_owner: record_creator_id,
+            }
+            const config = {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            };
+            const response = await axios.put(
+                `http://127.0.0.1:8000/api/records/${recordId}/`, // Template string used to insert recordId into URL
+                payload,
+                config
+            );
+            if(response.status === 200) {
+                navigate('/userdashboard');
+            } else {
+                throw new Error('Failed to update the record');
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                console.error("Field value error:", error.response.data);
+            } else if (error.response && error.response.status === 403) {
+                console.error("Permission denied:", error.response.data.detail);
+            } else {
+                console.error("Error submitting data:", error);
+            }
+        }
+    };
 
     return (
         <div className="mainbox w">
@@ -296,7 +324,7 @@ const Report = () => {
                         value={formData.subsystem}
                         onChange={(e) => handleInputChange(e, 'subsystem')}>
                         <option value="" disabled>Select a subsystem</option>
-                        {filteredSubsystems.length > 0 ? (
+                        {filteredSubsystems?.length > 0 ? (
                             filteredSubsystems.map((subsystem) => (
                             <option
                                 key={subsystem.subsystem_name}
@@ -449,4 +477,4 @@ const Report = () => {
     );
 }
 
-export default Report;
+export default ViewEdit;

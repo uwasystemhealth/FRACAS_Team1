@@ -1,9 +1,9 @@
 import React from 'react';
-import '../styles/UserDashboard.scss';
+import '../styles/AdminDashboard.scss';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/useAuth';
 
-const UserDashboard = () => {
+const AdminDashboard = () => {
     const navigate = useNavigate();
 
     const handleSearchReportsClick = () => {
@@ -58,4 +58,4 @@ const UserDashboard = () => {
     );
 }
 
-export default UserDashboard;
+export default AdminDashboard;

@@ -1,60 +1,201 @@
-import React from 'react';
-import '../styles/SearchReports.scss'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import '../styles/SearchReports.scss';
+import { useNavigate } from 'react-router-dom';
 
 const SearchReports = () => {
+    const [formData, setFormData] = useState({ team: '', subsystem: '', carYear: '' });
+    const [teams, setTeams] = useState([]);
+    const [subsystems, setSubsystems] = useState([]);
+    const [carYears, setCarYears] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [results, setResults] = useState([]);
+    const [pagination, setPagination] = useState({
+        next: null, // URL for the next page
+        previous: null, // URL for the previous page
+    });
+    const token = localStorage.getItem('token');
+    const navigate = useNavigate();
+
+    const handleViewClick = (result) => {
+        console.log("result--->", result)
+        navigate('/view', { state: { result } });
+      };
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            try {
+                const teamResponse = await axios.get("http://127.0.0.1:8000/api/teams/", {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setTeams(teamResponse.data.results);
+                const subsystemResponse = await axios.get("http://127.0.0.1:8000/api/subsystems/", {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setSubsystems(subsystemResponse.data.results);
+                const carYearResponse = await axios.get("http://127.0.0.1:8000/api/cars/", {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setCarYears(carYearResponse.data.results);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchInitialData();
+    }, []);
+
+    const handleSearch = async () => {
+        try {
+            let url = `http://127.0.0.1:8000/api/records/?search=${searchQuery}`;
+            if (formData.team) url += `&team__team_name=${formData.team}`;
+            if (formData.subsystem) url += `&subsystem__subsystem_name=${formData.subsystem}`;
+            if (formData.carYear) url += `&car_year__car_year=${formData.carYear}`;
+
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            });
+            setResults(response.data.results);
+            setPagination({
+                next: response.data.next,
+                previous: response.data.previous,
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Fetch results for previous page
+    const handlePreviousPage = async () => {
+        try {
+            if (pagination.previous){
+                let url = pagination.previous
+                const response = await axios.get(url, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setResults(response.data.results);
+                setPagination({
+                    next: response.data.next,
+                    previous: response.data.previous,
+                });
+            }
+            
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Fetch results for next page
+    const handleNextPage = async () => {
+        try {
+            if (pagination.next){
+                let url = pagination.next
+                const response = await axios.get(url, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setResults(response.data.results);
+                setPagination({
+                    next: response.data.next,
+                    previous: response.data.previous,
+                });
+            }
+            
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleInputChange = (e, field) => {
+        setFormData({
+            ...formData,
+            [field]: e.target.value,
+        });
+    };
+
     return (
-        <div className="searchmainbox searchw">
-            <div className="top">
-                <span>SearchReports</span>
+        <>
+            <div className="usertopimg">
+                <h1>SEARCH<br />REPORTS</h1>
             </div>
-            <div className="searchmain">
-                <span className="span1">Search for:</span>
-                <div className="list">
-                    {['Your Reports', 'Others Reports', 'All'].map((report, index) => (
-                        <div key={index} style={{ width: '155px', height: '100%' }}>
-                            <input type="radio" id={`radio${index}`} />
-                            <label htmlFor={`radio${index}`} style={{ color: 'rgb(71, 71, 71)' }}>
-                                &nbsp;&nbsp;{report}
-                            </label>
-                        </div>
-                    ))}
+            <div className='searchmainbox searchw'>
+                <div className='searchmain'>
+                    <input 
+                        className='searchfield'
+                        type="text" 
+                        placeholder="Search..." 
+                        value={searchQuery} 
+                        onChange={(e) => setSearchQuery(e.target.value)} 
+                    />
+                    <button onClick={handleSearch}>Search</button>
                 </div>
-                <div className="box">
-                    <div className="left">
-                        <span className="title">Search filters</span>
-                        <div className="xuanze">
-                            {Array(2).fill(null).map((_, index) => (
-                                <div key={index}>
-                                    <select name="" id="">
-                                        <option value="123">Any field</option>
-                                    </select>
-                                    <select name="" id="">
-                                        <option value="123">{index === 0 ? 'containsEnter' : 'contains'}</option>
-                                    </select>
-                                    <input
-                                        type="text"
-                                        placeholder="&nbsp;&nbsp;&nbsp;Enter a search term"
-                                        style={index === 1 ? { width: '200px' } : {}}
-                                    />
-                                </div>
+                <div className='filters'>
+                    <div className='filter'>
+                        <span>Team:</span>
+                        <select 
+                            value={formData.team} 
+                            onChange={(e) => handleInputChange(e, 'team')}>
+                            <option value="">Select a team</option>
+                            {teams.map((team, index) => (
+                                <option key={index} value={team.team_name}>
+                                    {team.team_name}
+                                </option>
                             ))}
-                        </div>
+                        </select>
                     </div>
-                    <div className="right">
-                        {['Tech Team', 'Car Year', 'Start Date:', 'End Date:'].map((label, index) => (
-                            <React.Fragment key={index}>
-                                <span className="s1">{label}</span>
-                                {['All Teams', 'Any Year', 'Day', 'Month', 'Start Year'].map((option, idx) => (
-                                    <select key={idx} className={index > 1 ? 'sel2' : ''}>
-                                        <option value="">{option}</option>
-                                    </select>
-                                ))}
-                            </React.Fragment>
-                        ))}
+                    <div className='filter'>
+                        <span>Subsystem:</span>
+                        <select 
+                            value={formData.subsystem} 
+                            onChange={(e) => handleInputChange(e, 'subsystem')}>
+                            <option value="">Select a subsystem</option>
+                            {subsystems.map((subsystem, index) => (
+                                <option key={index} value={subsystem.subsystem_name}>
+                                    {subsystem.subsystem_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='filter'>
+                        <span>Car Year:</span>
+                        <select 
+                            value={formData.carYear} 
+                            onChange={(e) => handleInputChange(e, 'carYear')}>
+                            <option value="">Select a car year</option>
+                            {carYears.map((year, index) => (
+                                <option key={index} value={year.car_year}>
+                                    {year.car_year}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </div>
+                <div className='results'>
+                    {results.map((result, index) => (
+                        <button onClick={() => handleViewClick(result)}>
+                        {result.failure_title || "[no_title]"}
+                    </button>
+                    ))}
+                
+                </div>
+
+
+                <div className='pagination-container'>
+                    <button onClick={handlePreviousPage}>&lt; Previous</button>
+                    <button onClick={handleNextPage}>Next &gt;</button>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

@@ -6,23 +6,31 @@ import HomePage from './pages/HomePage';
 import Login from "./pages/Login";
 import SignUpPage from "./pages/Signup";
 import UserDashboard from "./pages/UserDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import Report from "./pages/Report";
 import SearchReports from "./pages/SearchReports";
+import ViewEdit from "./pages/ViewEdit";
+import { AuthProvider } from "./components/useAuth";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/userdashboard" element={<UserDashboard />} />
-        <Route path="/report" element={<Report />} />
-        <Route path="/search" element={<SearchReports />} />
-      </Routes>
-      <Footer />
-    </Router>
+    <AuthProvider> {/* Wrap your Router with AuthProvider */}
+      <Router>
+        <Header />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/userdashboard" element={<ProtectedRoute element={<UserDashboard />} />} />
+          <Route path="/admindashboard" element={<ProtectedRoute element={<AdminDashboard />} />} />
+          <Route path="/report" element={<ProtectedRoute element={<Report />} />} />
+          <Route path="/search" element={<ProtectedRoute element={<SearchReports />} />} />
+          <Route path="/view" element={<ProtectedRoute element={<ViewEdit />} />} />
+        </Routes>
+        <Footer />
+      </Router>
+    </AuthProvider>
   );
 }
 

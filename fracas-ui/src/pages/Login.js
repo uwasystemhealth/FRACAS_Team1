@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../components/useAuth';
 import '../styles/Login.scss';
 
 const Login = () => {
@@ -8,7 +9,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-
+  const auth = useAuth();
   const handleLogin = async () => {
     try {
         const response = await fetch("http://127.0.0.1:8000/api/login", {
@@ -17,14 +18,39 @@ const Login = () => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                email: email,
+                username: email,
                 password: password,
             }),
         });
 
         if (response.status === 200) {
             // If the response status code is 200, navigate to the dashboard
-            navigate('/userdashboard');
+            const data = await response.json();
+            auth.authenticate(data.token);
+            
+            // Determine admin privilege
+            const token = localStorage.getItem('token')
+            const identityResponse = await fetch("http://127.0.0.1:8000/api/users/me/", {
+              method: "GET",
+              headers: {
+                  'Authorization': `Token ${token}`
+              }
+            });
+
+            if (identityResponse.status === 200) {
+              const identityData = await identityResponse.json(); // Wait for the JSON data
+              if (identityData.is_admin) {
+                localStorage.setItem('is_admin', true);
+                navigate('/admindashboard');
+              } else {
+                localStorage.setItem('is_admin', false);
+                navigate('/userdashboard');
+              }
+            } else {
+              // Handle error cases if needed
+              console.error("Error getting user identity:", identityResponse.status);
+              // ...
+            }
         } else {
             // Optionally, you can handle other status codes or get more detail from the response
             const data = await response.json();
@@ -42,14 +68,14 @@ const Login = () => {
       <div className="topimg">
         <h1>FRACAS<br />LOG IN</h1>
       </div>
-      <h1 className="w" style={{ marginTop: '40px', textAlign: 'center' }}>Log in</h1>
-      <div className="loginbox w">
+      <h1 className="loginw" style={{ marginTop: '40px', textAlign: 'center' }}>Log in</h1>
+      <div className="loginpagebox loginw">
         <span className="icon">
           <img src="/images/log-in-fill.png" alt="Login Icon" />
         </span>
         <h4 style={{ color: 'rgba(20, 137, 233,0.6)', textAlign: 'center', fontSize: '30px' }}>Welcome!</h4>
         <p style={{ color: 'rgb(119, 119, 119)', textAlign: 'center', fontSize: '17px' }}>Sign in to your account</p>
-        <div className="inpbox w">
+        <div className="inpbox loginw">
           <div className="inp">
           <span>Email</span>
         <br />
