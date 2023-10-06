@@ -45,6 +45,9 @@ def register_validation(data):
         data["team"] = None
     else:  # team found case insensitive exact match (__iexact)
         data["team"] = Team.objects.get(team_name__iexact=team).pk
+        # new registered user is not staff or admin
+        data["is_staff"] = False
+        data["is_admin"] = False
     return data
 
 

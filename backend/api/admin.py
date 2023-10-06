@@ -1,3 +1,5 @@
+from operator import is_
+
 from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
@@ -28,7 +30,16 @@ class UserAdmin(auth_admin.UserAdmin):
         (None, {"fields": ["password"]}),
         (
             "Personal info",
-            {"fields": ("first_name", "last_name", "team", "email")},
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "team",
+                    "email",
+                    "is_staff",
+                    "is_admin",
+                )
+            },
         ),
     )
     list_filter = [
@@ -40,6 +51,7 @@ class UserAdmin(auth_admin.UserAdmin):
         "last_name",
         "team",
         "email",
+        "is_staff",
         "is_admin",
     ]
     search_fields = ["first_name", "last_name", "team", "email"]
@@ -51,7 +63,16 @@ class UserAdmin(auth_admin.UserAdmin):
             None,
             {
                 "classes": ["wide"],
-                "fields": ["email", "password1", "password2"],
+                "fields": [
+                    "first_name",
+                    "last_name",
+                    "team",
+                    "email",
+                    "password1",
+                    "password2",
+                    "is_staff",
+                    "is_admin",
+                ],
             },
         ),
     ]

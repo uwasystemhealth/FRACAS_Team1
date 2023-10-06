@@ -38,6 +38,7 @@ class CustomUserManager(BaseUserManager):
         )
         user.is_admin = True
         user.is_superuser = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -63,6 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     # customised user manager
     objects = CustomUserManager()
@@ -73,11 +75,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             name = self.user_id
         return str(name)
-
-    @property
-    def is_staff(self):
-        """Satisifes built-in forms for user authorisation"""
-        return self.is_admin
 
 
 # team model

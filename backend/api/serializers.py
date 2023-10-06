@@ -22,7 +22,16 @@ class UserSerializer(serializers.ModelSerializer[User]):
     class Meta:
         model = User
         slugfield = "user_id"
-        fields = ["user_id", "first_name", "last_name", "email", "team", "url", "is_admin"]
+        fields = [
+            "user_id",
+            "first_name",
+            "last_name",
+            "email",
+            "team",
+            "url",
+            "is_admin",
+            "is_staff",
+        ]
 
         extra_kwargs = {
             "url": {"view_name": "api:user-detail", "lookup_field": "user_id"},
@@ -31,6 +40,8 @@ class UserSerializer(serializers.ModelSerializer[User]):
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     """Serializes the User model for Registration."""
+
+    password = serializers.CharField(max_length=68, min_length=8, write_only=True)
 
     class Meta:
         model = User
