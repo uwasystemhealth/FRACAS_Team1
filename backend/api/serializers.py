@@ -1,8 +1,10 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.core.exceptions import ValidationError
+from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 from .models import Car, Comment, Record, Subsystem, Team
+from .validations import register_validation
 
 User = get_user_model()
 
@@ -36,6 +38,51 @@ class UserSerializer(serializers.ModelSerializer[User]):
         extra_kwargs = {
             "url": {"view_name": "api:user-detail", "lookup_field": "user_id"},
         }
+
+
+class UserRegistrationSerializer(UserCreateSerializer):
+    """Serializes the User model for Registration."""
+
+    password = serializers.CharField(write_only=True)
+
+    team = serializers.SlugRelatedField(
+        slug_field="team_name",
+        queryset=Team.objects.all(),
+        allow_null=True,
+        required=False,
+    )
+
+    class Meta(UserCreateSerializer.Meta):
+        model = User
+        fields = (
+            "email",
+            "first_name",
+            "last_name",
+            "team",
+            "password",
+        )
+
+    # def create(self, data):
+    #     """Creates a new user instance with the provided clean_data.
+
+    #     Args:
+    #         clean_data (dict): A dictionary containing the cleaned data.
+
+    #     Returns:
+    #         User: The newly created user instance.
+    #     """
+    #     validated_data = register_validation(data)
+    #     user_data = validated_data.copy()
+    #     team = user_data["team"]
+    #     if team is not None:
+    #         user_data["team"] = Team.objects.get(pk=validated_data["team"])
+    #     else:
+    #         user_data["team"] = None
+
+    #     user_obj = User.objects.create_user(**user_data)
+
+    #     user_obj.save()
+    #     return user_obj
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
