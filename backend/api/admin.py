@@ -117,6 +117,7 @@ class RecordAdmin(admin.ModelAdmin):
     """Admin class for the Record model."""
 
     list_display = [
+        "failure_title",
         "record_creation_time",
         "status",
         "team",
@@ -132,6 +133,7 @@ class RecordAdmin(admin.ModelAdmin):
         "record_creator",
         "car_year",
     ]
+    ordering = ["failure_title", "record_creation_time"]
 
 
 # comment admin

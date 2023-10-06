@@ -12,6 +12,7 @@ from rest_framework.mixins import (
     RetrieveModelMixin,
     UpdateModelMixin,
 )
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -33,9 +34,14 @@ from .serializers import (
     UserRegisterSerializer,
     UserSerializer,
 )
-from .validations import register_validation, validate_email, validate_password
+from .validations import register_validation
 
 User = get_user_model()
+
+
+# Pagination classes
+class Pagination20(PageNumberPagination):
+    page_size = 20
 
 
 # API views
@@ -45,7 +51,6 @@ class UserRegister(APIView):
 
     authentication_classes = []
     permission_classes = [permissions.AllowAny]
-    pagination_class = None
 
     def post(self, request):
         clean_data = register_validation(request.data)
@@ -65,7 +70,6 @@ class UserLogout(APIView):
     """View to logout a user."""
 
     permission_classes = (permissions.IsAuthenticated,)
-    pagination_class = None
 
     def post(self, request):
         token, created = Token.objects.get_or_create(user=request.user)
@@ -91,7 +95,6 @@ class UserViewSet(
 
     permission_classes = [IsUserCreatorOrAdmin]
     serializer_class = UserSerializer
-    pagination_class = None
     queryset = User.objects.all()
     lookup_field = "user_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
@@ -120,7 +123,6 @@ class TeamViewSet(
 
     permission_classes = [ReadOnlyPermission]
     serializer_class = TeamSerializer
-    pagination_class = None
     queryset = Team.objects.all()
     lookup_field = "team_name"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
@@ -172,7 +174,6 @@ class SubsystemViewSet(
 
     permission_classes = [ReadOnlyPermission]
     serializer_class = SubsystemSerializer
-    pagination_class = None
     queryset = Subsystem.objects.all()
     lookup_field = "subsystem_name"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
@@ -202,7 +203,6 @@ class CarViewSet(
 
     permission_classes = [ReadOnlyPermission]
     serializer_class = CarSerializer
-    pagination_class = None
     queryset = Car.objects.all()
     lookup_field = "car_year"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
@@ -233,6 +233,7 @@ class RecordViewSet(
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsRecordCreatorOrAdmin]
     serializer_class = RecordSerializer
+    pagination_class = Pagination20
     queryset = Record.objects.all()
     lookup_field = "record_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
@@ -299,8 +300,10 @@ class CommentViewSet(
 ):
     """Viewset for the Comment model."""
 
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsCommenterOrAdmin]
     serializer_class = CommentSerializer
+    pagination_class = Pagination20
     queryset = Comment.objects.all()
     lookup_field = "comment_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]

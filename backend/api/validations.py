@@ -49,39 +49,3 @@ def register_validation(data):
         data["is_staff"] = False
         data["is_admin"] = False
     return data
-
-
-def validate_email(data):
-    """Validates the email field in the data.
-
-    Args:
-        data (dict): A dictionary containing the user data.
-
-    Returns:
-        bool: True if the email is valid, False otherwise.
-
-    Raises:
-        ValidationError: If the email is empty.
-    """
-    email = data["email"].strip()
-    if not email:
-        raise ValidationError("An email is required.")
-    return True
-
-
-def validate_password(data):
-    """Validates the password field in the data.
-
-    Args:
-        data (dict): A dictionary containing the user data.
-
-    Returns:
-        bool: True if the password is valid, False otherwise.
-
-    Raises:
-        ValidationError: If the password is empty.
-    """
-    password = data["password"].strip()
-    if not password:
-        raise ValidationError("Password is required.")
-    return True
