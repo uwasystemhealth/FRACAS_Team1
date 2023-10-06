@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
+from rest_framework import serializers
 
 from .models import Team
 
@@ -26,15 +26,15 @@ def register_validation(data):
     team = data["team"].strip()
 
     if not email or UserModel.objects.filter(email=email).exists():
-        raise ValidationError("Email taken: choose another email.")
+        raise serializers.ValidationError("Email taken: choose another email.")
     if not password1 or len(password1) < 8:
-        raise ValidationError("Choose another password, min 8 characters.")
+        raise serializers.ValidationError("Choose another password, min 8 characters.")
     if not first_name:
-        raise ValidationError("First name is required.")
+        raise serializers.ValidationError("First name is required.")
     if not last_name:
-        raise ValidationError("Last name is required.")
+        raise serializers.ValidationError("Last name is required.")
     if not password2 or password1 != password2:
-        raise ValidationError("Passwords must match.")
+        raise serializers.ValidationError("Passwords must match.")
     else:
         data["password"] = password1
         data.pop("password1")
