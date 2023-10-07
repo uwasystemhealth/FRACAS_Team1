@@ -1,0 +1,113 @@
+.loginw {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+li {
+  list-style: none;
+}
+
+.topimg {
+  height: 100px;
+  background-image: linear-gradient(to right, #032D5F, rgb(255, 255, 255));
+
+  h1 {
+    color: white;
+    margin-left: 90px;
+    padding-top: 7px;
+    font-size: 34px;
+  }
+}
+
+.loginpagebox {
+  max-width: 580px;
+  height: 500px;
+  margin-top: 30px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0px 0px 10px #ccc;
+  border-radius: 10px;
+  margin-bottom: 20px;
+
+  .icon {
+    display: block;
+    width: 60px;
+    height: 60px;
+    background-color: #ffffff;
+    margin: 10px auto;
+    padding-top: 20px;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .inpbox {
+    max-width: 400px;
+    height: 260px;
+    margin-top: 10px;
+
+    .inp {
+      width: 100%;
+      height: 76px;
+      margin-bottom: 40px;
+
+      span {
+        font-size: 20px;
+        color: rgb(90, 90, 90);
+      }
+
+      input {
+        width: 100%;
+        height: 48px;
+        border: 0px;
+        outline: none;
+        border-bottom: 1px solid rgb(224, 224, 224);
+        font-size: 18px;
+      }
+    }
+
+    button {
+      width: 240px;
+      height: 45px;
+      background-color: #501acf;
+      display: block;
+      border: 0px;
+      margin: 0 auto;
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      border-radius: 25px;
+
+      &:hover {
+        background-color: #2b0d70;
+      }
+    }
+
+    .s1,
+    .s2 {
+      display: block;
+      color: #ccc;
+      margin-top: 20px;
+      cursor: pointer;
+
+      &:hover {
+        color: #501acf;
+      }
+    }
+
+    .s1 {
+      float: left;
+    }
+
+    .s2 {
+      float: right;
+    }
+  }
+
+  @media screen and (max-width: 920px) {
+    width: calc(90% - 20px);
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+}
