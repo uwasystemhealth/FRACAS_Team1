@@ -174,6 +174,13 @@ class RecordSerializer(serializers.ModelSerializer):
         allow_null=True,
         required=False,
     )
+    record_editors = serializers.SlugRelatedField(
+        many=True,
+        slug_field="user_id",
+        queryset=User.objects.all(),
+        allow_null=True,
+        required=False,
+    )
     team = serializers.SlugRelatedField(
         slug_field="team_name",
         queryset=Team.objects.all(),
