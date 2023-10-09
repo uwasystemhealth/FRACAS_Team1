@@ -149,7 +149,6 @@ class Record(models.Model):
     )
     record_owner_unlinked = models.TextField(null=True, blank=True)
     record_editors = models.ManyToManyField(User, blank=True)
-    record_editors_unlinked = models.TextField(null=True, blank=True)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
     team_unlinked = models.TextField(blank=True, null=True)
     subsystem = models.ForeignKey(
