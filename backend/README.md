@@ -13,15 +13,29 @@
 5. Create a virtual environment: `python3 -m venv .venv`.
 6. Activate the virtual environment: `source .venv/bin/activate`.
 7. Install dependencies: `pip3 install -r requirements.txt`.
-8. Make database migraitons: `python3 manage.py makemigrations`, then `python3 manage.py makemigrations api`.
-9. Migrate the database: `python3 manage.py migrate`.
-10. Create superuser: `python3 manage.py createsuperuser`.
-11. Run the server: `python3 manage.py runserver`.
-12. Open the browser and go to: `http://127.0.0.1:8000/api/`.  
+8. Create a `.env` plaintext file, add configurations (see the section ".env configs" below).
+9. Make database migraitons: `python3 manage.py makemigrations`, then `python3 manage.py makemigrations api`.
+10. Migrate the database: `python3 manage.py migrate`.
+11. Create superuser: `python3 manage.py createsuperuser`.
+12. Run the server: `python3 manage.py runserver`.
+13. Open the browser and go to: `http://127.0.0.1:8000/api/`.  
     This should show the API root page using the browsable API.
-13. You'll need to add some data to the database. Either use the browsable API, the admin interface at `http://127.0.0.1:8000/admin/` or use the API endpoints directly with something like `curl`.
+14. You'll need to add some data to the database. Either use the browsable API, the admin interface at `http://127.0.0.1:8000/admin/` or use the API endpoints directly with something like `curl`.
 
 DEBUG is turned on and the database is sqlite3 for now.
+
+#### .env configs:
+
+```
+DJANGO_DEBUG=True
+
+DJANGO_EMAIL_HOST='smtp.gmail.com'
+
+DJANGO_EMAIL_HOST_USER='yourgmailaccount@gmail.com'
+
+DJANGO_EMAIL_HOST_PASSWORD='your gmail app password'
+```
+A sample config using gmail as the email host, see how to allow Django to send emails using a Gmail account in [this article](https://knowledge.workspace.google.com/kb/how-to-generate-an-app-passwords-000009237).
 
 #### Helpful tips / commands
 
@@ -340,11 +354,11 @@ data format: JSON object
 
 data format: JSON object
 
-> | field name        | type          | data type    | data format/range  | description                                |
-> | ----------------- | ------------- | ------------ | ------------------ | ------------------------------------------ |
-> | comment_text      | required      | string       |                    | comment content                            |
-> | record_id         | required      | int / string | a positive integer | record_id of the record to be commented on |
-> | commenter         | not required  | int / string | a positive integer | user_id of the commenter                   |
+> | field name        | type         | data type    | data format/range  | description                                |
+> | ----------------- | ------------ | ------------ | ------------------ | ------------------------------------------ |
+> | comment_text      | required     | string       |                    | comment content                            |
+> | record_id         | required     | int / string | a positive integer | record_id of the record to be commented on |
+> | commenter         | not required | int / string | a positive integer | user_id of the commenter                   |
 > | parent_comment_id | not required | int / string | a positive integer | comment_id of the parent comment           |
 
 <details>
@@ -1501,11 +1515,11 @@ data format: JSON object
 
 data format: JSON object
 
-> | field name        | type          | data type    | data format/range  | description                                |
-> | ----------------- | ------------- | ------------ | ------------------ | ------------------------------------------ |
-> | comment_text      | required      | string       |                    | comment content                            |
-> | record_id         | required      | int / string | a positive integer | record_id of the record to be commented on |
-> | commenter         | not required  | int / string | a positive integer | user_id of the commenter                   |
+> | field name        | type         | data type    | data format/range  | description                                |
+> | ----------------- | ------------ | ------------ | ------------------ | ------------------------------------------ |
+> | comment_text      | required     | string       |                    | comment content                            |
+> | record_id         | required     | int / string | a positive integer | record_id of the record to be commented on |
+> | commenter         | not required | int / string | a positive integer | user_id of the commenter                   |
 > | parent_comment_id | not required | int / string | a positive integer | comment_id of the parent comment           |
 
 <details>
@@ -1557,6 +1571,7 @@ data format: JSON object
 </details>
 
 ---
+
 <details>
  <summary><code>PUT</code> <code><b>/api/users/&ltint:user_id&gt/</b></code> <code>(update own user object using a user's user_id)</code></summary>
 
@@ -1574,12 +1589,12 @@ data format: JSON object
 
 data format: JSON object
 
-> | field name | type     | data type | description                           |
-> | ---------- | -------- | --------- | ------------------------------------- |
-> | email      | required | string    | user login email    |
-> | first_name | not required | string    | user first name     |
-> | last_name  | not required | string    | user last name      |
-> | team       | not required | string    | user team, can be empty               |
+> | field name | type         | data type | description             |
+> | ---------- | ------------ | --------- | ----------------------- |
+> | email      | required     | string    | user login email        |
+> | first_name | not required | string    | user first name         |
+> | last_name  | not required | string    | user last name          |
+> | team       | not required | string    | user team, can be empty |
 
 <details>
 <summary>Example</summary>
@@ -1599,7 +1614,7 @@ data format: JSON object
 
 > | http code | content-type       | response content                                              |
 > | --------- | ------------------ | ------------------------------------------------------------- |
-> | `200`     | `application/json` | Updated user object.                                       |
+> | `200`     | `application/json` | Updated user object.                                          |
 > | `400`     | `application/json` | Field-specific error message.                                 |
 > | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
 
@@ -1956,6 +1971,7 @@ data format: JSON object
 > | ------------ | ------------ | --------- | ------------------ | ------------------------------------------ |
 > | car_year     | required     | int       |                    | car year                                   |
 > | car_nickname | not required | string    | a positive integer | record_id of the record to be commented on |
+
 <details>
 <summary>Example</summary>
 
@@ -1972,7 +1988,7 @@ data format: JSON object
 
 > | http code | content-type       | response content                                              |
 > | --------- | ------------------ | ------------------------------------------------------------- |
-> | `201`     | `application/json` | Updated car object.                                       |
+> | `201`     | `application/json` | Updated car object.                                           |
 > | `400`     | `application/json` | Field-specific error message.                                 |
 > | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
 
@@ -2041,7 +2057,7 @@ data format: JSON object
 
 > | http code | content-type       | response content                                              |
 > | --------- | ------------------ | ------------------------------------------------------------- |
-> | `201`     | `application/json` | Updated subsystem object.                                       |
+> | `201`     | `application/json` | Updated subsystem object.                                     |
 > | `400`     | `application/json` | Field-specific error message.                                 |
 > | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
 
@@ -2110,7 +2126,7 @@ data format: JSON object
 
 > | http code | content-type       | response content                                              |
 > | --------- | ------------------ | ------------------------------------------------------------- |
-> | `201`     | `application/json` | Updated team object.                                       |
+> | `201`     | `application/json` | Updated team object.                                          |
 > | `400`     | `application/json` | Field-specific error message.                                 |
 > | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
 
@@ -2141,9 +2157,8 @@ data format: JSON object
 
 ---
 
-
-
 ### DELETE
+
 <details>
  <summary><code>DELETE</code> <code><b>/api/cars/&ltint:car_year&gt/</b></code> <code>(delete a particular car object using a car year)</code></summary>
 
@@ -2171,15 +2186,16 @@ Using HTTPie:
 
 ##### Responses
 
-> | http code | content-type       | response content                                                   |
-> | --------- | ------------------ | ------------------------------------------------------------------ |
-> | `204`     | `application/json` | None                                                               |
-> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}`      |
-> | `404`     | `application/json` | `{"detail": "Not found."}`                                         |
+> | http code | content-type       | response content                                              |
+> | --------- | ------------------ | ------------------------------------------------------------- |
+> | `204`     | `application/json` | None                                                          |
+> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
+> | `404`     | `application/json` | `{"detail": "Not found."}`                                    |
 
 </details>
 
 ---
+
 <details>
  <summary><code>DELETE</code> <code><b>/api/subsystems/&ltstr:subsystem_name&gt/</b></code> <code>(delete a particular team object using a name)</code></summary>
 
@@ -2207,11 +2223,11 @@ Using HTTPie:
 
 ##### Responses
 
-> | http code | content-type       | response content                                                   |
-> | --------- | ------------------ | ------------------------------------------------------------------ |
-> | `204`     | `application/json` | None                                                               |
-> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}`      |
-> | `404`     | `application/json` | `{"detail": "Not found."}`                                         |
+> | http code | content-type       | response content                                              |
+> | --------- | ------------------ | ------------------------------------------------------------- |
+> | `204`     | `application/json` | None                                                          |
+> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
+> | `404`     | `application/json` | `{"detail": "Not found."}`                                    |
 
 </details>
 
@@ -2244,16 +2260,15 @@ Using HTTPie:
 
 ##### Responses
 
-> | http code | content-type       | response content                                                   |
-> | --------- | ------------------ | ------------------------------------------------------------------ |
-> | `204`     | `application/json` | None                                                               |
-> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}`      |
-> | `404`     | `application/json` | `{"detail": "Not found."}`                                         |
+> | http code | content-type       | response content                                              |
+> | --------- | ------------------ | ------------------------------------------------------------- |
+> | `204`     | `application/json` | None                                                          |
+> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
+> | `404`     | `application/json` | `{"detail": "Not found."}`                                    |
 
 </details>
 
 ---
-
 
 ## Run for Production
 
