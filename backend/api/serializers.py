@@ -70,37 +70,6 @@ class UserRegistrationSerializer(UserCreateSerializer):
         return super().validate(validated_data)
 
 
-# class UserRegisterSerializer(serializers.ModelSerializer):
-#     """Serializes the User model for Registration."""
-
-#     password = serializers.CharField(write_only=True)
-
-#     class Meta:
-#         model = User
-#         fields = "__all__"
-
-#     def create(self, clean_data):
-#         """Creates a new user instance with the provided clean_data.
-
-#         Args:
-#             clean_data (dict): A dictionary containing the cleaned data.
-
-#         Returns:
-#             User: The newly created user instance.
-#         """
-#         user_data = clean_data.copy()
-#         team = user_data["team"]
-#         if team is not None:
-#             user_data["team"] = Team.objects.get(pk=clean_data["team"])
-#         else:
-#             user_data["team"] = None
-
-#         user_obj = User.objects.create_user(**user_data)
-
-#         user_obj.save()
-#         return user_obj
-
-
 class UserLoginSerializer(serializers.Serializer):
     """Serializes the User model for login."""
 

@@ -97,8 +97,11 @@ class UserViewSet(
 # Team Viewset
 # ------------------------------------------------------------------------------
 class TeamViewSet(
+    CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
+    DestroyModelMixin,
+    UpdateModelMixin,
     GenericViewSet,
 ):
     """Viewset for the Team model."""
@@ -146,8 +149,11 @@ class TeamViewSet(
 # Subsystem Viewset
 # ------------------------------------------------------------------------------
 class SubsystemViewSet(
+    CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
+    DestroyModelMixin,
+    UpdateModelMixin,
     GenericViewSet,
 ):
     """Viewset for the Subsystem model."""
@@ -172,8 +178,11 @@ class SubsystemViewSet(
 # Car Viewset
 # ------------------------------------------------------------------------------
 class CarViewSet(
+    CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
+    DestroyModelMixin,
+    UpdateModelMixin,
     GenericViewSet,
 ):
     """Viewset for the Car model."""
