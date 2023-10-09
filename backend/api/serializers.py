@@ -44,6 +44,7 @@ class UserRegistrationSerializer(UserCreateSerializer):
     """Serializes the User model for Registration."""
 
     password = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
 
     team = serializers.SlugRelatedField(
         slug_field="team_name",
@@ -60,60 +61,44 @@ class UserRegistrationSerializer(UserCreateSerializer):
             "last_name",
             "team",
             "password",
+            "password2",
         )
 
-    # def create(self, data):
-    #     """Creates a new user instance with the provided clean_data.
-
-    #     Args:
-    #         clean_data (dict): A dictionary containing the cleaned data.
-
-    #     Returns:
-    #         User: The newly created user instance.
-    #     """
-    #     validated_data = register_validation(data)
-    #     user_data = validated_data.copy()
-    #     team = user_data["team"]
-    #     if team is not None:
-    #         user_data["team"] = Team.objects.get(pk=validated_data["team"])
-    #     else:
-    #         user_data["team"] = None
-
-    #     user_obj = User.objects.create_user(**user_data)
-
-    #     user_obj.save()
-    #     return user_obj
+    def validate(self, data):
+        # this removes password2 if validations pass before sending to the model
+        validated_data = register_validation(data)
+        return super().validate(validated_data)
 
 
-class UserRegisterSerializer(serializers.ModelSerializer):
-    """Serializes the User model for Registration."""
+# class UserRegisterSerializer(serializers.ModelSerializer):
+#     """Serializes the User model for Registration."""
 
-    password = serializers.CharField(write_only=True)
+#     password = serializers.CharField(write_only=True)
 
-    class Meta:
-        model = User
-        fields = "__all__"
+#     class Meta:
+#         model = User
+#         fields = "__all__"
 
-    def create(self, clean_data):
-        """Creates a new user instance with the provided clean_data.
+#     def create(self, clean_data):
+#         """Creates a new user instance with the provided clean_data.
 
-        Args:
-            clean_data (dict): A dictionary containing the cleaned data.
+#         Args:
+#             clean_data (dict): A dictionary containing the cleaned data.
 
-        Returns:
-            User: The newly created user instance.
-        """
-        user_data = clean_data.copy()
-        team = user_data["team"]
-        if team is not None:
-            user_data["team"] = Team.objects.get(pk=clean_data["team"])
-        else:
-            user_data["team"] = None
+#         Returns:
+#             User: The newly created user instance.
+#         """
+#         user_data = clean_data.copy()
+#         team = user_data["team"]
+#         if team is not None:
+#             user_data["team"] = Team.objects.get(pk=clean_data["team"])
+#         else:
+#             user_data["team"] = None
 
-        user_obj = User.objects.create_user(**user_data)
+#         user_obj = User.objects.create_user(**user_data)
 
-        user_obj.save()
-        return user_obj
+#         user_obj.save()
+#         return user_obj
 
 
 class UserLoginSerializer(serializers.Serializer):
