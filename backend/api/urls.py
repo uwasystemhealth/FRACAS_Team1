@@ -10,7 +10,6 @@ from .views import (
     SubsystemViewSet,
     TeamViewSet,
     UserLogout,
-    UserRegister,
     UserViewSet,
 )
 
@@ -32,7 +31,6 @@ router.register(r"comments", CommentViewSet, basename="comment")
 
 # authentication views
 urlpatterns = [
-    path("register", UserRegister.as_view(), name="register"),
     path("login", views.obtain_auth_token, name="login"),
     path("logout", UserLogout.as_view(), name="logout"),
 ]

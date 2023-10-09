@@ -9,11 +9,11 @@ from rest_framework import permissions
 # Permission for User
 class IsUserCreatorOrAdmin(permissions.BasePermission):
     """Permission related to the URL, including creation of a new object (POST) and list all objects (GET)"""
+
     def has_permission(self, request, view):
         # Authentication check
         return request.user.is_authenticated
-    
-    
+
     """Object-level permission to only allow the creator of a User object or an admin to edit it."""
 
     def has_object_permission(self, request, view, obj):
@@ -23,18 +23,20 @@ class IsUserCreatorOrAdmin(permissions.BasePermission):
         # Read permissions are allowed to any request
         if request.method in permissions.SAFE_METHODS:
             return True
-        # request.user calls 
+        # request.user calls
         return obj == request.user or request.user.is_staff
+
 
 # Permission for record permission control
 class IsRecordCreatorOrAdmin(permissions.BasePermission):
     """Permission related to the URL, including creation of a new object (POST) and list all objects (GET)"""
+
     def has_permission(self, request, view):
         # Authentication check
         return request.user.is_authenticated
-    
+
     """Object-level permission to only allow the creator of a record object or an admin to edit it."""
-    
+
     def has_object_permission(self, request, view, obj):
         # Authentication check
         if not request.user.is_authenticated:
@@ -42,17 +44,20 @@ class IsRecordCreatorOrAdmin(permissions.BasePermission):
         # Read permissions are allowed to any request,
         if request.method in permissions.SAFE_METHODS:
             return True
-        # request.user calls 
+        # request.user calls
         return obj.record_creator == request.user or request.user.is_staff
+
 
 # Permission for comment permission control
 class IsCommenterOrAdmin(permissions.BasePermission):
     """Permission related to the URL, including creation of a new object (POST) and list all objects (GET)"""
+
     def has_permission(self, request, view):
         # Authentication check
         return request.user.is_authenticated
-    
+
     """Object-level permission to only allow the creator of a record object or an admin to edit it."""
+
     def has_object_permission(self, request, view, obj):
         # Authentication check
         if not request.user.is_authenticated:
@@ -60,8 +65,9 @@ class IsCommenterOrAdmin(permissions.BasePermission):
         # Read permissions are allowed to any request,
         if request.method in permissions.SAFE_METHODS:
             return True
-        # request.user calls 
+        # request.user calls
         return obj.commenter == request.user or request.user.is_staff
+
 
 # Permission for all ReadOnlyPermission, allow all admins by default
 class ReadOnlyPermission(permissions.BasePermission):
@@ -71,4 +77,4 @@ class ReadOnlyPermission(permissions.BasePermission):
             return False
         if request.user.is_staff:
             return True
-        return request.method in permissions.SAFE_METHODS 
+        return request.method in permissions.SAFE_METHODS

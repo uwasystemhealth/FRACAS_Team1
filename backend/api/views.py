@@ -31,10 +31,8 @@ from .serializers import (
     RecordSerializer,
     SubsystemSerializer,
     TeamSerializer,
-    UserRegisterSerializer,
     UserSerializer,
 )
-from .validations import register_validation
 
 User = get_user_model()
 
@@ -46,21 +44,8 @@ class Pagination20(PageNumberPagination):
 
 # API views
 # ------------------------------------------------------------------------------
-class UserRegister(APIView):
-    """View to register a new user."""
-
-    authentication_classes = []
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request):
-        clean_data = register_validation(request.data)
-        serializer = UserRegisterSerializer(data=clean_data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.create(clean_data)
-            if user:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
+# class UserRegister(APIView):
+# now using djoser
 
 # class UserLogin(APIView):
 # View is now using views.obtain_auth_token in urls.py
@@ -72,7 +57,7 @@ class UserLogout(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
-        token, created = Token.objects.get_or_create(user=request.user)
+        token, _ = Token.objects.get_or_create(user=request.user)
         token.delete()
         return Response({"message": "Logged out successfully"})
 
@@ -112,16 +97,14 @@ class UserViewSet(
 # Team Viewset
 # ------------------------------------------------------------------------------
 class TeamViewSet(
-    CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
-    UpdateModelMixin,
-    DestroyModelMixin,
     GenericViewSet,
 ):
     """Viewset for the Team model."""
 
-    permission_classes = [ReadOnlyPermission]
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"
@@ -163,11 +146,8 @@ class TeamViewSet(
 # Subsystem Viewset
 # ------------------------------------------------------------------------------
 class SubsystemViewSet(
-    CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
-    UpdateModelMixin,
-    DestroyModelMixin,
     GenericViewSet,
 ):
     """Viewset for the Subsystem model."""
@@ -192,11 +172,8 @@ class SubsystemViewSet(
 # Car Viewset
 # ------------------------------------------------------------------------------
 class CarViewSet(
-    CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
-    UpdateModelMixin,
-    DestroyModelMixin,
     GenericViewSet,
 ):
     """Viewset for the Car model."""

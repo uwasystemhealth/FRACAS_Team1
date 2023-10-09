@@ -62,9 +62,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         on_delete=models.SET_NULL,
         related_name="teams",
     )
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True, verbose_name="Email Verified")
+    is_admin = models.BooleanField(default=False, verbose_name="Admin")
+    is_staff = models.BooleanField(default=False, verbose_name="Team Lead")
 
     # customised user manager
     objects = CustomUserManager()
