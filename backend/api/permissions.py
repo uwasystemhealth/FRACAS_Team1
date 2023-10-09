@@ -45,7 +45,7 @@ class IsRecordCreatorOrAdmin(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         # request.user calls
-        return obj.record_creator == request.user or request.user.is_staff
+        return obj.record_creator == request.user or request.user.is_staff or request.user in obj.record_editors.all()
 
 
 # Permission for comment permission control
