@@ -124,7 +124,7 @@ const SearchReports = () => {
     };
 
     return (
-        <>
+        <div className='search-report'>
             <div className="usertopimg">
                 <h1>SEARCH<br />REPORTS</h1>
             </div>
@@ -182,7 +182,7 @@ const SearchReports = () => {
                 </div>
                 <div className='results'>
                     {results.map((result, index) => (
-                        <button onClick={() => handleViewClick(result)}>
+                        <button key={result.record_id} onClick={() => handleViewClick(result)}>
                         {result.failure_title || "[no_title]"}
                     </button>
                     ))}
@@ -195,7 +195,7 @@ const SearchReports = () => {
                     <button onClick={handleNextPage}>Next &gt;</button>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

@@ -5,7 +5,6 @@ const HomePage = () => {
     return (
         <div>
             <div className="topbox">
-                <img src="/images/banner.png" alt="" />
             </div>
             <div className="main w">
                 <div className="left">
@@ -30,7 +29,7 @@ const HomePage = () => {
                 </div>
             </div>
             <div className="imgbox">
-                <img src="/images/team.png" alt="" />
+                {/* <img src="/images/team.png" alt="" /> */}
             </div>
         </div>
     );
