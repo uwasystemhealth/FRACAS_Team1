@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
 import Header from '../components/Header';
 
 // Mocking modules and globals
