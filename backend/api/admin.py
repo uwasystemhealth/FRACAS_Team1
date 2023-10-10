@@ -38,6 +38,7 @@ class UserAdmin(auth_admin.UserAdmin):
                     "email",
                     "is_staff",
                     "is_admin",
+                    "is_active",
                 )
             },
         ),
