@@ -173,13 +173,13 @@ const Report = () => {
     fetchSubsystems();
   }, [token]);
 
-  const filteredSubsystems = formData.team ? subsystems.results.filter((subsystem) => subsystem.parent_team === formData.team) : [];
+  const filteredSubsystems = formData.team ? subsystems?.filter((subsystem) => subsystem.parent_team === formData.team) : [];
 
   useEffect(() => {
     if (teams.length !== 0 && formData.team) {
-      const selectedTeam = teams.results.find((team) => team.team_name === formData.team);
+      const selectedTeam = teams?.find((team) => team.team_name === formData.team);
       if (selectedTeam) {
-        allUsers.results.map((user) => {
+        allUsers.results?.map((user) => {
           if (user.user_id === selectedTeam.team_lead) {
             setFormData((prevFormData) => ({
               ...prevFormData,
@@ -199,7 +199,7 @@ const Report = () => {
             Authorization: `Token ${token}`,
           },
         });
-        setCars(response.data.results);
+        setCars(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -219,7 +219,7 @@ const Report = () => {
         </div>
         <h4>UWA MOTORSPORT FRACAS REPORT</h4>
         <ul className="list w">
-          {Object.keys(detailsMapping).map((iconId, index) => (
+          {Object.keys(detailsMapping)?.map((iconId, index) => (
             <li key={index} onClick={() => handleIconClick(iconId)}>
               <span>{["RS", "RVS", "AVS", "CVS"][index]}</span>
               <img src={`/images/info.png`} alt="" id={iconId} />
@@ -238,7 +238,7 @@ const Report = () => {
             </div>
             <div>
               <span>status: </span>
-              {detailInfo.statuses.map((status, index) => (
+              {detailInfo.statuses?.map((status, index) => (
                 <span key={index} style={{ color: "rgb(255, 255, 255)" }}>
                   {status}
                 </span>
@@ -265,8 +265,8 @@ const Report = () => {
               <option value="" disabled>
                 Select a team
               </option>
-              {teams.results ? ( // Check if teams.results is defined
-                teams.results.map((team) => (
+              {teams ? ( // Check if teams.results is defined
+                teams?.map((team) => (
                   <option key={team.team_name} value={team.team_name}>
                     {team.team_name}
                   </option>
@@ -283,7 +283,7 @@ const Report = () => {
                 Select a subsystem
               </option>
               {filteredSubsystems.length > 0 ? (
-                filteredSubsystems.map((subsystem) => (
+                filteredSubsystems?.map((subsystem) => (
                   <option key={subsystem.subsystem_name} value={subsystem.subsystem_name}>
                     {subsystem.subsystem_name}
                   </option>
@@ -297,7 +297,7 @@ const Report = () => {
             <u>Car year:</u>
             <select value={formData.car_year} onChange={(e) => handleInputChange(e, "car_year")}>
               <option value="">Select a car year</option>
-              {cars.map((car, index) => (
+              {cars?.map((car, index) => (
                 <option key={index} value={car.car_year}>
                   {car.car_nickname ? `${car.car_year} - ${car.car_nickname}` : car.car_year}
                 </option>

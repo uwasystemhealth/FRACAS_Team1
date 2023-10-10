@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios";
 import '../styles/Signup.scss';
 
 const SignUpPage = () => {
@@ -9,6 +10,28 @@ const SignUpPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [teams, setTeams] = useState([]);
+
+    const token = localStorage.getItem("token");
+
+    useEffect(() => {
+        const fetchTeams = async () => {
+        try {
+            const response = await axios.get("http://127.0.0.1:8000/api/teams/", {
+            headers: {
+                Authorization: `Token ${token}`,
+            },
+            });
+            setTeams(response.data);
+        } catch (error) {
+            console.error("Error fetching teams:", error);
+        }
+        };
+
+        fetchTeams();
+    }, [token]);
+
+    console.log("teams--->", teams)
 
     const navigate = useNavigate();
 
@@ -19,7 +42,7 @@ const SignUpPage = () => {
             alert("Passwords do not match");
         } else {
             try {
-                const response = await fetch("http://127.0.0.1:8000/api/register", {
+                const response = await fetch("http://127.0.0.1:8000/auth/users/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -29,7 +52,7 @@ const SignUpPage = () => {
                         last_name: lastName,
                         email: email,
                         team: team,
-                        password1: password,
+                        password: password,
                         password2: confirmPassword,
                     }),
                 });
@@ -70,9 +93,23 @@ const SignUpPage = () => {
                         <span>Last Name</span>
                         <input type="text" placeholder="Please enter your Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                     </div>
-                    <div className="inp">
+                    <div className="team-dropdown">
                         <span>Team</span>
-                        <input type="text" placeholder="Please enter your Team" value={team} onChange={(e) => setTeam(e.target.value)} />
+                        {/* <input type="text" placeholder="Please enter your Team" value={team} onChange={(e) => setTeam(e.target.value)} /> */}
+                        <select value={team} onChange={(e) => setTeam(e.target.value)}>
+                            <option value="" disabled>
+                                Select a team
+                            </option>
+                            {teams ? ( // Check if teams.results is defined
+                                teams?.map((team) => (
+                                <option key={team.team_name} value={team.team_name}>
+                                    {team.team_name}
+                                </option>
+                                ))
+                            ) : (
+                                <></> // Render nothing if teams.results is not defined
+                            )}
+                        </select>
                     </div>
                     <div className="inp">
                         <span>Email</span>
