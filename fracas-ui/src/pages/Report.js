@@ -54,9 +54,9 @@ const Report = () => {
     failure_mechanism: "",
     corrective_action_plan: "",
     team_lead: "",
-    record_creation_time: getCurrentDate(),
-    due_date: getCurrentDate(),
-    resolve_date: getCurrentDate(),
+    // record_creation_time: getCurrentDate(),
+    due_date: null,
+    resolve_date: null,
     resolution_status: "",
     // review_date: '',
     is_resolved: false,
@@ -78,9 +78,7 @@ const Report = () => {
   const handleSubmit = async () => {
     try {
       const payload = {
-        ...formData,
-        record_creator: users.user_id,
-        record_owner: users.user_id,
+        ...formData
       };
       const config = {
         headers: {
@@ -103,20 +101,28 @@ const Report = () => {
           },
         });
         setUsers(response.data);
+  
+        // Check if the fetched user has a team, and set it
+        if (response.data.team) {
+          setFormData(prevState => ({
+            ...prevState,
+            team: response.data.team
+          }));
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
+  
     fetchData();
   }, [token]);
-
+  
   const [allUsers, setAllusers] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/users/", {
+        const response = await axios.get("http://127.0.0.1:8000/api/users/?ordering=last_name,first_name", {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -130,17 +136,22 @@ const Report = () => {
     fetchData();
   }, [token]);
 
-  if (users.length !== 0) {
-    formData.record_creator = users.first_name + " " + users.last_name;
-    formData.record_owner = users.first_name + " " + users.last_name;
-  }
+  useEffect(() => {
+    if (users.first_name && users.last_name) {
+      setFormData(prevState => ({
+          ...prevState,
+          record_creator: users.user_id, // store the user_id
+          record_owner: users.user_id // store the user_id
+      }));
+    }
+}, [users]);
 
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/teams/", {
+        const response = await axios.get("http://127.0.0.1:8000/api/teams/?ordering=team_name", {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -159,7 +170,7 @@ const Report = () => {
   useEffect(() => {
     const fetchSubsystems = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/subsystems/", {
+        const response = await axios.get("http://127.0.0.1:8000/api/subsystems/?ordering=subsystem_name", {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -173,13 +184,13 @@ const Report = () => {
     fetchSubsystems();
   }, [token]);
 
-  const filteredSubsystems = formData.team ? subsystems.results.filter((subsystem) => subsystem.parent_team === formData.team) : [];
+  const filteredSubsystems = formData.team ? subsystems?.filter((subsystem) => subsystem.parent_team === formData.team) : [];
 
   useEffect(() => {
     if (teams.length !== 0 && formData.team) {
-      const selectedTeam = teams.results.find((team) => team.team_name === formData.team);
+      const selectedTeam = teams?.find((team) => team.team_name === formData.team);
       if (selectedTeam) {
-        allUsers.results.map((user) => {
+        allUsers?.map((user) => {
           if (user.user_id === selectedTeam.team_lead) {
             setFormData((prevFormData) => ({
               ...prevFormData,
@@ -189,17 +200,25 @@ const Report = () => {
         });
       }
     }
-  }, [teams, formData.team, allUsers.results, setFormData]);
+  }, [teams, formData.team, allUsers, setFormData]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/cars/", {
+        const response = await axios.get("http://127.0.0.1:8000/api/cars/?ordering=-car_year", {
           headers: {
             Authorization: `Token ${token}`,
           },
         });
-        setCars(response.data.results);
+        setCars(response.data);
+  
+        // Check if there are cars, and set the car_year to the latest one
+        if (response.data.length > 0) {
+          setFormData(prevState => ({
+            ...prevState,
+            car_year: response.data[0].car_year
+          }));
+        }
       } catch (error) {
         console.error(error);
       }
@@ -207,6 +226,11 @@ const Report = () => {
     fetchData();
   }, [token]);
 
+  const getUserNameById = (userId) => {
+    const user = allUsers.find(u => u.user_id === parseInt(userId));
+    return user ? `${user.first_name} ${user.last_name}` : '';
+  }
+  
   return (
     <div className="report-container">
       <div className="mainbox w">
@@ -219,7 +243,7 @@ const Report = () => {
         </div>
         <h4>UWA MOTORSPORT FRACAS REPORT</h4>
         <ul className="list w">
-          {Object.keys(detailsMapping).map((iconId, index) => (
+          {Object.keys(detailsMapping)?.map((iconId, index) => (
             <li key={index} onClick={() => handleIconClick(iconId)}>
               <span>{["RS", "RVS", "AVS", "CVS"][index]}</span>
               <img src={`/images/info.png`} alt="" id={iconId} />
@@ -238,7 +262,7 @@ const Report = () => {
             </div>
             <div>
               <span>status: </span>
-              {detailInfo.statuses.map((status, index) => (
+              {detailInfo.statuses?.map((status, index) => (
                 <span key={index} style={{ color: "rgb(255, 255, 255)" }}>
                   {status}
                 </span>
@@ -253,11 +277,23 @@ const Report = () => {
           </div>
           <div>
             <u>Record creator:</u>
-            <input type="text" value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")} placeholder="" />
+            <select value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")}>
+              {allUsers?.map(user => (
+                <option key={user.user_id} value={user.user_id}>
+                  {user.first_name} {user.last_name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
-            <u>Record owner:</u>
-            <input type="text" value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")} placeholder="" />
+              <u>Record owner:</u>
+              <select value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")}>
+                {allUsers.map(user => (
+                  <option key={user.user_id} value={user.user_id}>
+                    {user.first_name} {user.last_name}
+                  </option>
+                ))}
+              </select>
           </div>
           <div>
             <u>Technical team:</u>
@@ -265,14 +301,14 @@ const Report = () => {
               <option value="" disabled>
                 Select a team
               </option>
-              {teams.results ? ( // Check if teams.results is defined
-                teams.results.map((team) => (
+              {teams ? (
+                teams?.map((team) => (
                   <option key={team.team_name} value={team.team_name}>
                     {team.team_name}
                   </option>
                 ))
               ) : (
-                <></> // Render nothing if teams.results is not defined
+                <></> 
               )}
             </select>
           </div>
@@ -283,7 +319,7 @@ const Report = () => {
                 Select a subsystem
               </option>
               {filteredSubsystems.length > 0 ? (
-                filteredSubsystems.map((subsystem) => (
+                filteredSubsystems?.map((subsystem) => (
                   <option key={subsystem.subsystem_name} value={subsystem.subsystem_name}>
                     {subsystem.subsystem_name}
                   </option>
@@ -297,7 +333,7 @@ const Report = () => {
             <u>Car year:</u>
             <select value={formData.car_year} onChange={(e) => handleInputChange(e, "car_year")}>
               <option value="">Select a car year</option>
-              {cars.map((car, index) => (
+              {cars?.map((car, index) => (
                 <option key={index} value={car.car_year}>
                   {car.car_nickname ? `${car.car_year} - ${car.car_nickname}` : car.car_year}
                 </option>
@@ -349,23 +385,23 @@ const Report = () => {
           <div className="inpbox">
             <div>
               <u>Record creator:</u>
-              <input type="text" value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")} placeholder="" />
+              <input type="text" value={getUserNameById(formData.record_creator)} readOnly />
             </div>
             <div>
               <u>Record owner contact:</u>
-              <input type="text" value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")} placeholder="" />
+              <input type="text" value={getUserNameById(formData.record_owner)} readOnly />
             </div>
             <div>
               <u>Technical team lead:</u>
-              <input type="text" value={formData.team_lead} onChange={(e) => handleInputChange(e, "team_lead")} placeholder="" />
+              <input type="text" value={formData.team_lead} readOnly />
             </div>
             <div>
               <u>Report creation time:</u>
               <input
                 type="datetime-local"
-                value={formData.record_creation_time}
-                onChange={(e) => handleInputChange(e, "record_creation_time")}
+                value={getCurrentDate()}
                 placeholder=""
+                readOnly
               />
             </div>
             <div>
@@ -374,12 +410,22 @@ const Report = () => {
             </div>
             <div>
               <u>Due date:</u>
-              <input type="text" value={formData.due_date} onChange={(e) => handleInputChange(e, "due_date")} placeholder="" />
+              <input
+                type="datetime-local"
+                value={formData.due_date}
+                onChange={(e) => handleInputChange(e, "due_date")}
+                placeholder=""
+              />
             </div>
             <div>
               <u>Time resolved:</u>
-              <input type="text" value={formData.resolve_date} onChange={(e) => handleInputChange(e, "resolve_date")} placeholder="unresolved" />
-            </div>
+              <input
+                  type="datetime-local"
+                  value={formData.resolve_date || ""}
+                  onChange={(e) => handleInputChange(e, "resolve_date")}
+                  placeholder=""
+              />
+          </div>
           </div>
         )}
         <div className="btnbox">

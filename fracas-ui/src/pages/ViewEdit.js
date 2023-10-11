@@ -12,6 +12,7 @@ const ViewEdit = () => {
   const [showAdditionalData, setShowAdditionalData] = useState(false);
   const [cars, setCars] = useState([]);
   const token = localStorage.getItem("token");
+  let recordCreatorName, recordOwnerName;
 
   const detailsMapping = {
     img1: {
@@ -47,8 +48,6 @@ const ViewEdit = () => {
     return dateTime ? dateTime.slice(0, 16) : "";
   };
 
-  const record_creator_id = result.record_creator;
-
   const [formData, setFormData] = useState({
     record_creator: result.record_creator,
     record_owner: result.record_owner,
@@ -63,9 +62,9 @@ const ViewEdit = () => {
     failure_mechanism: result.failure_mechanism,
     corrective_action_plan: result.corrective_action_plan,
     team_lead: result.team_lead,
-    record_creation_time: getCurrentDate(),
-    due_date: getCurrentDate(),
-    resolve_date: getCurrentDate(),
+    record_creation_time: formatDateTime(result.record_creation_time),
+    due_date: formatDateTime(result.due_date) === "" ? null : formatDateTime(result.due_date),
+    resolve_date: formatDateTime(result.resolve_date) === "" ? null : formatDateTime(result.resolve_date),
     resolution_status: result.resolution_status,
     // review_date: '',
     is_resolved: result.is_resolved,
@@ -121,10 +120,10 @@ const ViewEdit = () => {
   }, [token]);
 
   if (allUsers.length !== 0) {
-    allUsers.results.map((data) => {
+    allUsers?.map((data) => {
       if (data.user_id === result.record_creator) {
-        formData.record_creator = data.first_name + " " + data.last_name;
-        formData.record_owner = data.first_name + " " + data.last_name;
+        recordCreatorName = data.first_name + " " + data.last_name;
+        recordOwnerName = data.first_name + " " + data.last_name;
       }
     });
   }
@@ -167,13 +166,13 @@ const ViewEdit = () => {
     fetchSubsystems();
   }, [token]);
 
-  const filteredSubsystems = formData.team ? subsystems?.results?.filter((subsystem) => subsystem.parent_team === formData.team) : [];
+  const filteredSubsystems = formData.team ? subsystems?.filter((subsystem) => subsystem.parent_team === formData.team) : [];
 
   useEffect(() => {
     if (teams.length !== 0 && formData.team) {
-      const selectedTeam = teams.results.find((team) => team.team_name === formData.team);
-      if (selectedTeam && allUsers.results) {
-        allUsers.results.map((user) => {
+      const selectedTeam = teams.find((team) => team.team_name === formData.team);
+      if (selectedTeam && allUsers) {
+        allUsers?.map((user) => {
           if (user.user_id === selectedTeam.team_lead) {
             setFormData((prevFormData) => ({
               ...prevFormData,
@@ -183,7 +182,7 @@ const ViewEdit = () => {
         });
       }
     }
-  }, [teams, formData.team, allUsers.results, setFormData]);
+  }, [teams, formData.team, allUsers, setFormData]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -193,7 +192,7 @@ const ViewEdit = () => {
             Authorization: `Token ${token}`,
           },
         });
-        setCars(response.data.results);
+        setCars(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -201,7 +200,7 @@ const ViewEdit = () => {
     fetchData();
   }, [token]);
 
-  const isUserAllowedToEdit = users.first_name + " " + users.last_name === formData.record_owner;
+  const isUserAllowedToEdit = users.first_name + " " + users.last_name === recordCreatorName;
 
   const handleSubmit = async () => {
     if (!isUserAllowedToEdit) {
@@ -211,9 +210,7 @@ const ViewEdit = () => {
     try {
       const recordId = result.record_id; // Assume you have record id in the result object
       const payload = {
-        ...formData,
-        record_creator: record_creator_id,
-        record_owner: record_creator_id,
+        ...formData
       };
       const config = {
         headers: {
@@ -253,7 +250,7 @@ const ViewEdit = () => {
         </div>
         <h4>UWA MOTORSPORT FRACAS REPORT</h4>
         <ul className="list w">
-          {Object.keys(detailsMapping).map((iconId, index) => (
+          {Object.keys(detailsMapping)?.map((iconId, index) => (
             <li key={index} onClick={() => handleIconClick(iconId)}>
               <span>{["RS", "RVS", "AVS", "CVS"][index]}</span>
               <img src={`/images/info.png`} alt="" id={iconId} />
@@ -272,7 +269,7 @@ const ViewEdit = () => {
             </div>
             <div>
               <span>status: </span>
-              {detailInfo.statuses.map((status, index) => (
+              {detailInfo.statuses?.map((status, index) => (
                 <span key={index} style={{ color: "rgb(255, 255, 255)" }}>
                   {status}
                 </span>
@@ -287,11 +284,11 @@ const ViewEdit = () => {
           </div>
           <div>
             <u>Record creator:</u>
-            <input type="text" value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")} placeholder="" />
+            <input type="text" value={recordCreatorName} readOnly />
           </div>
           <div>
             <u>Record owner:</u>
-            <input type="text" value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")} placeholder="" />
+            <input type="text" value={recordOwnerName} readOnly />
           </div>
           <div>
             <u>Technical team:</u>
@@ -299,8 +296,8 @@ const ViewEdit = () => {
               <option value="" disabled>
                 Select a team
               </option>
-              {teams.results ? ( // Check if teams.results is defined
-                teams.results.map((team) => (
+              {teams ? ( // Check if teams.results is defined
+                teams?.map((team) => (
                   <option key={team.team_name} value={team.team_name}>
                     {team.team_name}
                   </option>
@@ -317,7 +314,7 @@ const ViewEdit = () => {
                 Select a subsystem
               </option>
               {filteredSubsystems?.length > 0 ? (
-                filteredSubsystems.map((subsystem) => (
+                filteredSubsystems?.map((subsystem) => (
                   <option key={subsystem.subsystem_name} value={subsystem.subsystem_name}>
                     {subsystem.subsystem_name}
                   </option>
@@ -331,7 +328,7 @@ const ViewEdit = () => {
             <u>Car year:</u>
             <select value={formData.car_year} onChange={(e) => handleInputChange(e, "car_year")}>
               <option value="">Select a car year</option>
-              {cars.map((car, index) => (
+              {cars?.map((car, index) => (
                 <option key={index} value={car.car_year}>
                   {car.car_nickname ? `${car.car_year} - ${car.car_nickname}` : car.car_year}
                 </option>
@@ -383,23 +380,23 @@ const ViewEdit = () => {
           <div className="inpbox">
             <div>
               <u>Record creator:</u>
-              <input type="text" value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")} placeholder="" />
+              <input type="text" value={formData.record_creator} readOnly />
             </div>
             <div>
               <u>Record owner contact:</u>
-              <input type="text" value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")} placeholder="" />
+              <input type="text" value={formData.record_owner} readOnly />
             </div>
             <div>
               <u>Technical team lead:</u>
-              <input type="text" value={formData.team_lead} onChange={(e) => handleInputChange(e, "team_lead")} placeholder="" />
+              <input type="text" value={formData.team_lead} readOnly />
             </div>
             <div>
               <u>Report creation time:</u>
               <input
                 type="datetime-local"
                 value={formData.record_creation_time}
-                onChange={(e) => handleInputChange(e, "record_creation_time")}
                 placeholder=""
+                readOnly
               />
             </div>
             <div>
@@ -408,11 +405,21 @@ const ViewEdit = () => {
             </div>
             <div>
               <u>Due date:</u>
-              <input type="text" value={formData.due_date} onChange={(e) => handleInputChange(e, "due_date")} placeholder="" />
+              <input
+                type="datetime-local"
+                value={formData.due_date}
+                onChange={(e) => handleInputChange(e, "due_date")}
+                placeholder=""
+              />
             </div>
             <div>
               <u>Time resolved:</u>
-              <input type="text" value={formData.resolve_date} onChange={(e) => handleInputChange(e, "resolve_date")} placeholder="unresolved" />
+              <input
+                  type="datetime-local"
+                  value={formData.resolve_date || ""}
+                  onChange={(e) => handleInputChange(e, "resolve_date")}
+                  placeholder=""
+              />
             </div>
           </div>
         )}

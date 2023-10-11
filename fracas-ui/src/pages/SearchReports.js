@@ -14,11 +14,11 @@ const SearchReports = () => {
         next: null, // URL for the next page
         previous: null, // URL for the previous page
     });
+    const [hasSearched, setHasSearched] = useState(false);
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
 
     const handleViewClick = (result) => {
-        console.log("result--->", result)
         navigate('/view', { state: { result } });
       };
 
@@ -30,25 +30,43 @@ const SearchReports = () => {
                         'Authorization': `Token ${token}`
                     }
                 });
-                setTeams(teamResponse.data.results);
+                setTeams(teamResponse.data);
                 const subsystemResponse = await axios.get("http://127.0.0.1:8000/api/subsystems/", {
                     headers: {
                         'Authorization': `Token ${token}`
                     }
                 });
-                setSubsystems(subsystemResponse.data.results);
+                setSubsystems(subsystemResponse.data);
                 const carYearResponse = await axios.get("http://127.0.0.1:8000/api/cars/", {
                     headers: {
                         'Authorization': `Token ${token}`
                     }
                 });
-                setCarYears(carYearResponse.data.results);
+                setCarYears(carYearResponse.data);
             } catch (error) {
                 console.error(error);
             }
         };
         fetchInitialData();
-    }, []);
+    }, [token]);
+
+    useEffect(() => {
+        const fetchInitialRecords = async () => {
+            try {
+                const response = await axios.get("http://127.0.0.1:8000/api/records/", {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setResults(response.data.results);
+            } catch (error) {
+                console.error("Error fetching initial records:", error);
+            }
+        };
+    
+        fetchInitialRecords();
+    }, [token]);
+    
 
     const handleSearch = async () => {
         try {
@@ -70,6 +88,7 @@ const SearchReports = () => {
         } catch (error) {
             console.error(error);
         }
+        setHasSearched(true);
     };
 
     // Fetch results for previous page
@@ -146,7 +165,7 @@ const SearchReports = () => {
                             value={formData.team} 
                             onChange={(e) => handleInputChange(e, 'team')}>
                             <option value="">Select a team</option>
-                            {teams.map((team, index) => (
+                            {teams?.map((team, index) => (
                                 <option key={index} value={team.team_name}>
                                     {team.team_name}
                                 </option>
@@ -159,7 +178,7 @@ const SearchReports = () => {
                             value={formData.subsystem} 
                             onChange={(e) => handleInputChange(e, 'subsystem')}>
                             <option value="">Select a subsystem</option>
-                            {subsystems.map((subsystem, index) => (
+                            {subsystems?.map((subsystem, index) => (
                                 <option key={index} value={subsystem.subsystem_name}>
                                     {subsystem.subsystem_name}
                                 </option>
@@ -172,7 +191,7 @@ const SearchReports = () => {
                             value={formData.carYear} 
                             onChange={(e) => handleInputChange(e, 'carYear')}>
                             <option value="">Select a car year</option>
-                            {carYears.map((year, index) => (
+                            {carYears?.map((year, index) => (
                                 <option key={index} value={year.car_year}>
                                     {year.car_year}
                                 </option>
@@ -181,14 +200,17 @@ const SearchReports = () => {
                     </div>
                 </div>
                 <div className='results'>
-                    {results.map((result, index) => (
+                    {results?.map((result, index) => (
                         <button key={result.record_id} onClick={() => handleViewClick(result)}>
                         {result.failure_title || "[no_title]"}
                     </button>
                     ))}
-                
                 </div>
-
+                {hasSearched && results.length === 0 && (
+                    <div className='not-found'>
+                        <p>No results found</p>
+                    </div>
+                )}
 
                 <div className='pagination-container'>
                     <button onClick={handlePreviousPage}>&lt; Previous</button>
