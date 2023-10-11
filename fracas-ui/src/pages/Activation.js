@@ -9,18 +9,17 @@ const ActivateAccount = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .post("http://127.0.0.1:8000/auth/users/activation/", {
+    const response = axios.post("http://127.0.0.1:8000/auth/users/activation/", {
         uid: uid,
         token: token,
       })
       .then(() => {
-        navigate("/login");
         alert("Activation successful!");
+        navigate("/login");
       })
       .catch((err) => {
-        if (err.response) {
-          alert("Failed to activate account: " + err.response.data);
+        if (response.status === 403) {
+          alert("account already activated");
         } else {
           alert("Failed to activate account: " + err.message);
         }
