@@ -44,6 +44,16 @@ const ViewEdit = () => {
     setDetailInfo(detailsMapping[iconId]);
   };
 
+  const handleStatusClick = (iconId) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      is_resolved: iconId === 'img1' ? !prevData.is_resolved : prevData.is_resolved,
+      is_record_validated: iconId === 'img2' ? !prevData.is_record_validated : prevData.is_record_validated,
+      is_analysis_validated: iconId === 'img3' ? !prevData.is_analysis_validated : prevData.is_analysis_validated,
+      is_correction_validated: iconId === 'img4' ? !prevData.is_correction_validated : prevData.is_correction_validated,
+    }));
+  };
+
   const formatDateTime = (dateTime) => {
     return dateTime ? dateTime.slice(0, 16) : "";
   };
@@ -252,7 +262,7 @@ const ViewEdit = () => {
         <ul className="list w">
           {Object.keys(detailsMapping)?.map((iconId, index) => (
             <li key={index}>
-              <span>{["RS", "RVS", "AVS", "CVS"][index]}</span>
+              <span onClick={() => handleStatusClick(iconId)}>{["RS", "RVS", "AVS", "CVS"][index]}</span>
               <img src={`/images/info.png`} alt="" id={iconId}  onClick={() => handleIconClick(iconId)}/>
             </li>
           ))}
@@ -401,7 +411,7 @@ const ViewEdit = () => {
             </div>
             <div>
               <u>Review status:</u>
-              <input type="text" value={formData.is_resolved} onChange={(e) => handleInputChange(e, "is_resolved")} placeholder="" />
+              <input type="text" value={formData.is_reviwed} onChange={(e) => handleInputChange(e, "is_reviwed")} placeholder="" />
             </div>
             <div>
               <u>Due date:</u>
