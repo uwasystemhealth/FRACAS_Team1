@@ -10,7 +10,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   const auth = useAuth();
-  const handleLogin = async () => {
+  const handleLogin = async (event) => {
+    event.preventDefault();
     try {
         const response = await fetch("http://127.0.0.1:8000/api/login", {
             method: "POST",
@@ -76,29 +77,31 @@ const Login = () => {
         <h4 style={{ color: 'rgba(20, 137, 233,0.6)', textAlign: 'center', fontSize: '30px' }}>Welcome!</h4>
         <p style={{ color: 'rgb(119, 119, 119)', textAlign: 'center', fontSize: '17px' }}>Sign in to your account</p>
         <div className="inpbox loginw">
-          <div className="inp">
-          <span>Email</span>
-        <br />
-          <input 
-            type="text" 
-            placeholder="Please enter your email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)}
-            required 
-          />
-          </div>
-          <div className="inp">
-            <span>Password</span>
-            <br />
-            <input 
-              type="password" 
-              placeholder="Please enter your Password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)}
-              required 
-            />
-          </div>
-          <button onClick={handleLogin}>Log in</button>
+          <form onSubmit={handleLogin}>
+            <div className="inp">
+              <span>Email</span>
+              <br />
+              <input 
+                type="text" 
+                placeholder="Please enter your email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)}
+                required 
+              />
+            </div>
+            <div className="inp">
+              <span>Password</span>
+              <br />
+              <input 
+                type="password" 
+                placeholder="Please enter your Password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)}
+                required 
+              />
+            </div>
+            <button type="submit">Log in</button>
+          </form>
           <span className="s1"><Link to="/forgotpassword">Forgot password?</Link></span>
           <span className="s2"><Link to="/signup">Create account</Link></span>
         </div>

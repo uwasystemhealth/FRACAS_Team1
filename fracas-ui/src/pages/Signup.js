@@ -11,13 +11,15 @@ const SignUpPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [teams, setTeams] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const token = localStorage.getItem("token");
 
     useEffect(() => {
         const fetchTeams = async () => {
         try {
-            const response = await axios.get("http://127.0.0.1:8000/api/teams/", {
+            const response = await axios.get("http://127.0.0.1:8000/api/teams/?ordering=team_name", {
             headers: {
                 Authorization: `Token ${token}`,
             },
@@ -33,7 +35,9 @@ const SignUpPage = () => {
 
     const navigate = useNavigate();
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setIsLoading(true);
         if (!firstName || !lastName || !team || !email || !password || !confirmPassword) {
             alert("Please fill in the registration information");
         } else if (password !== confirmPassword) {
@@ -58,7 +62,7 @@ const SignUpPage = () => {
                 const data = await response.json();
 
                 if (response.status === 201) {
-                    alert("Registration successful! Please login.");
+                    alert("Registration successful! You'll receive an activation email shortly.");
                     navigate('/login');
                 } else {
                     alert(data.error || "An error occurred while registering.");
@@ -68,6 +72,7 @@ const SignUpPage = () => {
                 alert("An error occurred. Please try again.");
             }
         }
+        setIsLoading(false);
     };
 
     return (
@@ -83,45 +88,47 @@ const SignUpPage = () => {
                 <h4 style={{ color: 'rgba(20, 137, 233, 0.6)', textAlign: 'center', fontSize: '30px' }}>Welcome!</h4>
                 <p style={{ color: 'rgb(119, 119, 119)', textAlign: 'center', fontSize: '17px' }}>Create a new account</p>
                 <div className="inpbox signup-w">
-                    <div className="inp">
-                        <span>First Name</span>
-                        <input type="text" placeholder="Please enter your First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                    </div>
-                    <div className="inp">
-                        <span>Last Name</span>
-                        <input type="text" placeholder="Please enter your Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                    </div>
-                    <div className="team-dropdown">
-                        <span>Team</span>
-                        {/* <input type="text" placeholder="Please enter your Team" value={team} onChange={(e) => setTeam(e.target.value)} /> */}
-                        <select value={team} onChange={(e) => setTeam(e.target.value)}>
-                            <option value="" disabled>
-                                Select a team
-                            </option>
-                            {teams ? ( // Check if teams.results is defined
-                                teams?.map((team) => (
-                                <option key={team.team_name} value={team.team_name}>
-                                    {team.team_name}
+                    <form onSubmit={handleSubmit}>
+                        <div className="inp">
+                            <span>First Name</span>
+                            <input type="text" placeholder="Please enter your First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                        </div>
+                        <div className="inp">
+                            <span>Last Name</span>
+                            <input type="text" placeholder="Please enter your Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                        </div>
+                        <div className="team-dropdown">
+                            <span>Team</span>
+                            {/* <input type="text" placeholder="Please enter your Team" value={team} onChange={(e) => setTeam(e.target.value)} /> */}
+                            <select value={team} onChange={(e) => setTeam(e.target.value)}>
+                                <option value="" disabled>
+                                    Select a team
                                 </option>
-                                ))
-                            ) : (
-                                <></> // Render nothing if teams.results is not defined
-                            )}
-                        </select>
-                    </div>
-                    <div className="inp">
-                        <span>Email</span>
-                        <input type="text" placeholder="Please enter your Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    </div>
-                    <div className="inp">
-                        <span>Password</span>
-                        <input type="password" placeholder="Please enter your Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    </div>
-                    <div className="inp">
-                        <span>Confirm Password</span>
-                        <input type="password" placeholder="Please re-enter your Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                    </div>
-                    <button onClick={handleSubmit}>Register</button>
+                                {teams ? ( // Check if teams.results is defined
+                                    teams?.map((team) => (
+                                    <option key={team.team_name} value={team.team_name}>
+                                        {team.team_name}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <></> // Render nothing if teams.results is not defined
+                                )}
+                            </select>
+                        </div>
+                        <div className="inp">
+                            <span>Email</span>
+                            <input type="text" placeholder="Please enter your Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        </div>
+                        <div className="inp">
+                            <span>Password</span>
+                            <input type="password" placeholder="Please enter your Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        </div>
+                        <div className="inp">
+                            <span>Confirm Password</span>
+                            <input type="password" placeholder="Please re-enter your Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        </div>
+                        <button type="submit" disabled={isLoading}>Register</button>
+                    </form>
                     <span className="s1"><Link to="/forgotpassword">Forgot password?</Link></span>
                     <span className="s2">
                         <Link to="/login">Already have an account? Sign In</Link>
