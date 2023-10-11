@@ -72,7 +72,11 @@ $grey-text: #696969;
       // left: 50%;
       // transform: translateX(-50%);
       button {
-        padding: 4px 8px;
+        height: 40px;
+        padding: 0 12px;
+        background-color: #f5d33b;
+        border-radius: 10px;
+        cursor: pointer;
         margin: 4px;
       }
     }
@@ -149,6 +153,12 @@ $grey-text: #696969;
     button:hover {
       color: rgba(139, 1, 1, 0.6);
     }
+  }
+
+  .not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .usertopimg {
