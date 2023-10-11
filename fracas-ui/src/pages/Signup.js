@@ -31,8 +31,6 @@ const SignUpPage = () => {
         fetchTeams();
     }, [token]);
 
-    console.log("teams--->", teams)
-
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
@@ -77,14 +75,14 @@ const SignUpPage = () => {
             <div className="topimg">
                 <h1>FRACAS<br />SIGN UP</h1>
             </div>
-            <h1 className="w" style={{ marginTop: '40px', textAlign: 'center' }}>Sign Up</h1>
-            <div className="loginbox w">
+            <h1 className="signup-w" style={{ marginTop: '40px', textAlign: 'center' }}>Sign Up</h1>
+            <div className="signupbox signup-w">
                 <span className="icon">
                     <img src="/images/register.png" alt="icon" />
                 </span>
                 <h4 style={{ color: 'rgba(20, 137, 233, 0.6)', textAlign: 'center', fontSize: '30px' }}>Welcome!</h4>
                 <p style={{ color: 'rgb(119, 119, 119)', textAlign: 'center', fontSize: '17px' }}>Create a new account</p>
-                <div className="inpbox w">
+                <div className="inpbox signup-w">
                     <div className="inp">
                         <span>First Name</span>
                         <input type="text" placeholder="Please enter your First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
@@ -124,7 +122,7 @@ const SignUpPage = () => {
                         <input type="password" placeholder="Please re-enter your Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                     </div>
                     <button onClick={handleSubmit}>Register</button>
-                    <span className="s1">Forgot password?</span>
+                    <span className="s1"><Link to="/forgotpassword">Forgot password?</Link></span>
                     <span className="s2">
                         <Link to="/login">Already have an account? Sign In</Link>
                     </span>

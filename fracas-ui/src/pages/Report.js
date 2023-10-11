@@ -78,9 +78,7 @@ const Report = () => {
   const handleSubmit = async () => {
     try {
       const payload = {
-        ...formData,
-        record_creator: users.user_id,
-        record_owner: users.user_id,
+        ...formData
       };
       const config = {
         headers: {
@@ -103,14 +101,22 @@ const Report = () => {
           },
         });
         setUsers(response.data);
+  
+        // Check if the fetched user has a team, and set it
+        if (response.data.team) {
+          setFormData(prevState => ({
+            ...prevState,
+            team: response.data.team
+          }));
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
+  
     fetchData();
   }, [token]);
-
+  
   const [allUsers, setAllusers] = useState([]);
 
   useEffect(() => {
@@ -130,10 +136,15 @@ const Report = () => {
     fetchData();
   }, [token]);
 
-  if (users.length !== 0) {
-    formData.record_creator = users.first_name + " " + users.last_name;
-    formData.record_owner = users.first_name + " " + users.last_name;
-  }
+  useEffect(() => {
+    if (users.first_name && users.last_name) {
+      setFormData(prevState => ({
+          ...prevState,
+          record_creator: users.user_id, // store the user_id
+          record_owner: users.user_id // store the user_id
+      }));
+    }
+}, [users]);
 
   const [teams, setTeams] = useState([]);
 
@@ -200,12 +211,21 @@ const Report = () => {
           },
         });
         setCars(response.data);
+  
+        // Check if there are cars, and set the car_year to the latest one
+        if (response.data.length > 0) {
+          setFormData(prevState => ({
+            ...prevState,
+            car_year: response.data[0].car_year
+          }));
+        }
       } catch (error) {
         console.error(error);
       }
     };
     fetchData();
   }, [token]);
+  
 
   return (
     <div className="report-container">
@@ -253,11 +273,23 @@ const Report = () => {
           </div>
           <div>
             <u>Record creator:</u>
-            <input type="text" value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")} placeholder="" />
+            <select value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")}>
+              {allUsers?.map(user => (
+                <option key={user.user_id} value={user.user_id}>
+                  {user.first_name} {user.last_name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
-            <u>Record owner:</u>
-            <input type="text" value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")} placeholder="" />
+              <u>Record owner:</u>
+              <select value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")}>
+                {allUsers.map(user => (
+                  <option key={user.user_id} value={user.user_id}>
+                    {user.first_name} {user.last_name}
+                  </option>
+                ))}
+              </select>
           </div>
           <div>
             <u>Technical team:</u>
@@ -265,14 +297,14 @@ const Report = () => {
               <option value="" disabled>
                 Select a team
               </option>
-              {teams ? ( // Check if teams.results is defined
+              {teams ? (
                 teams?.map((team) => (
                   <option key={team.team_name} value={team.team_name}>
                     {team.team_name}
                   </option>
                 ))
               ) : (
-                <></> // Render nothing if teams.results is not defined
+                <></> 
               )}
             </select>
           </div>
