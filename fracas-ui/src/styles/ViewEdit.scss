@@ -96,7 +96,47 @@
         }
       }
     }
+    .details {
+      position: absolute;
+      max-width: 320px;
+      //height: auto;
+      text-align: center;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 1);
+      left: 50%;
+      top: 130px;
+      transform: translate(-50%, -50%);
+      display: block;
 
+      .x {
+        display: block;
+        width: 28px;
+        height: 28px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: rgba(139, 1, 1, 0.6);
+        text-align: center;
+        line-height: 28px;
+        color: white;
+        cursor: pointer;
+      }
+      h4 {
+        margin: 0px;
+        height: 0px;
+        margin-block-end: 1.33em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        display: block;
+        font-weight: bold;
+        line-height: 0px;
+        font-size: 16px;
+      }
+
+      div {
+        height: 30px;
+      }
+    }
     .licolor {
       background-color: rgb(153, 248, 150);
     }
@@ -205,35 +245,7 @@
     }
   }
 
-  .details {
-    position: absolute;
-    max-width: 320px;
-    height: auto;
-    padding: 20px;
-    background-color: rgba(31, 31, 31, 0.7);
-    left: 50%;
-    top: 130px;
-    transform: translate(-50%, -50%);
-    display: none;
-
-    .x {
-      display: block;
-      width: 28px;
-      height: 28px;
-      position: absolute;
-      top: 0;
-      right: 0;
-      background-color: rgba(139, 1, 1, 0.6);
-      text-align: center;
-      line-height: 28px;
-      color: white;
-      cursor: pointer;
-    }
-
-    div {
-      height: 30px;
-    }
-  }
+  
 
   @media screen and (max-width: 920px) {
     .mainbox {
