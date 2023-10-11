@@ -12,6 +12,7 @@ import SearchReports from "./pages/SearchReports";
 import ViewEdit from "./pages/ViewEdit";
 import { AuthProvider } from "./components/useAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Activation from "./pages/Activation";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/user_activation/:uid/:token" element={<Activation />} />
           <Route path="/userdashboard" element={<ProtectedRoute element={<UserDashboard />} />} />
           <Route path="/admindashboard" element={<ProtectedRoute element={<AdminDashboard />} />} />
           <Route path="/report" element={<ProtectedRoute element={<Report />} />} />
