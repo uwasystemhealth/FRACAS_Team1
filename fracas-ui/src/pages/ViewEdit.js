@@ -16,20 +16,20 @@ const ViewEdit = () => {
 
   const detailsMapping = {
     img1: {
-      name: "Review Status",
-      statuses: ["Red for Unvalidated", "Green for Validated", "Grey for None"],
+      name: "Resolve Status",
+      statuses: ["Red for Not Resolved, ", "Green for Resolved"],
     },
     img2: {
       name: "Record Validation Status",
-      statuses: ["Red for Unvalidated", "Green for Validated", "Grey for None"],
+      statuses: ["Red for Unvalidated, ", "Green for Validated"],
     },
     img3: {
       name: "Analysis Validation Status",
-      statuses: ["Red for Unvalidated", "Green for Validated", "Grey for None"],
+      statuses: ["Red for Unvalidated, ", "Green for Validated"],
     },
     img4: {
       name: "Correction Validation",
-      statuses: ["Red for Unvalidated", "Green for Validated", "Grey for None"],
+      statuses: ["Red for Unvalidated, ", "Green for Validated"],
     },
   };
 
@@ -42,6 +42,16 @@ const ViewEdit = () => {
   const handleIconClick = (iconId) => {
     setShowDetails(true);
     setDetailInfo(detailsMapping[iconId]);
+  };
+
+  const handleStatusClick = (iconId) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      is_resolved: iconId === 'img1' ? !prevData.is_resolved : prevData.is_resolved,
+      is_record_validated: iconId === 'img2' ? !prevData.is_record_validated : prevData.is_record_validated,
+      is_analysis_validated: iconId === 'img3' ? !prevData.is_analysis_validated : prevData.is_analysis_validated,
+      is_correction_validated: iconId === 'img4' ? !prevData.is_correction_validated : prevData.is_correction_validated,
+    }));
   };
 
   const formatDateTime = (dateTime) => {
@@ -251,31 +261,40 @@ const ViewEdit = () => {
         <h4>UWA MOTORSPORT FRACAS REPORT</h4>
         <ul className="list w">
           {Object.keys(detailsMapping)?.map((iconId, index) => (
-            <li key={index} onClick={() => handleIconClick(iconId)}>
-              <span>{["RS", "RVS", "AVS", "CVS"][index]}</span>
-              <img src={`/images/info.png`} alt="" id={iconId} />
+            <li key={index}
+            style={{
+              backgroundColor: formData.is_resolved && iconId === 'img1'
+                ? 'rgb(153, 248, 150)'
+                : formData.is_record_validated && iconId === 'img2'
+                ? 'rgb(153, 248, 150)'
+                : formData.is_analysis_validated && iconId === 'img3'
+                ? 'rgb(153, 248, 150)'
+                : 'rgb(253, 125, 125',
+            }}>
+              <span onClick={() => handleStatusClick(iconId)}>{["RS", "RVS", "AVS", "CVS"][index]}</span>
+              <img src={`/images/info.png`} alt="" id={iconId}  onClick={() => handleIconClick(iconId)}/>
             </li>
           ))}
         </ul>
         {showDetails && (
-          <div className="details">
-            <h4 style={{ textAlign: "center", height: "30px", marginTop: "-10px" }}>info</h4>
-            <span className="x" onClick={() => setShowDetails(false)}>
-              x
-            </span>
-            <div>
-              <span>wholeName: </span>
-              <span style={{ color: "rgb(255, 255, 255)" }}>{detailInfo.name}</span>
-            </div>
-            <div>
-              <span>status: </span>
-              {detailInfo.statuses?.map((status, index) => (
-                <span key={index} style={{ color: "rgb(255, 255, 255)" }}>
-                  {status}
-                </span>
-              ))}
-            </div>
+        <div className="details">
+          <h4>info</h4>
+          <span className="x" onClick={() => setShowDetails(false)}>
+            [x]
+          </span>
+          <div>
+            <span>wholeName: </span>
+            <span style={{ color: "rgb(0, 0, 0)" }}>{detailInfo.name}</span>
           </div>
+          <div>
+            <span>status: </span>
+            {detailInfo.statuses?.map((status, index) => (
+              <span key={index} style={{ color: "rgb(0, 0, 0)" }}>
+                {status}
+              </span>
+            ))}
+          </div>
+        </div>
         )}
         <div className="inpbox">
           <div>
@@ -401,7 +420,7 @@ const ViewEdit = () => {
             </div>
             <div>
               <u>Review status:</u>
-              <input type="text" value={formData.is_resolved} onChange={(e) => handleInputChange(e, "is_resolved")} placeholder="" />
+              <input type="text" value={formData.is_reviwed} onChange={(e) => handleInputChange(e, "is_reviwed")} placeholder="" />
             </div>
             <div>
               <u>Due date:</u>
