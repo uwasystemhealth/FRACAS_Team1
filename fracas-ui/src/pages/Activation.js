@@ -1,5 +1,4 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { TailSpin } from "react-loader-spinner";
 import "../styles/Activation.scss";
 
