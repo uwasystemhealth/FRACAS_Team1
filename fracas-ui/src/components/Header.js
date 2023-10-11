@@ -87,20 +87,24 @@ const Header = () => {
                 <>
                   <li>
                     <Link to="/userdashboard" onClick={() => setShow(false)}>
-                      User Dashboard
+                      Dashboard
                     </Link>
-                  </li>
-                  <li>
-                    <a href="#" onClick={handleLogout} style={{ cursor: "pointer", color: "black", textDecoration: "underline", fontSize: "20px" }}>
-                      Logout
-                    </a>
                   </li>
                 </>
               )}
               {isAdmin && (
                 <>
                   <li>
-                    <a href="http://127.0.0.1:8000/admin/">Admin Dashboard (External)</a>
+                    <a href="http://127.0.0.1:8000/admin/">Admin</a>
+                  </li>
+                </>
+              )}
+              {isAuthenticated && (
+                <>
+                  <li>
+                    <a href="#" onClick={handleLogout} style={{ cursor: "pointer", color: "black", textDecoration: "underline", fontSize: "20px" }}>
+                      Logout
+                    </a>
                   </li>
                 </>
               )}
