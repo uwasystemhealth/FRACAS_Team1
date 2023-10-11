@@ -190,7 +190,7 @@ const Report = () => {
     if (teams.length !== 0 && formData.team) {
       const selectedTeam = teams?.find((team) => team.team_name === formData.team);
       if (selectedTeam) {
-        allUsers.results?.map((user) => {
+        allUsers?.map((user) => {
           if (user.user_id === selectedTeam.team_lead) {
             setFormData((prevFormData) => ({
               ...prevFormData,
@@ -225,8 +225,12 @@ const Report = () => {
     };
     fetchData();
   }, [token]);
-  
 
+  const getUserNameById = (userId) => {
+    const user = allUsers.find(u => u.user_id === parseInt(userId));
+    return user ? `${user.first_name} ${user.last_name}` : '';
+  }
+  
   return (
     <div className="report-container">
       <div className="mainbox w">
@@ -381,11 +385,11 @@ const Report = () => {
           <div className="inpbox">
             <div>
               <u>Record creator:</u>
-              <input type="text" value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")} placeholder="" />
+              <input type="text" value={getUserNameById(formData.record_creator)} readOnly />
             </div>
             <div>
               <u>Record owner contact:</u>
-              <input type="text" value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")} placeholder="" />
+              <input type="text" value={getUserNameById(formData.record_owner)} readOnly />
             </div>
             <div>
               <u>Technical team lead:</u>
