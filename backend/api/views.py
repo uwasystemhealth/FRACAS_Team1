@@ -85,7 +85,7 @@ class UserViewSet(
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = ["user_id", "email", "team__team_name"]
     filterset_fields = ["user_id", "email", "team__team_name"]
-    ordering_fields = ["user_id"]
+    ordering_fields = ["first_name", "last_name", "user_id"]
 
     @action(detail=False, methods=["get"], permission_classes=[ReadOnlyPermission])
     def me(self, request):

@@ -35,7 +35,7 @@ DEBUG = True
 # DEBUG = os.getenv("DJANGO_DEBUG", False)
 
 
-ALLOWED_HOSTS = ["1.0.0.127.in-addr.arpa", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost:300", "1.0.0.127.in-addr.arpa", "127.0.0.1"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
@@ -169,10 +169,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # DJOSER
 DJOSER = {
     "SEND_ACTIVATION_EMAIL": True,
-    "ACTIVATION_URL": "#/activate/{uid}/{token}",
+    "ACTIVATION_URL": "activate/{uid}/{token}",
     "SEND_CONFIRMATION_EMAIL": True,
     "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
-    "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
+    "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": False,
+    "PASSWORD_RESET_CONFIRM_RETYPE": True,
     "SET_USERNAME_RETYPE": True,
     "SET_PASSWORD_RETYPE": True,
     "USERNAME_RESET_CONFIRM_URL": "username/reset/confirm/{uid}/{token}",
@@ -181,6 +182,12 @@ DJOSER = {
     "LOGIN_FIELD": "email",
     "SERIALIZERS": {
         "user_create": "api.serializers.UserRegistrationSerializer",
+    },
+    "EMAIL": {
+        "activation": "api.email.ActivationEmail",
+        "confirmation": "api.email.ConfirmationEmail",
+        "password_reset": "api.email.PasswordResetEmail",
+        "password_changed_confirmation": "api.email.PasswordChangedConfirmationEmail",
     },
 }
 
@@ -201,5 +208,5 @@ EMAIL_HOST_PASSWORD = os.getenv("DJANGO_EMAIL_HOST_PASSWORD", "")
 EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "587")
 EMAIL_USE_TLS = True
 
-DEFAULT_FROM_EMAIL = "No Reply <noreply@example.com>"
-SERVER_EMAIL = "No Reply <noreply@example.com>"
+DEFAULT_FROM_EMAIL = "UWAM FRACAS"
+SERVER_EMAIL = "No Reply"
