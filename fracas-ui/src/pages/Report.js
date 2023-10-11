@@ -54,9 +54,9 @@ const Report = () => {
     failure_mechanism: "",
     corrective_action_plan: "",
     team_lead: "",
-    record_creation_time: getCurrentDate(),
-    due_date: getCurrentDate(),
-    resolve_date: getCurrentDate(),
+    // record_creation_time: getCurrentDate(),
+    due_date: null,
+    resolve_date: null,
     resolution_status: "",
     // review_date: '',
     is_resolved: false,
@@ -190,7 +190,7 @@ const Report = () => {
     if (teams.length !== 0 && formData.team) {
       const selectedTeam = teams?.find((team) => team.team_name === formData.team);
       if (selectedTeam) {
-        allUsers.results?.map((user) => {
+        allUsers?.map((user) => {
           if (user.user_id === selectedTeam.team_lead) {
             setFormData((prevFormData) => ({
               ...prevFormData,
@@ -200,7 +200,7 @@ const Report = () => {
         });
       }
     }
-  }, [teams, formData.team, allUsers.results, setFormData]);
+  }, [teams, formData.team, allUsers, setFormData]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -225,8 +225,12 @@ const Report = () => {
     };
     fetchData();
   }, [token]);
-  
 
+  const getUserNameById = (userId) => {
+    const user = allUsers.find(u => u.user_id === parseInt(userId));
+    return user ? `${user.first_name} ${user.last_name}` : '';
+  }
+  
   return (
     <div className="report-container">
       <div className="mainbox w">
@@ -381,23 +385,23 @@ const Report = () => {
           <div className="inpbox">
             <div>
               <u>Record creator:</u>
-              <input type="text" value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")} placeholder="" />
+              <input type="text" value={getUserNameById(formData.record_creator)} readOnly />
             </div>
             <div>
               <u>Record owner contact:</u>
-              <input type="text" value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")} placeholder="" />
+              <input type="text" value={getUserNameById(formData.record_owner)} readOnly />
             </div>
             <div>
               <u>Technical team lead:</u>
-              <input type="text" value={formData.team_lead} onChange={(e) => handleInputChange(e, "team_lead")} placeholder="" />
+              <input type="text" value={formData.team_lead} readOnly />
             </div>
             <div>
               <u>Report creation time:</u>
               <input
                 type="datetime-local"
-                value={formData.record_creation_time}
-                onChange={(e) => handleInputChange(e, "record_creation_time")}
+                value={getCurrentDate()}
                 placeholder=""
+                readOnly
               />
             </div>
             <div>
@@ -406,12 +410,22 @@ const Report = () => {
             </div>
             <div>
               <u>Due date:</u>
-              <input type="text" value={formData.due_date} onChange={(e) => handleInputChange(e, "due_date")} placeholder="" />
+              <input
+                type="datetime-local"
+                value={formData.due_date}
+                onChange={(e) => handleInputChange(e, "due_date")}
+                placeholder=""
+              />
             </div>
             <div>
               <u>Time resolved:</u>
-              <input type="text" value={formData.resolve_date} onChange={(e) => handleInputChange(e, "resolve_date")} placeholder="unresolved" />
-            </div>
+              <input
+                  type="datetime-local"
+                  value={formData.resolve_date || ""}
+                  onChange={(e) => handleInputChange(e, "resolve_date")}
+                  placeholder=""
+              />
+          </div>
           </div>
         )}
         <div className="btnbox">
