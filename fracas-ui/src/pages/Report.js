@@ -122,7 +122,7 @@ const Report = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/users/", {
+        const response = await axios.get("http://127.0.0.1:8000/api/users/?ordering=last_name,first_name", {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -151,7 +151,7 @@ const Report = () => {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/teams/", {
+        const response = await axios.get("http://127.0.0.1:8000/api/teams/?ordering=team_name", {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -170,7 +170,7 @@ const Report = () => {
   useEffect(() => {
     const fetchSubsystems = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/subsystems/", {
+        const response = await axios.get("http://127.0.0.1:8000/api/subsystems/?ordering=subsystem_name", {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -205,7 +205,7 @@ const Report = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/cars/", {
+        const response = await axios.get("http://127.0.0.1:8000/api/cars/?ordering=-car_year", {
           headers: {
             Authorization: `Token ${token}`,
           },
