@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
 import axios from "axios";
@@ -16,7 +16,7 @@ const ResetPasswordPage = () => {
     event.preventDefault();
     setIsLoading(true);
     if (!password || !confirmPassword) {
-      alert("Please fill in the registration information");
+      alert("Please fill in the both passwords");
     } else if (password !== confirmPassword) {
       alert("Passwords do not match");
     } else {
