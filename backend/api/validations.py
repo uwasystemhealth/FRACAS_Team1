@@ -16,21 +16,26 @@ def register_validation(data):
     Raises:
         ValidationError: If the email is already taken, the password is too short, or the passwords do not match.
     """
-    email = data["email"].strip()
-    first_name = data["first_name"].strip()
-    last_name = data["last_name"].strip()
-    password = data["password"].strip()
-    password2 = data["password2"].strip()
+    # strip all whitespace from the data, capitalize first and last name
+    data["email"] = data["email"].strip()
+    data["first_name"] = (
+        data["first_name"].strip()[0].upper() + data["first_name"].strip()[1:]
+    )
+    data["last_name"] = (
+        data["last_name"].strip()[0].upper() + data["last_name"].strip()[1:]
+    )
+    data["password"] = data["password"].strip()
+    data["password2"] = data["password2"].strip()
 
-    if not email or UserModel.objects.filter(email=email).exists():
+    if not data["email"] or UserModel.objects.filter(email=data["email"]).exists():
         raise serializers.ValidationError("Email taken: choose another email.")
-    if not password or len(password) < 8:
+    if not data["password"] or len(data["password"]) < 8:
         raise serializers.ValidationError("Choose another password, min 8 characters.")
-    if not first_name:
+    if not data["first_name"]:
         raise serializers.ValidationError("First name is required.")
-    if not last_name:
+    if not data["last_name"]:
         raise serializers.ValidationError("Last name is required.")
-    if not password2 or password != password2:
+    if not data["password2"] or data["password"] != data["password2"]:
         raise serializers.ValidationError("Passwords must match.")
     else:
         data.pop("password2")
