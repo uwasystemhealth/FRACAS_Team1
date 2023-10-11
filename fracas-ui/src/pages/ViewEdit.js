@@ -12,6 +12,7 @@ const ViewEdit = () => {
   const [showAdditionalData, setShowAdditionalData] = useState(false);
   const [cars, setCars] = useState([]);
   const token = localStorage.getItem("token");
+  let recordCreatorName, recordOwnerName;
 
   const detailsMapping = {
     img1: {
@@ -47,8 +48,6 @@ const ViewEdit = () => {
     return dateTime ? dateTime.slice(0, 16) : "";
   };
 
-  const record_creator_id = result.record_creator;
-
   const [formData, setFormData] = useState({
     record_creator: result.record_creator,
     record_owner: result.record_owner,
@@ -63,9 +62,9 @@ const ViewEdit = () => {
     failure_mechanism: result.failure_mechanism,
     corrective_action_plan: result.corrective_action_plan,
     team_lead: result.team_lead,
-    record_creation_time: getCurrentDate(),
-    due_date: getCurrentDate(),
-    resolve_date: getCurrentDate(),
+    record_creation_time: formatDateTime(result.record_creation_time),
+    due_date: formatDateTime(result.due_date) === "" ? null : formatDateTime(result.due_date),
+    resolve_date: formatDateTime(result.resolve_date) === "" ? null : formatDateTime(result.resolve_date),
     resolution_status: result.resolution_status,
     // review_date: '',
     is_resolved: result.is_resolved,
@@ -123,8 +122,8 @@ const ViewEdit = () => {
   if (allUsers.length !== 0) {
     allUsers?.map((data) => {
       if (data.user_id === result.record_creator) {
-        formData.record_creator = data.first_name + " " + data.last_name;
-        formData.record_owner = data.first_name + " " + data.last_name;
+        recordCreatorName = data.first_name + " " + data.last_name;
+        recordOwnerName = data.first_name + " " + data.last_name;
       }
     });
   }
@@ -201,7 +200,7 @@ const ViewEdit = () => {
     fetchData();
   }, [token]);
 
-  const isUserAllowedToEdit = users.first_name + " " + users.last_name === formData.record_owner;
+  const isUserAllowedToEdit = users.first_name + " " + users.last_name === recordCreatorName;
 
   const handleSubmit = async () => {
     if (!isUserAllowedToEdit) {
@@ -211,9 +210,7 @@ const ViewEdit = () => {
     try {
       const recordId = result.record_id; // Assume you have record id in the result object
       const payload = {
-        ...formData,
-        record_creator: record_creator_id,
-        record_owner: record_creator_id,
+        ...formData
       };
       const config = {
         headers: {
@@ -287,11 +284,11 @@ const ViewEdit = () => {
           </div>
           <div>
             <u>Record creator:</u>
-            <input type="text" value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")} placeholder="" />
+            <input type="text" value={recordCreatorName} readOnly />
           </div>
           <div>
             <u>Record owner:</u>
-            <input type="text" value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")} placeholder="" />
+            <input type="text" value={recordOwnerName} readOnly />
           </div>
           <div>
             <u>Technical team:</u>
@@ -383,23 +380,23 @@ const ViewEdit = () => {
           <div className="inpbox">
             <div>
               <u>Record creator:</u>
-              <input type="text" value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")} placeholder="" />
+              <input type="text" value={formData.record_creator} readOnly />
             </div>
             <div>
               <u>Record owner contact:</u>
-              <input type="text" value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")} placeholder="" />
+              <input type="text" value={formData.record_owner} readOnly />
             </div>
             <div>
               <u>Technical team lead:</u>
-              <input type="text" value={formData.team_lead} onChange={(e) => handleInputChange(e, "team_lead")} placeholder="" />
+              <input type="text" value={formData.team_lead} readOnly />
             </div>
             <div>
               <u>Report creation time:</u>
               <input
                 type="datetime-local"
                 value={formData.record_creation_time}
-                onChange={(e) => handleInputChange(e, "record_creation_time")}
                 placeholder=""
+                readOnly
               />
             </div>
             <div>
@@ -408,11 +405,21 @@ const ViewEdit = () => {
             </div>
             <div>
               <u>Due date:</u>
-              <input type="text" value={formData.due_date} onChange={(e) => handleInputChange(e, "due_date")} placeholder="" />
+              <input
+                type="datetime-local"
+                value={formData.due_date}
+                onChange={(e) => handleInputChange(e, "due_date")}
+                placeholder=""
+              />
             </div>
             <div>
               <u>Time resolved:</u>
-              <input type="text" value={formData.resolve_date} onChange={(e) => handleInputChange(e, "resolve_date")} placeholder="unresolved" />
+              <input
+                  type="datetime-local"
+                  value={formData.resolve_date || ""}
+                  onChange={(e) => handleInputChange(e, "resolve_date")}
+                  placeholder=""
+              />
             </div>
           </div>
         )}
