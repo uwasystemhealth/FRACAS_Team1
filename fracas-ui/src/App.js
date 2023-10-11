@@ -10,6 +10,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Report from "./pages/Report";
 import SearchReports from "./pages/SearchReports";
 import ViewEdit from "./pages/ViewEdit";
+import ForgotPassword from "./pages/ForgotPassword";
 import { AuthProvider } from "./components/useAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/userdashboard" element={<ProtectedRoute element={<UserDashboard />} />} />
           <Route path="/admindashboard" element={<ProtectedRoute element={<AdminDashboard />} />} />
           <Route path="/report" element={<ProtectedRoute element={<Report />} />} />

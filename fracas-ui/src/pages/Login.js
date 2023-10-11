@@ -99,7 +99,7 @@ const Login = () => {
             />
           </div>
           <button onClick={handleLogin}>Log in</button>
-          <span className="s1">forgot password?</span>
+          <span className="s1"><Link to="/forgotpassword">Forgot password?</Link></span>
           <span className="s2"><Link to="/signup">Create account</Link></span>
         </div>
       </div>
