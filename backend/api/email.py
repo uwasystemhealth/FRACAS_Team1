@@ -7,6 +7,7 @@ class BaseEmail(email.BaseEmailMessage):
         context["site_name"] = "UWAM FRACAS"
         context["domain"] = "localhost:3000"
         context["image_url"] = "static/images/UWAM-Logo-2023-(colour).png"
+        context["backend"] = "127.0.0.1:8000"
         return context
 
 
