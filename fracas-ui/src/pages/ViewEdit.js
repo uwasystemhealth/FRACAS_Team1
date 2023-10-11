@@ -261,7 +261,16 @@ const ViewEdit = () => {
         <h4>UWA MOTORSPORT FRACAS REPORT</h4>
         <ul className="list w">
           {Object.keys(detailsMapping)?.map((iconId, index) => (
-            <li key={index}>
+            <li key={index}
+            style={{
+              backgroundColor: formData.is_resolved && iconId === 'img1'
+                ? 'rgb(153, 248, 150)'
+                : formData.is_record_validated && iconId === 'img2'
+                ? 'rgb(153, 248, 150)'
+                : formData.is_analysis_validated && iconId === 'img3'
+                ? 'rgb(153, 248, 150)'
+                : 'rgb(253, 125, 125',
+            }}>
               <span onClick={() => handleStatusClick(iconId)}>{["RS", "RVS", "AVS", "CVS"][index]}</span>
               <img src={`/images/info.png`} alt="" id={iconId}  onClick={() => handleIconClick(iconId)}/>
             </li>
