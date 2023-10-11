@@ -12,8 +12,8 @@ const Report = () => {
 
   const detailsMapping = {
     img1: {
-      name: "Review Status",
-      statuses: ["Red for Not Reviewed, ", "Green for Reviwed"],
+      name: "Resolve Status",
+      statuses: ["Red for Not Resolved, ", "Green for Resolved"],
     },
     img2: {
       name: "Record Validation Status",
