@@ -16,7 +16,7 @@ const ViewEdit = () => {
 
   const detailsMapping = {
     img1: {
-      name: "Resolve Status",
+      name: "Record Resolved Status",
       statuses: ["Red for Not Resolved, ", "Green for Resolved"],
     },
     img2: {
@@ -28,7 +28,7 @@ const ViewEdit = () => {
       statuses: ["Red for Unvalidated, ", "Green for Validated"],
     },
     img4: {
-      name: "Correction Validation",
+      name: "Correction Validation Status",
       statuses: ["Red for Unvalidated, ", "Green for Validated"],
     },
   };
@@ -248,6 +248,11 @@ const ViewEdit = () => {
     }
   };
 
+  const getUserNameById = (userId) => {
+    const user = allUsers.find(u => u.user_id === parseInt(userId));
+    return user ? `${user.first_name} ${user.last_name}` : '';
+  }
+
   return (
     <div className="view-container">
       <div className="mainbox w">
@@ -269,25 +274,27 @@ const ViewEdit = () => {
                 ? 'rgb(153, 248, 150)'
                 : formData.is_analysis_validated && iconId === 'img3'
                 ? 'rgb(153, 248, 150)'
-                : 'rgb(253, 125, 125',
+                : formData.is_correction_validated && iconId === 'img4'
+                ? 'rgb(153, 248, 150)'
+                : 'rgb(253, 125, 125)',
             }}>
-              <span onClick={() => handleStatusClick(iconId)}>{["RS", "RVS", "AVS", "CVS"][index]}</span>
+              <span onClick={() => handleStatusClick(iconId)}>{["RRS", "RVS", "AVS", "CVS"][index]}</span>
               <img src={`/images/info.png`} alt="" id={iconId}  onClick={() => handleIconClick(iconId)}/>
             </li>
           ))}
         </ul>
         {showDetails && (
         <div className="details">
-          <h4>info</h4>
+          <h4>INFO</h4>
           <span className="x" onClick={() => setShowDetails(false)}>
             [x]
           </span>
           <div>
-            <span>wholeName: </span>
+            <span>Full Name: </span>
             <span style={{ color: "rgb(0, 0, 0)" }}>{detailInfo.name}</span>
           </div>
           <div>
-            <span>status: </span>
+            <span>Status: </span>
             {detailInfo.statuses?.map((status, index) => (
               <span key={index} style={{ color: "rgb(0, 0, 0)" }}>
                 {status}
@@ -399,11 +406,11 @@ const ViewEdit = () => {
           <div className="inpbox">
             <div>
               <u>Record creator:</u>
-              <input type="text" value={formData.record_creator} readOnly />
+              <input type="text" value={getUserNameById(formData.record_creator)} readOnly />
             </div>
             <div>
               <u>Record owner contact:</u>
-              <input type="text" value={formData.record_owner} readOnly />
+              <input type="text" value={getUserNameById(formData.record_owner)} readOnly />
             </div>
             <div>
               <u>Technical team lead:</u>
