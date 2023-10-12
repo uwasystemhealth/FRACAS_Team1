@@ -181,13 +181,9 @@ const ViewEdit = () => {
     fetchData();
 }, []);
 
-  const isUserAllowedToEdit = users.first_name + " " + users.last_name === recordCreatorName;
+  //const isUserAllowedToEdit = users.first_name + " " + users.last_name === recordCreatorName;
 
   const handleSubmit = async () => {
-    if (!isUserAllowedToEdit) {
-      alert("You do not have permission to edit this record.");
-      return;
-    }
     try {
       const response = await api.updateRecord(result.record_id, formData);
       if (response.status === 200) {
