@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { TailSpin } from "react-loader-spinner";
-import axios from "axios";
+import * as api from "../api";
 import "../styles/Activation.scss";
 
 const ActivateAccount = () => {
@@ -9,21 +9,13 @@ const ActivateAccount = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .post("http://127.0.0.1:8000/auth/users/activation/", {
-        uid: uid,
-        token: token,
-      })
+    api.activateAccount(uid, token)  // Use the function from api.js
       .then(() => {
         navigate("/login");
         alert("Activation successful!");
       })
-      .catch((err) => {
-        if (err.response) {
-          alert("Failed to activate account: " + err.response.data);
-        } else {
-          alert("Failed to activate account: " + err.message);
-        }
+      .catch((error) => {
+        alert("Failed to activate account: " + error.message);
       });
   }, [navigate, token, uid]);
 
