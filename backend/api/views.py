@@ -294,12 +294,27 @@ class CommentViewSet(
     lookup_field = "comment_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = ["comment_text", "commenter__user_id"]
-    filterset_fields = ["comment_text", "commenter__user_id"]
+    filterset_fields = ["comment_text", "commenter__user_id", "record_id__record_id"]
     ordering_fields = ["creation_time"]
 
-    @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
-    def record(self, request, comment_id=None):
-        """additional API route to return comment's record"""
-        comment = self.get_object()
-        serializer = RecordSerializer(comment.record_id, context={"request": request})
+    @action(detail=False, methods=["get"], permission_classes=[ReadOnlyPermission])
+    def record(self, request, record_id=None):
+        """additional API route to all comment based on record_id"""
+        comments = Comment.objects.filter(
+            record_id__record_id=request.query_params["record_id"]
+        ).order_by("creation_time")
+        serializer = CommentSerializer(
+            comments, many=True, context={"request": request}
+        )
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def user(self, request, user_id=None):
+        """additional API route to all comment based on user_id"""
+        comments = Comment.objects.filter(
+            commenter__user_id=request.query_params["user_id"]
+        ).order_by("creation_time")
+        serializer = CommentSerializer(
+            comments, many=True, context={"request": request}
+        )
         return Response(status=status.HTTP_200_OK, data=serializer.data)

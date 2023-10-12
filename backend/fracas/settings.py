@@ -35,7 +35,7 @@ DEBUG = True
 # DEBUG = os.getenv("DJANGO_DEBUG", False)
 
 
-ALLOWED_HOSTS = ["localhost:300", "1.0.0.127.in-addr.arpa", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost:3000", "1.0.0.127.in-addr.arpa", "127.0.0.1"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
