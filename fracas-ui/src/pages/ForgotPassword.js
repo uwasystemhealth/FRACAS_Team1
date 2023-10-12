@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { TailSpin } from "react-loader-spinner";
 import * as api from "../api";
 import "../styles/ForgotPassword.scss";
 
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    setIsLoading(true);
     if (!email) {
         alert('Please enter your email.');
+        setIsLoading(false);
         return;
     }
 
@@ -24,7 +28,9 @@ const ForgotPassword = () => {
       console.error("Error while sending reset email:", error);
       alert("An error occurred. Please try again.");
     }
+    setIsLoading(false);
   };
+
   return (
     <div className="fp-container">
       <div className="top-img">
@@ -45,9 +51,24 @@ const ForgotPassword = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <button type="submit">
-              Submit
-            </button>
+            {isLoading ? (
+              <div className="spinner-container">
+                <TailSpin
+                  height="80"
+                  width="80"
+                  color="#501acf"
+                  ariaLabel="tail-spin-loading"
+                  radius="1"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  visible={true}
+                />
+              </div>
+            ) : (
+              <button type="submit" disabled={isLoading}>
+                Submit
+              </button>
+            )}
           </form>
           <div className="create">
             Don't have an account?{" "}

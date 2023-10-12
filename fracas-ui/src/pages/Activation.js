@@ -15,7 +15,12 @@ const ActivateAccount = () => {
         alert("Activation successful!");
       })
       .catch((error) => {
-        alert("Failed to activate account: " + error.message);
+        if (error.message.includes("403")) {
+          alert("Account already activated.");
+        } else {
+          alert("Failed to activate account: " + error.message);
+        }
+        navigate("/login");
       });
   }, [navigate, token, uid]);
 

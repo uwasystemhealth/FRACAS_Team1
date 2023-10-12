@@ -105,7 +105,7 @@ export const logoutUser = async (tokenOverride = null) => {
 
 export const resetPasswordEmail = async (email) => {
     try {
-        const response = await axios.post(`${BASE_URL_NEW}/auth/users/reset_email/`, { email }, {
+        const response = await axios.post(`${BASE_URL_NEW}/auth/users/reset_password/`, { email }, {
             headers: {
                 "Content-Type": "application/json",
             }
@@ -127,9 +127,11 @@ export const activateAccount = async (uid, token) => {
             uid,
             token,
         });
-        
-        if (response.status !== 200) {
-            throw new Error(response.data);
+        if (response.status === 403) {
+            throw new Error("Already activated.");
+        }
+        if (response.status !== 204) {
+            throw new Error(`Request failed with status code ${response.status}`);
         }
         
         return response.data;
