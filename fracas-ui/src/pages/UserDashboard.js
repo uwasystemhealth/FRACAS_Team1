@@ -16,16 +16,23 @@ const UserDashboard = () => {
     }
 
     const auth = useAuth();
-    const handleLogout = async () => {
+    const handleLogout = async (e) => {
+        e.preventDefault();
         try {
-            await api.logoutUser();
-            auth.signout();
-            navigate('/');  // Navigate to the root upon successful logout.
+          const token = localStorage.getItem("token");
+          const response = await api.logoutUser(token)
+          localStorage.removeItem("is_admin"); // Remove the is_admin from localStorage
+          localStorage.removeItem("token"); // Remove the token from localStorage
+          if (response.message === "Logged out successfully") {
+            navigate("/"); // Navigate to the root upon successful logout.
+          } else {
+            const data = await response.json();
+            alert(data.message || "Error logging out. Please try again.");
+          }
         } catch (error) {
-            console.error("Error during logout:", error);
-            alert("An error occurred while logging out. Please try again.");
+          alert("An error occurred while logging out. Please try again.");
         }
-    };
+      };
 
     return (
         <div>
