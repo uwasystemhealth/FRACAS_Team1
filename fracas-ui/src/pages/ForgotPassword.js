@@ -14,7 +14,7 @@ const ForgotPassword = () => {
         return;
       }
     try {
-      const response = fetch("http://127.0.0.1:8000/auth/users/reset_email/", {
+      const response = fetch("http://127.0.0.1:8000/auth/users/reset_password/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
