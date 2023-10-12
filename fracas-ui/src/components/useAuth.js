@@ -12,8 +12,11 @@ function useProvideAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
   const authenticate = (token) => {
-    localStorage.setItem('token', token);
-    setIsAuthenticated(true);
+    return new Promise((resolve) => {
+      localStorage.setItem('token', token);
+      setIsAuthenticated(true);
+      resolve();
+    });
   };
 
   const signout = () => {

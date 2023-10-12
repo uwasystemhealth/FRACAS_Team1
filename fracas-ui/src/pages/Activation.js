@@ -1,38 +1,23 @@
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
+import * as api from "../api";
 import "../styles/Activation.scss";
 
 const ActivateAccount = () => {
   const { uid, token } = useParams();
   const navigate = useNavigate();
-  
-    const activateAccount = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/auth/users/activation/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ uid: uid, token: token }),
-        });
-  
-        if (!response.ok) {
-          if (response.status === 403) {
-            alert("Account already activated");
-          } else {
-            throw new Error("Failed to activate account");
-          }
-        } else {
-          alert("Activation successful!");
-        }
+
+  useEffect(() => {
+    api.activateAccount(uid, token)  // Use the function from api.js
+      .then(() => {
         navigate("/login");
-      } catch (err) {
-        alert("Failed to activate account: " + err.message);
-      }
-    };
-  
-    activateAccount();
-  
+        alert("Activation successful!");
+      })
+      .catch((error) => {
+        alert("Failed to activate account: " + error.message);
+      });
+  }, [navigate, token, uid]);
 
   return (
     <div style={{ marginBottom: "150px" }}>
