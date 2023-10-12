@@ -445,7 +445,7 @@ const ViewEdit = () => {
         <div className="btnbox">
           <div className="botbtn">
             <div className="right" onClick={handleSubmit}>
-              Submit
+              Update
             </div>
           </div>
         </div>

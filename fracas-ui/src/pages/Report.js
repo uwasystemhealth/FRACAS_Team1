@@ -361,7 +361,9 @@ const Report = () => {
           </div>
           <div>
             <u>Failure time:</u>
-            <input type="datetime-local" value={formData.failure_time} onChange={(e) => handleInputChange(e, "failure_time")} placeholder="" />
+
+            <input type="datetime-local" value={formData.failure_time} onChange={(e) => handleInputChange(e, "failure_time")} />
+
           </div>
           <div>
             <u>Failure description:</u>
@@ -393,11 +395,11 @@ const Report = () => {
           </div>
           <div>
             <u>Comments:</u>
-            <input type="text" placeholder="" style={{ height: "80px" }} />
+            <input type="text" placeholder="Add comments after you've submitted a report" readOnly/>
           </div>
         </div>
         <div className="shoubox">
-          <h4>Addtional Data Folder</h4>
+          <h4>Additional Data Folder</h4>
           <span onClick={() => setShowAdditionalData(!showAdditionalData)}></span>
         </div>
         {showAdditionalData && (
@@ -413,15 +415,6 @@ const Report = () => {
             <div>
               <u>Technical team lead:</u>
               <input type="text" value={formData.team_lead} readOnly />
-            </div>
-            <div>
-              <u>Report creation time:</u>
-              <input
-                type="datetime-local"
-                value={getCurrentDate()}
-                placeholder=""
-                readOnly
-              />
             </div>
             <div>
               <u>Review status:</u>
