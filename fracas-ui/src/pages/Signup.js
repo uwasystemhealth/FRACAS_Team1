@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
-import axios from "axios";
+import * as api from "../api";
 import "../styles/Signup.scss";
 
 const SignUpPage = () => {
@@ -14,78 +14,57 @@ const SignUpPage = () => {
   const [teams, setTeams] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
     const fetchTeams = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/teams/?ordering=team_name",
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-        setTeams(response.data);
-      } catch (error) {
-        console.error("Error fetching teams:", error);
-      }
+        try {
+            const response = await api.getTeams();
+            setTeams(response.data);
+        } catch (error) {
+            console.error("Error fetching teams:", error);
+        }
     };
 
     fetchTeams();
-  }, [token]);
+}, []);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    if (
-      !firstName ||
-      !lastName ||
-      !team ||
-      !email ||
-      !password ||
-      !confirmPassword
-    ) {
-      alert("Please fill in the registration information");
-    } else if (password !== confirmPassword) {
-      alert("Passwords do not match");
-    } else {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/auth/users/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+
+    if (!firstName || !lastName || !team || !email || !password || !confirmPassword) {
+        alert("Please fill in the registration information");
+        setIsLoading(false);
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match");
+        setIsLoading(false);
+        return;
+    }
+
+    try {
+        const userDetails = {
             first_name: firstName,
             last_name: lastName,
             email: email,
             team: team,
             password: password,
             password2: confirmPassword,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (response.status === 201) {
-          alert(
-            "Registration successful! You'll receive an activation email shortly."
-          );
-          navigate("/login");
-        } else {
-          alert(data.error || "An error occurred while registering.");
-        }
-      } catch (error) {
+        };
+        
+        await api.registerUser(userDetails);
+        alert("Registration successful! You'll receive an activation email shortly.");
+        navigate("/login");
+    } catch (error) {
         console.error("Error while registering:", error);
         alert("An error occurred. Please try again.");
-      }
     }
+
     setIsLoading(false);
-  };
+};
 
   return (
     <div style={{ marginBottom: "150px" }}>
