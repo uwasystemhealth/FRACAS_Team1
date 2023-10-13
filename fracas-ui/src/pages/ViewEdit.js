@@ -82,6 +82,7 @@ const ViewEdit = () => {
     is_analysis_validated: result.is_analysis_validated,
     is_correction_validated: result.is_correction_validated,
     is_reviewed: result.is_reviewed,
+    record_editors: result.record_editors,
   });
 
   const [users, setUsers] = useState([]);
@@ -253,6 +254,30 @@ const ViewEdit = () => {
     return user ? `${user.first_name} ${user.last_name}` : '';
   }
 
+  // Selected editors
+  const [selectedUsers, setSelectedUsers] = useState([]); // to store selected users from the dropdown
+  // Initialise with existing data.
+  useEffect(() => {
+    const existedEditors = allUsers.filter(user => result.record_editors.includes(user.user_id));
+    setSelectedUsers(existedEditors);
+  }, []);
+  const addUserToEditors = (user) => {
+    if (!formData.record_editors.includes(user.user_id)) {
+      setSelectedUsers([...selectedUsers, user]);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        record_editors: [...prevFormData.record_editors, user.user_id],
+      }));
+    }
+  };
+  const removeUserFromEditors = (user) => {
+    setSelectedUsers(selectedUsers.filter((u) => u.user_id !== user.user_id));
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      record_editors: prevFormData.record_editors.filter((id) => id !== user.user_id),
+    }));
+  };
+
   return (
     <div className="view-container">
       <div className="mainbox w">
@@ -403,7 +428,7 @@ const ViewEdit = () => {
           <span onClick={() => setShowAdditionalData(!showAdditionalData)}></span>
         </div>
         {showAdditionalData && (
-          <div className="inpbox">
+          <div className="inpbox">[]
             <div>
               <u>Record creator:</u>
               <input type="text" value={getUserNameById(formData.record_creator)} readOnly />
@@ -447,6 +472,34 @@ const ViewEdit = () => {
                   placeholder=""
               />
             </div>
+            <div>
+              <u>Record editors:</u>
+              <select onChange={(e) => {
+                const selectedUserId = parseInt(e.target.value);
+                if (selectedUserId) {
+                  const selectedUser = allUsers.find((user) => user.user_id === selectedUserId);
+                  if (selectedUser) {
+                    addUserToEditors(selectedUser);
+                  }
+                }
+              }}>
+                <option value="" disabled>
+                  Select a user
+                </option>
+                {allUsers.map((user) => (
+                  <option key={user.user_id} value={user.user_id}>
+                    {user.first_name} {user.last_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedUsers.map((user) => (
+            <div key={user.user_id}>
+              <u>Editor: </u>
+              <input type="text" value={`${user.first_name} ${user.last_name}`} placeholder="" />
+              <button className="editorDelete" onClick={() => removeUserFromEditors(user)}>[X]</button>
+            </div>
+            ))}
           </div>
         )}
         <div className="btnbox">
