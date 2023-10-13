@@ -244,9 +244,13 @@ const Report = () => {
   
   // Selected editors
   const [selectedUsers, setSelectedUsers] = useState([]); // to store selected users from the dropdown
+  // Synchronise selected editors with formData
+  useEffect(() => {
+    const existedEditors = allUsers.filter(user => formData.record_editors.includes(user.user_id));
+    setSelectedUsers(existedEditors);
+  }, [allUsers, formData.record_editors]);
   const addUserToEditors = (user) => {
     if (!formData.record_editors.includes(user.user_id)) {
-      setSelectedUsers([...selectedUsers, user]);
       setFormData((prevFormData) => ({
         ...prevFormData,
         record_editors: [...prevFormData.record_editors, user.user_id],
@@ -254,7 +258,6 @@ const Report = () => {
     }
   };
   const removeUserFromEditors = (user) => {
-    setSelectedUsers(selectedUsers.filter((u) => u.user_id !== user.user_id));
     setFormData((prevFormData) => ({
       ...prevFormData,
       record_editors: prevFormData.record_editors.filter((id) => id !== user.user_id),
@@ -491,7 +494,7 @@ const Report = () => {
             </div>
             {selectedUsers.map((user) => (
             <div key={user.user_id}>
-              <u>Editor: </u>
+              <u>Selected Editor: </u>
               <input type="text" value={`${user.first_name} ${user.last_name}`} placeholder="" />
               <button className="editorDelete" onClick={() => removeUserFromEditors(user)}>[X]</button>
             </div>
