@@ -2,6 +2,7 @@ import React from 'react';
 import '../styles/UserDashboard.scss';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/useAuth';
+import * as api from "../api";
 
 const UserDashboard = () => {
     const navigate = useNavigate();
@@ -15,30 +16,23 @@ const UserDashboard = () => {
     }
 
     const auth = useAuth();
-    const handleLogout = async () => {
+    const handleLogout = async (e) => {
+        e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch("http://127.0.0.1:8000/api/logout", {
-                method: "POST", // Assuming it's a POST request. Adjust if necessary.
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Token ${token}`,
-                },
-            });
-    
-            if (response.status === 200) {
-                auth.signout();
-                navigate('/');  // Navigate to the root upon successful logout.
-            } else {
-                // Optionally, handle other status codes or display an error message.
-                const data = await response.json();
-                alert(data.message || "Error logging out. Please try again.");
-            }
+          const token = localStorage.getItem("token");
+          const response = await api.logoutUser(token)
+          localStorage.removeItem("is_admin"); // Remove the is_admin from localStorage
+          localStorage.removeItem("token"); // Remove the token from localStorage
+          if (response.message === "Logged out successfully") {
+            navigate("/"); // Navigate to the root upon successful logout.
+          } else {
+            const data = await response.json();
+            alert(data.message || "Error logging out. Please try again.");
+          }
         } catch (error) {
-            console.error("Error during logout:", error);
-            alert("An error occurred while logging out. Please try again.");
+          alert("An error occurred while logging out. Please try again.");
         }
-    };
+      };
 
     return (
         <div>

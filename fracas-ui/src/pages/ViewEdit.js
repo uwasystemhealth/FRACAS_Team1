@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import * as api from "../api";
 import '../styles/ViewEdit.scss';
 
 const ViewEdit = () => {
@@ -11,7 +11,6 @@ const ViewEdit = () => {
   const [detailInfo, setDetailInfo] = useState({});
   const [showAdditionalData, setShowAdditionalData] = useState(false);
   const [cars, setCars] = useState([]);
-  const token = localStorage.getItem("token");
   let recordCreatorName, recordOwnerName;
 
   const detailsMapping = {
@@ -34,10 +33,6 @@ const ViewEdit = () => {
   };
 
   const navigate = useNavigate();
-
-  function getCurrentDate() {
-    return new Date().toISOString().slice(0, 16);
-  }
 
   const handleIconClick = (iconId) => {
     setShowDetails(true);
@@ -96,39 +91,29 @@ const ViewEdit = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/users/me/", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        setUsers(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+        try {
+            const response = await api.getCurrentUser();
+            setUsers(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
     };
-
     fetchData();
-  }, [token]);
+  }, []);
 
   const [allUsers, setAllusers] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/users/", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        setAllusers(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+        try {
+            const response = await api.getAllUsers();
+            setAllusers(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
     };
-
     fetchData();
-  }, [token]);
+}, []);
 
   if (allUsers.length !== 0) {
     allUsers?.map((data) => {
@@ -143,39 +128,29 @@ const ViewEdit = () => {
 
   useEffect(() => {
     const fetchTeams = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/teams/", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        setTeams(response.data);
-      } catch (error) {
-        console.error("Error fetching teams:", error);
-      }
+        try {
+            const response = await api.getTeams();
+            setTeams(response.data);
+        } catch (error) {
+            console.error("Error fetching teams:", error);
+        }
     };
-
     fetchTeams();
-  }, [token]);
+}, []);
 
   const [subsystems, setSubsystems] = useState([]);
 
   useEffect(() => {
     const fetchSubsystems = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/subsystems/", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        setSubsystems(response.data);
-      } catch (error) {
-        console.error("Error fetching subsystems:", error);
-      }
+        try {
+            const response = await api.getSubsystems();
+            setSubsystems(response.data);
+        } catch (error) {
+            console.error("Error fetching subsystems:", error);
+        }
     };
-
     fetchSubsystems();
-  }, [token]);
+}, []);
 
   const filteredSubsystems = formData.team ? subsystems?.filter((subsystem) => subsystem.parent_team === formData.team) : [];
 
@@ -197,48 +172,27 @@ const ViewEdit = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/cars/", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        setCars(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+        try {
+            const response = await api.getCars();
+            setCars(response.data);
+        } catch (error) {
+            console.error(error);
+        }
     };
     fetchData();
-  }, [token]);
+}, []);
 
-  const isUserAllowedToEdit = users.first_name + " " + users.last_name === recordCreatorName;
+  //const isUserAllowedToEdit = users.first_name + " " + users.last_name === recordCreatorName;
 
   const handleSubmit = async () => {
-    if (!isUserAllowedToEdit) {
-      alert("You do not have permission to edit this record.");
-      return;
-    }
     try {
-      const recordId = result.record_id; // Assume you have record id in the result object
-      const payload = {
-        ...formData
-      };
-      const config = {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      };
-      const response = await axios.put(
-        `http://127.0.0.1:8000/api/records/${recordId}/`, // Template string used to insert recordId into URL
-        payload,
-        config
-      );
+      const response = await api.updateRecord(result.record_id, formData);
       if (response.status === 200) {
-        navigate("/userdashboard");
+          navigate("/userdashboard");
       } else {
-        throw new Error("Failed to update the record");
+          throw new Error("Failed to update the record");
       }
-    } catch (error) {
+  } catch (error) {
       if (error.response && error.response.status === 400) {
         console.error("Field value error:", error.response.data);
       } else if (error.response && error.response.status === 403) {
@@ -253,6 +207,7 @@ const ViewEdit = () => {
     const user = allUsers.find(u => u.user_id === parseInt(userId));
     return user ? `${user.first_name} ${user.last_name}` : '';
   }
+
 
   // Selected editors
   const [selectedUsers, setSelectedUsers] = useState([]); // to store selected users from the dropdown
@@ -503,7 +458,7 @@ const ViewEdit = () => {
         <div className="btnbox">
           <div className="botbtn">
             <div className="right" onClick={handleSubmit}>
-              Submit
+              Update
             </div>
           </div>
         </div>

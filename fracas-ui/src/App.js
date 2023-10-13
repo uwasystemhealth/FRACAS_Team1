@@ -5,15 +5,16 @@ import Footer from "./components/Footer";
 import HomePage from './pages/HomePage';
 import Login from "./pages/Login";
 import SignUpPage from "./pages/Signup";
+import Activation from "./pages/Activation";
 import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Report from "./pages/Report";
 import SearchReports from "./pages/SearchReports";
 import ViewEdit from "./pages/ViewEdit";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import { AuthProvider } from "./components/useAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Activation from "./pages/Activation";
 
 function App() {
   return (
@@ -24,8 +25,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/user_activation/:uid/:token" element={<Activation />} />
+          <Route path="/activate/:uid/:token" element={<Activation />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/password/reset/confirm/:uid/:token" element={<ResetPassword />} />
           <Route path="/userdashboard" element={<ProtectedRoute element={<UserDashboard />} />} />
           <Route path="/admindashboard" element={<ProtectedRoute element={<AdminDashboard />} />} />
           <Route path="/report" element={<ProtectedRoute element={<Report />} />} />

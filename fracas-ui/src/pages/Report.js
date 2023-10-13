@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import * as api from "../api";
 import "../styles/Report.scss";
 
 const Report = () => {
@@ -8,7 +8,6 @@ const Report = () => {
   const [detailInfo, setDetailInfo] = useState({});
   const [showAdditionalData, setShowAdditionalData] = useState(false);
   const [cars, setCars] = useState([]);
-  const token = localStorage.getItem("token");
 
   const detailsMapping = {
     img1: {
@@ -88,15 +87,7 @@ const Report = () => {
 
   const handleSubmit = async () => {
     try {
-      const payload = {
-        ...formData
-      };
-      const config = {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      };
-      const response = await axios.post("http://127.0.0.1:8000/api/records/", payload, config);
+      const response = await api.createRecord(formData);
       navigate("/userdashboard");
     } catch (error) {
       console.error("Error submitting data:", error);
@@ -106,14 +97,8 @@ const Report = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/users/me/", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
+        const response = await api.getCurrentUser();
         setUsers(response.data);
-  
-        // Check if the fetched user has a team, and set it
         if (response.data.team) {
           setFormData(prevState => ({
             ...prevState,
@@ -124,28 +109,22 @@ const Report = () => {
         console.error("Error fetching data:", error);
       }
     };
-  
     fetchData();
-  }, [token]);
+  }, []);
   
   const [allUsers, setAllusers] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/users/?ordering=last_name,first_name", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
+        const response = await api.getAllUsers();
         setAllusers(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
     fetchData();
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (users.first_name && users.last_name) {
@@ -162,38 +141,28 @@ const Report = () => {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/teams/?ordering=team_name", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
+        const response = await api.getTeams();
         setTeams(response.data);
       } catch (error) {
         console.error("Error fetching teams:", error);
       }
     };
-
     fetchTeams();
-  }, [token]);
+  }, []);
 
   const [subsystems, setSubsystems] = useState([]);
 
   useEffect(() => {
     const fetchSubsystems = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/subsystems/?ordering=subsystem_name", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
+        const response = await api.getSubsystems();
         setSubsystems(response.data);
       } catch (error) {
         console.error("Error fetching subsystems:", error);
       }
     };
-
     fetchSubsystems();
-  }, [token]);
+  }, []);
 
   const filteredSubsystems = formData.team ? subsystems?.filter((subsystem) => subsystem.parent_team === formData.team) : [];
 
@@ -216,14 +185,8 @@ const Report = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/cars/?ordering=-car_year", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
+        const response = await api.getCars();
         setCars(response.data);
-  
-        // Check if there are cars, and set the car_year to the latest one
         if (response.data.length > 0) {
           setFormData(prevState => ({
             ...prevState,
@@ -235,7 +198,7 @@ const Report = () => {
       }
     };
     fetchData();
-  }, [token]);
+  }, []);
 
   const getUserNameById = (userId) => {
     const user = allUsers.find(u => u.user_id === parseInt(userId));
@@ -387,7 +350,9 @@ const Report = () => {
           </div>
           <div>
             <u>Failure time:</u>
-            <input type="datetime-local" value={formData.failure_time} onChange={(e) => handleInputChange(e, "failure_time")} placeholder="" />
+
+            <input type="datetime-local" value={formData.failure_time} onChange={(e) => handleInputChange(e, "failure_time")} />
+
           </div>
           <div>
             <u>Failure description:</u>
@@ -419,11 +384,11 @@ const Report = () => {
           </div>
           <div>
             <u>Comments:</u>
-            <input type="text" placeholder="" style={{ height: "80px" }} />
+            <input type="text" placeholder="Add comments after you've submitted a report" readOnly/>
           </div>
         </div>
         <div className="shoubox">
-          <h4>Addtional Data Folder</h4>
+          <h4>Additional Data Folder</h4>
           <span onClick={() => setShowAdditionalData(!showAdditionalData)}></span>
         </div>
         {showAdditionalData && (
@@ -439,15 +404,6 @@ const Report = () => {
             <div>
               <u>Technical team lead:</u>
               <input type="text" value={formData.team_lead} readOnly />
-            </div>
-            <div>
-              <u>Report creation time:</u>
-              <input
-                type="datetime-local"
-                value={getCurrentDate()}
-                placeholder=""
-                readOnly
-              />
             </div>
             <div>
               <u>Review status:</u>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import * as api from "../api";
 
 const Header = () => {
   // Check if the user is authenticated.
@@ -17,16 +18,10 @@ const Header = () => {
     setShow(false);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://127.0.0.1:8000/api/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
-        },
-      });
+      const response = await api.logoutUser(token)
       localStorage.removeItem("is_admin"); // Remove the is_admin from localStorage
       localStorage.removeItem("token"); // Remove the token from localStorage
-      if (response.status === 200) {
+      if (response.message === "Logged out successfully") {
         navigate("/"); // Navigate to the root upon successful logout.
       } else {
         const data = await response.json();
@@ -51,6 +46,8 @@ const Header = () => {
       window.removeEventListener("resize", recalc, false);
     };
   }, []);
+
+  console.log(api.BASE_URL_NEW)
 
   return (
     <div className="topnav">
@@ -95,7 +92,7 @@ const Header = () => {
               {isAdmin && (
                 <>
                   <li>
-                    <a href="http://127.0.0.1:8000/admin/">Admin</a>
+                    <a href={`${api.BASE_URL_NEW}/admin`}>Admin</a>
                   </li>
                 </>
               )}

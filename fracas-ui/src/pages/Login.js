@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/useAuth';
+import * as api from "../api"
 import '../styles/Login.scss';
 
 const Login = () => {
@@ -13,56 +14,31 @@ const Login = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                username: email,
-                password: password,
-            }),
+        const loginResponse = await api.loginUser({
+            username: email,
+            password: password
         });
 
-        if (response.status === 200) {
-            // If the response status code is 200, navigate to the dashboard
-            const data = await response.json();
-            auth.authenticate(data.token);
+        if (loginResponse && loginResponse.token) {
+            const token = loginResponse.token;
+            auth.authenticate(token);
             
-            // Determine admin privilege
-            const token = localStorage.getItem('token')
-            const identityResponse = await fetch("http://127.0.0.1:8000/api/users/me/", {
-              method: "GET",
-              headers: {
-                  'Authorization': `Token ${token}`
-              }
-            });
-
-            if (identityResponse.status === 200) {
-              const identityData = await identityResponse.json(); // Wait for the JSON data
-              if (identityData.is_admin) {
+            const identityData = await api.getCurrentUser(token);
+            if (identityData.data.is_admin) {
                 localStorage.setItem('is_admin', true);
                 navigate('/admindashboard');
-              } else {
+            } else {
                 localStorage.setItem('is_admin', false);
                 navigate('/userdashboard');
-              }
-            } else {
-              // Handle error cases if needed
-              console.error("Error getting user identity:", identityResponse.status);
-              // ...
             }
         } else {
-            // Optionally, you can handle other status codes or get more detail from the response
-            const data = await response.json();
-            alert(data.message || "Incorrect email or password.");
+            alert("Incorrect email or password.");
         }
     } catch (error) {
         console.error("Error during login:", error);
         alert("An error occurred. Please try again.");
     }
 };
-
 
   return (
     <div style={{ marginBottom: '150px' }}>

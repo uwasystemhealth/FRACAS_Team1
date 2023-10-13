@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import '../styles/SearchReports.scss';
+import * as api from "../api";
 import { useNavigate } from 'react-router-dom';
 
 const SearchReports = () => {
@@ -15,123 +15,82 @@ const SearchReports = () => {
         previous: null, // URL for the previous page
     });
     const [hasSearched, setHasSearched] = useState(false);
-    const token = localStorage.getItem('token');
     const navigate = useNavigate();
 
     const handleViewClick = (result) => {
         navigate('/view', { state: { result } });
       };
 
-    useEffect(() => {
+      useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const teamResponse = await axios.get("http://127.0.0.1:8000/api/teams/", {
-                    headers: {
-                        'Authorization': `Token ${token}`
-                    }
-                });
+                const teamResponse = await api.getTeams();
                 setTeams(teamResponse.data);
-                const subsystemResponse = await axios.get("http://127.0.0.1:8000/api/subsystems/", {
-                    headers: {
-                        'Authorization': `Token ${token}`
-                    }
-                });
+
+                const subsystemResponse = await api.getSubsystems();
                 setSubsystems(subsystemResponse.data);
-                const carYearResponse = await axios.get("http://127.0.0.1:8000/api/cars/", {
-                    headers: {
-                        'Authorization': `Token ${token}`
-                    }
-                });
+
+                const carYearResponse = await api.getCars();
                 setCarYears(carYearResponse.data);
             } catch (error) {
                 console.error(error);
             }
         };
         fetchInitialData();
-    }, [token]);
+    }, []);
 
     useEffect(() => {
         const fetchInitialRecords = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/api/records/", {
-                    headers: {
-                        'Authorization': `Token ${token}`
-                    }
-                });
+                const response = await api.getRecords();
                 setResults(response.data.results);
             } catch (error) {
                 console.error("Error fetching initial records:", error);
             }
         };
-    
         fetchInitialRecords();
-    }, [token]);
+    }, []);
     
 
     const handleSearch = async () => {
         try {
-            let url = `http://127.0.0.1:8000/api/records/?search=${searchQuery}`;
-            if (formData.team) url += `&team__team_name=${formData.team}`;
-            if (formData.subsystem) url += `&subsystem__subsystem_name=${formData.subsystem}`;
-            if (formData.carYear) url += `&car_year__car_year=${formData.carYear}`;
-
-            const response = await axios.get(url, {
-                headers: {
-                    'Authorization': `Token ${token}`
-                }
-            });
+            const response = await api.searchRecords(searchQuery, formData);
             setResults(response.data.results);
             setPagination({
-                next: response.data.next,
-                previous: response.data.previous,
+                next: response.next,
+                previous: response.previous,
             });
         } catch (error) {
-            console.error(error);
+            console.error("Error searching records:", error);
         }
         setHasSearched(true);
     };
 
-    // Fetch results for previous page
     const handlePreviousPage = async () => {
+        if (!pagination.previous) return;
         try {
-            if (pagination.previous){
-                let url = pagination.previous
-                const response = await axios.get(url, {
-                    headers: {
-                        'Authorization': `Token ${token}`
-                    }
-                });
-                setResults(response.data.results);
-                setPagination({
-                    next: response.data.next,
-                    previous: response.data.previous,
-                });
-            }
-            
+            const response = await api.getPageByURL(pagination.previous);
+            setResults(response.results);
+            setPagination({
+                next: response.next,
+                previous: response.previous,
+            });
         } catch (error) {
-            console.error(error);
+            console.error("Error fetching previous page:", error);
         }
     };
-
-    // Fetch results for next page
+    
     const handleNextPage = async () => {
+        if (!pagination.next) return;
         try {
-            if (pagination.next){
-                let url = pagination.next
-                const response = await axios.get(url, {
-                    headers: {
-                        'Authorization': `Token ${token}`
-                    }
-                });
-                setResults(response.data.results);
-                setPagination({
-                    next: response.data.next,
-                    previous: response.data.previous,
-                });
-            }
-            
+            const response = await api.getPageByURL(pagination.next);
+            setResults(response.results);
+            setPagination({
+                next: response.next,
+                previous: response.previous,
+            });
         } catch (error) {
-            console.error(error);
+            console.error("Error fetching next page:", error);
         }
     };
 
@@ -206,7 +165,7 @@ const SearchReports = () => {
                     </button>
                     ))}
                 </div>
-                {hasSearched && results.length === 0 && (
+                {hasSearched && (results?.length || 0) === 0 && (
                     <div className='not-found'>
                         <p>No results found</p>
                     </div>
