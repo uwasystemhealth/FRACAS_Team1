@@ -245,11 +245,13 @@ const Report = () => {
   // Selected editors
   const [selectedUsers, setSelectedUsers] = useState([]); // to store selected users from the dropdown
   const addUserToEditors = (user) => {
-    setSelectedUsers([...selectedUsers, user]);
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      record_editors: [...prevFormData.record_editors, user.user_id],
-    }));
+    if (!formData.record_editors.includes(user.user_id)) {
+      setSelectedUsers([...selectedUsers, user]);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        record_editors: [...prevFormData.record_editors, user.user_id],
+      }));
+    }
   };
   const removeUserFromEditors = (user) => {
     setSelectedUsers(selectedUsers.filter((u) => u.user_id !== user.user_id));
@@ -468,7 +470,15 @@ const Report = () => {
             </div>
             <div>
               <u>Record editors:</u>
-              <select onChange={(e) => addUserToEditors(allUsers.find((user) => user.user_id === parseInt(e.target.value)))}>
+              <select onChange={(e) => {
+                const selectedUserId = parseInt(e.target.value);
+                if (selectedUserId) {
+                  const selectedUser = allUsers.find((user) => user.user_id === selectedUserId);
+                  if (selectedUser) {
+                    addUserToEditors(selectedUser);
+                  }
+                }
+              }}>
                 <option value="" disabled>
                   Select a user
                 </option>
@@ -479,15 +489,13 @@ const Report = () => {
                 ))}
               </select>
             </div>
-            <div>
-                {selectedUsers.map((user) => (
-                  <div key={user.user_id}>
-                    <u>Editor: </u>
-                    <input type="text" value={`${user.first_name} ${user.last_name}`} placeholder="" />
-                    <button className="editorDelete" onClick={() => removeUserFromEditors(user)}>[X]</button>
-                  </div>
-                ))}
+            {selectedUsers.map((user) => (
+            <div key={user.user_id}>
+              <u>Editor: </u>
+              <input type="text" value={`${user.first_name} ${user.last_name}`} placeholder="" />
+              <button className="editorDelete" onClick={() => removeUserFromEditors(user)}>[X]</button>
             </div>
+            ))}
           </div>
         )}
         <div className="btnbox">
