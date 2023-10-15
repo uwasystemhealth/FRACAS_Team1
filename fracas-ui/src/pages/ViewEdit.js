@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import CommentsModal from "../components/CommentsModal";
 import * as api from "../api";
 import '../styles/ViewEdit.scss';
 
@@ -11,6 +12,8 @@ const ViewEdit = () => {
   const [detailInfo, setDetailInfo] = useState({});
   const [showAdditionalData, setShowAdditionalData] = useState(false);
   const [cars, setCars] = useState([]);
+  const [comments, setComments] = useState(['']);
+  const [isModalOpen, setModalOpen] = useState(false);
   let recordCreatorName, recordOwnerName;
 
   const detailsMapping = {
@@ -205,6 +208,10 @@ const ViewEdit = () => {
   const getUserNameById = (userId) => {
     const user = allUsers.find(u => u.user_id === parseInt(userId));
     return user ? `${user.first_name} ${user.last_name}` : '';
+  }
+
+  const addNewComment = () => {
+    setComments(prevComments => [...prevComments, '']); // add a new empty comment to the array
   }
 
   return (
@@ -403,11 +410,11 @@ const ViewEdit = () => {
         )}
         <div className="btnbox">
           <div className="botbtn">
-            <div className="right" onClick={handleSubmit}>
-              Update
-            </div>
+            <button className="left" onClick={handleSubmit}>Update</button>
+            <button className="right" onClick={() => setModalOpen(true)}>Add a Comment</button>
           </div>
         </div>
+        <CommentsModal isOpen={isModalOpen} onClose={() => setModalOpen(false)}></CommentsModal>
       </div>
     </div>
   );
