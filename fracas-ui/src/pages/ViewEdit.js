@@ -12,6 +12,7 @@ const ViewEdit = () => {
   const [showAdditionalData, setShowAdditionalData] = useState(false);
   const [cars, setCars] = useState([]);
   let recordCreatorName, recordOwnerName;
+  const token = localStorage.getItem('token')
 
   const detailsMapping = {
     img1: {
@@ -91,7 +92,7 @@ const ViewEdit = () => {
   useEffect(() => {
     const fetchData = async () => {
         try {
-            const response = await api.getCurrentUser();
+            const response = await api.getCurrentUser(token);
             setUsers(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -105,14 +106,14 @@ const ViewEdit = () => {
   useEffect(() => {
     const fetchData = async () => {
         try {
-            const response = await api.getAllUsers();
+            const response = await api.getAllUsers(token);
             setAllusers(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
     fetchData();
-}, []);
+}, [token]);
 
   if (allUsers.length !== 0) {
     allUsers?.map((data) => {
@@ -128,28 +129,28 @@ const ViewEdit = () => {
   useEffect(() => {
     const fetchTeams = async () => {
         try {
-            const response = await api.getTeams();
+            const response = await api.getTeams(token);
             setTeams(response.data);
         } catch (error) {
             console.error("Error fetching teams:", error);
         }
     };
     fetchTeams();
-}, []);
+}, [token]);
 
   const [subsystems, setSubsystems] = useState([]);
 
   useEffect(() => {
     const fetchSubsystems = async () => {
         try {
-            const response = await api.getSubsystems();
+            const response = await api.getSubsystems(token);
             setSubsystems(response.data);
         } catch (error) {
             console.error("Error fetching subsystems:", error);
         }
     };
     fetchSubsystems();
-}, []);
+}, [token]);
 
   const filteredSubsystems = formData.team ? subsystems?.filter((subsystem) => subsystem.parent_team === formData.team) : [];
 
@@ -172,20 +173,20 @@ const ViewEdit = () => {
   useEffect(() => {
     const fetchData = async () => {
         try {
-            const response = await api.getCars();
+            const response = await api.getCars(token);
             setCars(response.data);
         } catch (error) {
             console.error(error);
         }
     };
     fetchData();
-}, []);
+}, [token]);
 
   //const isUserAllowedToEdit = users.first_name + " " + users.last_name === recordCreatorName;
 
   const handleSubmit = async () => {
     try {
-      const response = await api.updateRecord(result.record_id, formData);
+      const response = await api.updateRecord(token, result.record_id, formData);
       if (response.status === 200) {
           navigate("/userdashboard");
       } else {

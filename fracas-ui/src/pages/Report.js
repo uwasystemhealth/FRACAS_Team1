@@ -8,6 +8,7 @@ const Report = () => {
   const [detailInfo, setDetailInfo] = useState({});
   const [showAdditionalData, setShowAdditionalData] = useState(false);
   const [cars, setCars] = useState([]);
+  const token = localStorage.getItem('token')
 
   const detailsMapping = {
     img1: {
@@ -86,7 +87,7 @@ const Report = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await api.createRecord(formData);
+      const response = await api.createRecord(token, formData);
       navigate("/userdashboard");
     } catch (error) {
       console.error("Error submitting data:", error);
@@ -96,7 +97,7 @@ const Report = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.getCurrentUser();
+        const response = await api.getCurrentUser(token);
         setUsers(response.data);
         if (response.data.team) {
           setFormData(prevState => ({
@@ -109,21 +110,21 @@ const Report = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [token]);
   
   const [allUsers, setAllusers] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.getAllUsers();
+        const response = await api.getAllUsers(token);
         setAllusers(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     fetchData();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (users.first_name && users.last_name) {
@@ -140,28 +141,28 @@ const Report = () => {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await api.getTeams();
+        const response = await api.getTeams(token);
         setTeams(response.data);
       } catch (error) {
         console.error("Error fetching teams:", error);
       }
     };
     fetchTeams();
-  }, []);
+  }, [token]);
 
   const [subsystems, setSubsystems] = useState([]);
 
   useEffect(() => {
     const fetchSubsystems = async () => {
       try {
-        const response = await api.getSubsystems();
+        const response = await api.getSubsystems(token);
         setSubsystems(response.data);
       } catch (error) {
         console.error("Error fetching subsystems:", error);
       }
     };
     fetchSubsystems();
-  }, []);
+  }, [token]);
 
   const filteredSubsystems = formData.team ? subsystems?.filter((subsystem) => subsystem.parent_team === formData.team) : [];
 
@@ -184,7 +185,7 @@ const Report = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.getCars();
+        const response = await api.getCars(token);
         setCars(response.data);
         if (response.data.length > 0) {
           setFormData(prevState => ({
@@ -197,7 +198,7 @@ const Report = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [token]);
 
   const getUserNameById = (userId) => {
     const user = allUsers.find(u => u.user_id === parseInt(userId));

@@ -16,6 +16,7 @@ const SearchReports = () => {
     });
     const [hasSearched, setHasSearched] = useState(false);
     const navigate = useNavigate();
+    const token = localStorage.getItem('token')
 
     const handleViewClick = (result) => {
         navigate('/view', { state: { result } });
@@ -24,37 +25,37 @@ const SearchReports = () => {
       useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const teamResponse = await api.getTeams();
+                const teamResponse = await api.getTeams(token);
                 setTeams(teamResponse.data);
 
-                const subsystemResponse = await api.getSubsystems();
+                const subsystemResponse = await api.getSubsystems(token);
                 setSubsystems(subsystemResponse.data);
 
-                const carYearResponse = await api.getCars();
+                const carYearResponse = await api.getCars(token);
                 setCarYears(carYearResponse.data);
             } catch (error) {
                 console.error(error);
             }
         };
         fetchInitialData();
-    }, []);
+    }, [token]);
 
     useEffect(() => {
         const fetchInitialRecords = async () => {
             try {
-                const response = await api.getRecords();
+                const response = await api.getRecords(token);
                 setResults(response.data.results);
             } catch (error) {
                 console.error("Error fetching initial records:", error);
             }
         };
         fetchInitialRecords();
-    }, []);
+    }, [token]);
     
 
     const handleSearch = async () => {
         try {
-            const response = await api.searchRecords(searchQuery, formData);
+            const response = await api.searchRecords(token, searchQuery, formData);
             setResults(response.data.results);
             setPagination({
                 next: response.next,
@@ -69,7 +70,7 @@ const SearchReports = () => {
     const handlePreviousPage = async () => {
         if (!pagination.previous) return;
         try {
-            const response = await api.getPageByURL(pagination.previous);
+            const response = await api.getPageByURL(token, pagination.previous);
             setResults(response.results);
             setPagination({
                 next: response.next,
@@ -83,7 +84,7 @@ const SearchReports = () => {
     const handleNextPage = async () => {
         if (!pagination.next) return;
         try {
-            const response = await api.getPageByURL(pagination.next);
+            const response = await api.getPageByURL(token, pagination.next);
             setResults(response.results);
             setPagination({
                 next: response.next,
