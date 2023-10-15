@@ -186,6 +186,20 @@
         margin-top: 16px;
         text-indent: 16px;
       }
+
+      .editorDelete  {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        position: relative;
+        right: 0;
+        background-color: red;
+        cursor: pointer;
+        padding: 5px;
+        color: white;
+        top: 25%;
+        height: 50%;
+      } 
     }
   }
 
@@ -276,6 +290,13 @@
             width: 100%;
           }
         }
+        .editorDelete  {
+          height: 100%;
+          top: 25%;
+          left: 50%;
+          width: 10%;
+          justify-content: center;
+        }  
       }
 
       .shoubox {
