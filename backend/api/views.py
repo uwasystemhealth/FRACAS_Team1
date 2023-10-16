@@ -272,7 +272,38 @@ class RecordViewSet(
             comments, many=True, context={"request": request}
         )
         return Response(status=status.HTTP_200_OK, data=serializer.data)
-
+    # Customised update(), overwrites UpdateModelMixin.update()
+    # Exclude fields that cannot be modified by non-staff
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        if not user.is_staff and not user.is_admin:
+            # For regular users, remove the fields they cannot update
+            fields_not_allowed_to_modify = ['is_record_validated', 'is_analysis_validated', 'is_correction_validated', 'is_reviewed']
+            for field_name in fields_not_allowed_to_modify:
+                if field_name in serializer.validated_data:
+                    del serializer.validated_data[field_name]
+        self.perform_update(serializer)
+        return Response(serializer.data)
+    
+    # Customised create(), overwrites CreateModelMixin.create()
+    # Exclude fields that cannot be modified by non-staff
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        if not user.is_staff and not user.is_admin:
+            # For regular users, remove the fields they cannot initialise
+            fields_not_allowed_to_modify = ['is_record_validated', 'is_analysis_validated', 'is_correction_validated', 'is_reviewed']
+            for field_name in fields_not_allowed_to_modify:
+                if field_name in serializer.validated_data:
+                    del serializer.validated_data[field_name]
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 # Comments Viewset
 # ------------------------------------------------------------------------------
