@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import * as api from "../api";
 import '../styles/Modal.scss'; 
 
-const CommentsModal = ({ isOpen, onClose, children }) => {
+const CommentsModal = ({ isOpen, onClose, record_id }) => {
+  console.log("id--->", record_id)
   const [comments, setComments] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [user, setUser] = useState(null); // Initialize user as null
@@ -41,7 +42,7 @@ const CommentsModal = ({ isOpen, onClose, children }) => {
             </button>
         </div>
         <div className='content'>
-          {children}
+          {}
           {comments.map((comment, index) => (
             <p key={index}>
               <strong>{comment.split(":")[0]}</strong>: {comment.split(":")[1].trim()}

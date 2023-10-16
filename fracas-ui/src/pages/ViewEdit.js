@@ -414,7 +414,7 @@ const ViewEdit = () => {
             <button className="right" onClick={() => setModalOpen(true)}>Add a Comment</button>
           </div>
         </div>
-        <CommentsModal isOpen={isModalOpen} onClose={() => setModalOpen(false)}></CommentsModal>
+        <CommentsModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} record_id={result.record_id}></CommentsModal>
       </div>
     </div>
   );
