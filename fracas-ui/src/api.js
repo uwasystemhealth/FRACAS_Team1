@@ -134,3 +134,11 @@ export const activateAccount = async (uid, token) => {
         throw error;
     }
 };
+
+export const getComments = (token, record_id) => {
+    return axios.get(`${BASE_URL}/comments/record/?record_id=${record_id}`, { headers: headers(token) });
+}
+
+export const addComment = (token, payload) => {
+    return axios.post(`${BASE_URL}/comments/`, payload, { headers: headers(token) });
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import CommentsModal from "../components/CommentsModal";
 import * as api from "../api";
 import '../styles/ViewEdit.scss';
 
@@ -11,6 +12,8 @@ const ViewEdit = () => {
   const [detailInfo, setDetailInfo] = useState({});
   const [showAdditionalData, setShowAdditionalData] = useState(false);
   const [cars, setCars] = useState([]);
+  const [comments, setComments] = useState(['']);
+  const [isModalOpen, setModalOpen] = useState(false);
   let recordCreatorName, recordOwnerName;
   const token = localStorage.getItem('token')
 
@@ -100,7 +103,7 @@ const ViewEdit = () => {
         }
     };
     fetchData();
-  }, []);
+  }, [token]);
 
   const [allUsers, setAllusers] = useState([]);
 
@@ -372,17 +375,17 @@ const ViewEdit = () => {
               style={{ height: "60px" }}
             />
           </div>
-          <div>
+          {/* <div>
             <u>Comments:</u>
             <input type="text" placeholder="" style={{ height: "80px" }} />
-          </div>
+          </div> */}
         </div>
         <div className="shoubox">
           <h4>Addtional Data Folder</h4>
           <span onClick={() => setShowAdditionalData(!showAdditionalData)}></span>
         </div>
         {showAdditionalData && (
-          <div className="inpbox">[]
+          <div className="inpbox">
             <div>
               <u>Record creator:</u>
               <input type="text" value={getUserNameById(formData.record_creator)} readOnly />
@@ -458,11 +461,11 @@ const ViewEdit = () => {
         )}
         <div className="btnbox">
           <div className="botbtn">
-            <div className="right" onClick={handleSubmit}>
-              Update
-            </div>
+            <button className="left" onClick={handleSubmit}>Update</button>
+            <button className="right" onClick={() => setModalOpen(true)}>Add a Comment</button>
           </div>
         </div>
+        <CommentsModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} record_id={result.record_id}></CommentsModal>
       </div>
     </div>
   );

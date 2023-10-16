@@ -151,7 +151,7 @@
     margin-top: 20px;
 
     div {
-      display: flex;
+      display: block;
       width: 90%;
       height: 80px;
       margin-left: 5%;
@@ -242,24 +242,37 @@
   .btnbox {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
 
     .botbtn {
       margin-bottom: 1%;
       cursor: pointer;
+      display: flex;
+      justify-content: space-evenly;
+      width: 100%;
 
-      div {
+      button {
         width: 228px;
         height: 100%;
         background-color: rgb(245, 211, 59);
         text-align: center;
         font-size: 18px;
         line-height: 70px;
+        border: none;
       }
     }
   }
 
-  
+  .comment-section {
+    position: relative; // ensure it's not positioned absolutely
+    margin-top: 10px !important;
+    margin-bottom: 10px !important; // added some margin to separate from the next element
+  }
+
+.comment-input-wrapper {
+  display: block;
+  width: 100%;
+}
 
   @media screen and (max-width: 920px) {
     .mainbox {
@@ -274,7 +287,7 @@
         div {
           width: 100%;
           margin: 40px auto;
-          display: grid;
+          display: block;
           grid-template-columns: repeat(1, 1fr);
 
           u {
@@ -300,21 +313,25 @@
       }
 
       .shoubox {
-        margin-top: 200px;
+        margin-top: 90px;
       }
 
       .btnbox {
         width: 100%;
+        display: flex;
+        justify-content: space-evenly;
 
         .botbtn {
           width: 100%;
           margin: 0%;
 
-          div {
-            width: 100%;
+          button {
+            width: 40%;
+            border: none;
           }
         }
       }
     }
   }
 }
+
