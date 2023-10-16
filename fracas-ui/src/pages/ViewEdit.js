@@ -103,7 +103,7 @@ const ViewEdit = () => {
         }
     };
     fetchData();
-  }, []);
+  }, [token]);
 
   const [allUsers, setAllusers] = useState([]);
 
@@ -375,17 +375,17 @@ const ViewEdit = () => {
               style={{ height: "60px" }}
             />
           </div>
-          <div>
+          {/* <div>
             <u>Comments:</u>
             <input type="text" placeholder="" style={{ height: "80px" }} />
-          </div>
+          </div> */}
         </div>
         <div className="shoubox">
           <h4>Addtional Data Folder</h4>
           <span onClick={() => setShowAdditionalData(!showAdditionalData)}></span>
         </div>
         {showAdditionalData && (
-          <div className="inpbox">[]
+          <div className="inpbox">
             <div>
               <u>Record creator:</u>
               <input type="text" value={getUserNameById(formData.record_creator)} readOnly />
