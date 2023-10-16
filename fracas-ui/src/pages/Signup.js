@@ -13,11 +13,12 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [teams, setTeams] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
     const fetchTeams = async () => {
         try {
-            const response = await api.getTeams();
+            const response = await api.getTeams(token);
             setTeams(response.data);
         } catch (error) {
             console.error("Error fetching teams:", error);

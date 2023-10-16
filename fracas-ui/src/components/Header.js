@@ -47,8 +47,6 @@ const Header = () => {
     };
   }, []);
 
-  console.log(api.BASE_URL_NEW)
-
   return (
     <div className="topnav">
       <header>
