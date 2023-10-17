@@ -34,6 +34,7 @@
         .content {
             height: 85%;
             width: 100%;
+            overflow: auto;
         }
 
         .input-box {
@@ -59,7 +60,7 @@
 @media screen and (max-width: 920px) {
     .modal-overlay {
         position: absolute;
-        top: 25%;
+        top: 63%;
         left: 7%;
         width: -webkit-fill-available !important;
         height: 50%;
