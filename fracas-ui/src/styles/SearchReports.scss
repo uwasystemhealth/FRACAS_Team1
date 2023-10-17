@@ -31,7 +31,7 @@ $grey-text: #696969;
   }
 
   .searchmainbox {
-    height: 600px;
+    min-height: 500px;
     box-shadow: 0px 0px 10px $secondary-color;
     margin-top: 40px;
     margin-bottom: 110px;
@@ -67,7 +67,8 @@ $grey-text: #696969;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 180px;
+      margin-top: 50px;
+      padding-bottom: 20px;
       // position: absolute;
       // left: 50%;
       // transform: translateX(-50%);
