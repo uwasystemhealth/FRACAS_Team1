@@ -65,6 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True, verbose_name="Email Verified")
     is_admin = models.BooleanField(default=False, verbose_name="Admin")
     is_staff = models.BooleanField(default=False, verbose_name="Team Lead")
+    is_superuser = models.BooleanField(default=False, verbose_name="Superuser")
 
     # customised user manager
     objects = CustomUserManager()
@@ -75,6 +76,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             name = self.user_id
         return str(name)
+
+    def save(self, *args, **kwargs):
+        """
+        Ensure that is_superuser is always the same as is_admin.
+        Ensure that all admins are also staff.
+        """
+        self.is_superuser = self.is_admin
+        if self.is_admin:
+            self.is_staff = True
+        super().save(*args, **kwargs)
 
 
 # team model
