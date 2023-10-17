@@ -49,6 +49,10 @@ const SearchReports = () => {
       try {
         const response = await api.getRecords(token);
         setResults(response.data.results);
+        setPagination({
+          next: response.next,
+          previous: response.previous,
+        });
       } catch (error) {
         console.error("Error fetching initial records:", error);
       }
@@ -222,7 +226,7 @@ const SearchReports = () => {
         </div>
         <div className="pagination-container">
           <button onClick={handlePreviousPage}>&lt; Previous</button>
-          <button onClick={handleNextPage}>Next &gt;</button>
+          <button onClick={handleNextPage}>&nbsp;&nbsp;  Next &nbsp; &gt;</button>
         </div>
       </div>
     </div>
