@@ -38,6 +38,7 @@ class UserAdmin(auth_admin.UserAdmin):
                     "email",
                     "is_staff",
                     "is_admin",
+                    "is_superuser",
                     "is_active",
                 )
             },
@@ -54,6 +55,7 @@ class UserAdmin(auth_admin.UserAdmin):
         "email",
         "is_staff",
         "is_admin",
+        "is_superuser",
         "is_active",
     ]
     search_fields = ["first_name", "last_name", "team", "email"]
@@ -74,6 +76,7 @@ class UserAdmin(auth_admin.UserAdmin):
                     "password2",
                     "is_staff",
                     "is_admin",
+                    "is_superuser",
                 ],
             },
         ),
