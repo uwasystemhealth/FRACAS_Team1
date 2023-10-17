@@ -82,7 +82,25 @@ const Header = () => {
                 <>
                   <li>
                     <Link to="/userdashboard" onClick={() => setShow(false)}>
-                      Dashboard
+                      Menu
+                    </Link>
+                  </li>
+                </>
+              )}
+              {isAuthenticated && (
+                <>
+                  <li>
+                    <Link to="/report" onClick={() => setShow(false)}>
+                      New Report
+                    </Link>
+                  </li>
+                </>
+              )}
+              {isAuthenticated && (
+                <>
+                  <li>
+                    <Link to="/search" onClick={() => setShow(false)}>
+                      Search & View Reports
                     </Link>
                   </li>
                 </>
