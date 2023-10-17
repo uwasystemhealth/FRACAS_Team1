@@ -83,6 +83,11 @@ const CommentsModal = ({ isOpen, onClose, record_id }) => {
             type='text' 
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                handleAddComment();
+              }
+            }}
           />
           <button onClick={handleAddComment}>
             Add
