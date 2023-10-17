@@ -35,8 +35,8 @@ export const createRecord = (token, formData) => {
     return axios.post(`${BASE_URL}/records/`, formData, { headers: headers(token) });
 }
 
-export const getRecords = (token) => {
-    return axios.get(`${BASE_URL}/records/`, { headers: headers(token) });
+export const getRecords = (token, ordering = "-record_creation_time") => {
+    return axios.get(`${BASE_URL}/records/?ordering=${ordering}`, { headers: headers(token) });
 }
 
 export const searchRecords = (token, query, formData) => {

@@ -137,10 +137,18 @@ $grey-text: #696969;
     }
   }
 
+  .results-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
   .results {
     display: grid;
     grid-template-columns: repeat(2, 1fr); // Two equal-width columns
     grid-gap: 5px; // Adjust the gap between items as needed
+    margin-top: 20px;
 
     button {
       background: transparent;
@@ -159,6 +167,7 @@ $grey-text: #696969;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
   }
 
   .usertopimg {
