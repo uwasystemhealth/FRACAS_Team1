@@ -50,8 +50,8 @@ const SearchReports = () => {
         const response = await api.getRecords(token);
         setResults(response.data.results);
         setPagination({
-          next: response.next,
-          previous: response.previous,
+          next: response.data.next,
+          previous: response.data.previous,
         });
       } catch (error) {
         console.error("Error fetching initial records:", error);
@@ -68,8 +68,8 @@ const SearchReports = () => {
       const response = await api.searchRecords(token, searchQuery, formData);
       setResults(response.data.results);
       setPagination({
-        next: response.next,
-        previous: response.previous,
+        next: response.data.next,
+        previous: response.data.previous,
       });
     } catch (error) {
       console.error("Error searching records:", error);
@@ -99,10 +99,10 @@ const SearchReports = () => {
     if (!pagination.previous) return;
     try {
       const response = await api.getPageByURL(token, pagination.previous);
-      setResults(response.results);
+      setResults(response.data.results);
       setPagination({
-        next: response.next,
-        previous: response.previous,
+        next: response.data.next,
+        previous: response.data.previous,
       });
     } catch (error) {
       console.error("Error fetching previous page:", error);
@@ -113,10 +113,10 @@ const SearchReports = () => {
     if (!pagination.next) return;
     try {
       const response = await api.getPageByURL(token, pagination.next);
-      setResults(response.results);
+      setResults(response.data.results);
       setPagination({
-        next: response.next,
-        previous: response.previous,
+        next: response.data.next,
+        previous: response.data.previous,
       });
     } catch (error) {
       console.error("Error fetching next page:", error);
