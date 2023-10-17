@@ -223,7 +223,7 @@ class RecordViewSet(
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsRecordCreatorOrAdmin]
     serializer_class = RecordSerializer
-    pagination_class = Pagination10
+    pagination_class = Pagination20
     queryset = Record.objects.all()
     lookup_field = "record_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
