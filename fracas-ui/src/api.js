@@ -116,6 +116,24 @@ export const resetPasswordEmail = async (email) => {
     }
 };
 
+export const resetPasswordSubmission = async (uid, token, password, confirmPassword) => {
+    try {
+        const response = await axios.post(
+          `${BASE_URL_NEW}/auth/users/reset_password_confirm/`,
+          {
+            uid: uid,
+            token: token,
+            new_password: password,
+            re_new_password: confirmPassword,
+          }
+        );
+
+        return response;
+      } catch (error) {
+        throw error;
+      }
+}
+
 export const activateAccount = async (uid, token) => {
     try {
         const response = await axios.post(`${BASE_URL_NEW}/auth/users/activation/`, {

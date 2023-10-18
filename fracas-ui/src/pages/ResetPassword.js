@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
-import axios from "axios";
+import * as api from "../api";
 import "../styles/Signup.scss";
 
 const ResetPasswordPage = () => {
@@ -21,23 +21,13 @@ const ResetPasswordPage = () => {
       alert("Passwords do not match");
     } else {
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/auth/users/reset_password_confirm/",
-          {
-            uid: uid,
-            token: token,
-            new_password: password,
-            re_new_password: confirmPassword,
-          }
-        );
-
-        const data = await response.data;
+        const response = await api.resetPasswordSubmission(uid, token, password, confirmPassword);
 
         if (response.status === 204) {
           alert("Password successfully reset.");
           navigate("/login");
         } else {
-          alert(data.error || "An error occurred while registering.");
+          alert(response.data.error || "An error occurred while registering.");
         }
       } catch (error) {
         console.error("Error while reseting password:", error);
