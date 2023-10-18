@@ -3,7 +3,7 @@
 A prototype [deployed website](http://54.253.142.8/) using the following deployment tutorial (not always available).
 
 > <font color="red">**Important note**</font>  
-> The following deployment tutorial is concluded based on the demonstration of the project. Additional security suggestions are provided as quoted notes in related steps for the prodction deployment.
+> The following deployment tutorial is concluded based on the demonstration of the project. Additional security suggestions are provided as quoted notes in related steps for the production deployment.
 
 Server machine configuration
 
@@ -37,7 +37,7 @@ A valid Ubuntu server machine can be created as an AWS EC2 instance. This involv
 
 5. **Name the EC2 instance**:
 
-   - Enter a proper name to identify the server machien.
+   - Enter a proper name to identify the server machine.
 
 6. **Choose an Amazon Machine Image (AMI)**:
 
@@ -58,7 +58,7 @@ A valid Ubuntu server machine can be created as an AWS EC2 instance. This involv
 9. **Configure Network Settings**:
 
    - Create a new security group or use an existing security group for access control.
-   - For the creation of a new security group in place, select `Allow SSH taffic from Anywhere` and `Allow HTTP traffic from the internet`
+   - For the creation of a new security group in place, select `Allow SSH traffic from Anywhere` and `Allow HTTP traffic from the internet`
 
 10. **Add Storage**:
 
@@ -78,19 +78,19 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
 ### Server machine connection
 
 1. **Find connection details**
-   - Find the created EC2 instance in AWS EC2 dashboard, then enter the instance summary page by clicking on its Instance ID (which looks like i-xxxxxxxxxxx).
-   - Click `Actions - Connect` to enter the connection page, take note of its Public IP.
-   - Click SSH client for the connection details, take note of its Public DNS, which looks like `ec2-xxx...compute.amazonaws.com`.
+   - Find the created EC2 instance in the AWS EC2 dashboard, then enter the instance summary page by clicking on its Instance ID (which looks like i-xxxxxxxxxxx).
+   - Click `Actions - Connect` to enter the connection page, and take note of its Public IP.
+   - Click SSH client for the connection details, and take note of its Public DNS, which looks like `ec2-xxx...compute.amazonaws.com`.
 2. **Connect to the server machine**
    - Use the connection details and the private key selected in the EC2 creation step to connect to the EC2 instance using SSH.
    - Suppose that an SSH client like OpenSSH has been configured on your machine and can be called using `ssh`. Suppose that your key file's name is `your-private-key.pem` and your EC2's Public DNS is your-EC2-Pubic-DNS, you can connect to your server using:
    ```bash
    ssh -i "your-private-key.pem" ubuntu@your-EC2-Pubic-DNS
    ```
-   - <font color="green">**Developer tips:**</font> On Windows, an external application MobaXterm can be used to manage multiple SSH connection like tabs.
+   - <font color="green">**Developer tips:**</font> On Windows, an external application MobaXterm can be used to manage multiple SSH connections like tabs.
      - Create a new session, select SSH, then fill your EC2's Public DNS in the `Remote host` blank, and Specify username as `ubuntu`
      - Click on Advanced SSH settings, tick `Use private key` and select the key file located on your local machine.
-     - Save settings, then double click it in the bookmark panel on the left to start an SSH session. Multiple sessions can be manged as tabs at ease.
+     - Save settings, then double-click it in the bookmark panel on the left to start an SSH session. Multiple sessions can be managed as tabs at ease.
 
 </details>
 
@@ -110,8 +110,8 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
    - Please refer to the Server machine connection section.
 
 2. **Update and upgrade packages**
-   - Run `sudo apt update` to update package list and then run `sudo apt upgrade` to upgrade pacakges. Enter Y and press enter again to confirm.
-   - A "Pending kernal upgrade" menu might pop up. Press Tab key to move the cursor to Ok and press enter to confirm.
+   - Run `sudo apt update` to update package list and then run `sudo apt upgrade` to upgrade packages. Enter Y and press enter again to confirm.
+   - A "Pending kernel upgrade" menu might pop up. Press Tab key to move the cursor to Ok and press enter to confirm.
 
 </details>
 
@@ -434,7 +434,7 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
    ```
 
 > <font color="red">**Important Security Note**</font>  
-> HTTP connection is not secured and should be replaced with appropriate HTTPS protection. HTTPS is usualy avaialbe for a domain name rather than a public IP used in this sample tutorial. Therefore, when the system is deployed for production, the connection should be secured either with HTTPS or VPN for encryption of data in transmission.
+> HTTP connection is not secured and should be replaced with appropriate HTTPS protection. HTTPS is usually available for a domain name rather than a public IP used in this sample tutorial. Therefore, when the system is deployed for production, the connection should be secured either with HTTPS or VPN for encryption of data in transmission.
 
 </details>
 
