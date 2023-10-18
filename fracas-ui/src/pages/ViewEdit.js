@@ -354,6 +354,7 @@ const ViewEdit = () => {
               placeholder=""
               value={formData.failure_description}
               onChange={(e) => handleInputChange(e, "failure_description")}
+              style={{ height: "60px" }}
             />
           </div>
           <div>
@@ -371,6 +372,7 @@ const ViewEdit = () => {
               placeholder=""
               value={formData.corrective_action_plan}
               onChange={(e) => handleInputChange(e, "corrective_action_plan")}
+              style={{ height: "60px" }}
             />
           </div>
           {/* <div>
