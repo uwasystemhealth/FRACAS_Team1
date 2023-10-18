@@ -189,7 +189,7 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
    ]
    CSRF_TRUSTED_ORIGINS = ["http://your.server.public.ip"]
    ```
-5. **Configure .env for email**
+5. **Configure email verification**
 
    - Create a file called `.env` in the `backend` folder. For example, run `nano ~/FRACAS_Team1/backend/.env` to create and edit at the same time.
    - Fill in the email details:
@@ -203,6 +203,18 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
    ```
 
    - Note: a tip for using gmail can be found [here](https://support.google.com/mail/answer/185833?hl=en), use the created app password as the DJANGO_EMAIL_HOST_PASSWORD instead of your gmail account password.
+
+   - Edit `backend/api/email.py`, modify `context["domain"]` in the `BaseEmail` class to the server's public address:
+   ```python
+   class BaseEmail(email.BaseEmailMessage):
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["site_name"] = "UWAM FRACAS"
+        context["domain"] = "your.server.public.ip:80"
+        context["image_url"] = "static/images/UWAM-Logo-2023-(colour).png"
+        context["backend"] = "127.0.0.1:8000"
+        return context
+   ```
 
 6. **(Optional) Use a cloud database**
 
