@@ -188,6 +188,8 @@ class Record(models.Model):
     is_analysis_validated = models.BooleanField(blank=True, null=True, default=False)
     is_correction_validated = models.BooleanField(blank=True, null=True, default=False)
     is_reviewed = models.BooleanField(blank=True, null=True, default=False)
+    record_creator_email = models.TextField(blank=True, null=True)
+    record_owner_email = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """
@@ -197,8 +199,10 @@ class Record(models.Model):
         if creating:
             if self.record_creator:
                 self.record_creator_unlinked = str(self.record_creator)
+                self.record_creator_email = self.record_creator.email
             if self.record_owner:
                 self.record_owner_unlinked = str(self.record_owner)
+                self.record_owner_email = self.record_owner.email
             if self.team:
                 self.team_unlinked = str(self.team)
             if self.subsystem:
