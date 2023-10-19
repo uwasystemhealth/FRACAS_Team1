@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import CommentsModal from "../components/CommentsModal";
 import * as api from "../api";
-import "../styles/Report.scss";
+import '../styles/ViewEdit.scss';
 
-const Report = () => {
+const ViewEdit = () => {
+  const location = useLocation();
+  const result = location.state?.result || {};
   const [showDetails, setShowDetails] = useState(false);
   const [detailInfo, setDetailInfo] = useState({});
   const [showAdditionalData, setShowAdditionalData] = useState(false);
   const [cars, setCars] = useState([]);
+  const [comments, setComments] = useState(['']);
+  const [isModalOpen, setModalOpen] = useState(false);
+  let recordCreatorName, recordOwnerName;
   const token = localStorage.getItem('token')
 
   const detailsMapping = {
@@ -31,10 +38,6 @@ const Report = () => {
 
   const navigate = useNavigate();
 
-  function getCurrentDate() {
-    return new Date().toISOString().slice(0, 16);
-  }
-
   const handleIconClick = (iconId) => {
     setShowDetails(true);
     setDetailInfo(detailsMapping[iconId]);
@@ -50,31 +53,35 @@ const Report = () => {
     }));
   };
 
+  const formatDateTime = (dateTime) => {
+    return dateTime ? dateTime.slice(0, 16) : "";
+  };
+
   const [formData, setFormData] = useState({
-    record_creator: "",
-    record_owner: "",
-    team: "",
-    subsystem: "",
-    car_year: "",
-    failure_time: "",
-    failure_title: "",
-    failure_description: "",
-    failure_impact: "",
-    failure_cause: "",
-    failure_mechanism: "",
-    corrective_action_plan: "",
-    team_lead: "",
-    // record_creation_time: getCurrentDate(),
-    due_date: null,
-    resolve_date: null,
-    resolution_status: "",
+    record_creator: result.record_creator,
+    record_owner: result.record_owner,
+    team: result.team,
+    subsystem: result.subsystem,
+    car_year: result.car_year,
+    failure_time: formatDateTime(result.failure_time),
+    failure_title: result.failure_title,
+    failure_description: result.failure_description,
+    failure_impact: result.failure_impact,
+    failure_cause: result.failure_cause,
+    failure_mechanism: result.failure_mechanism,
+    corrective_action_plan: result.corrective_action_plan,
+    team_lead: result.team_lead,
+    record_creation_time: formatDateTime(result.record_creation_time),
+    due_date: formatDateTime(result.due_date) === "" ? null : formatDateTime(result.due_date),
+    resolve_date: formatDateTime(result.resolve_date) === "" ? null : formatDateTime(result.resolve_date),
+    resolution_status: result.resolution_status,
     // review_date: '',
-    is_resolved: false,
-    is_record_validated: false,
-    is_analysis_validated: false,
-    is_correction_validated: false,
-    is_reviewed: false,
-    record_editors: [],
+    is_resolved: result.is_resolved,
+    is_record_validated: result.is_record_validated,
+    is_analysis_validated: result.is_analysis_validated,
+    is_correction_validated: result.is_correction_validated,
+    is_reviewed: result.is_reviewed,
+    record_editors: result.record_editors,
   });
 
   const [users, setUsers] = useState([]);
@@ -86,91 +93,75 @@ const Report = () => {
     }));
   };
 
-  const handleSubmit = async () => {
-    try {
-      const response = await api.createRecord(token, formData);
-      navigate("/userdashboard");
-    } catch (error) {
-      console.error("Error submitting data:", error);
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.getCurrentUser(token);
-        setUsers(response.data);
-        if (response.data.team) {
-          setFormData(prevState => ({
-            ...prevState,
-            team: response.data.team
-          }));
+        try {
+            const response = await api.getCurrentUser(token);
+            setUsers(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
     };
     fetchData();
   }, [token]);
-  
+
   const [allUsers, setAllusers] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.getAllUsers(token);
-        setAllusers(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+        try {
+            const response = await api.getAllUsers(token);
+            setAllusers(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
     };
     fetchData();
-  }, [token]);
+}, [token]);
 
-  useEffect(() => {
-    if (users.first_name && users.last_name) {
-      setFormData(prevState => ({
-          ...prevState,
-          record_creator: users.user_id, // store the user_id
-          record_owner: users.user_id // store the user_id
-      }));
-    }
-}, [users]);
+  if (allUsers.length !== 0) {
+    allUsers?.map((data) => {
+      if (data.user_id === result.record_creator) {
+        recordCreatorName = data.first_name + " " + data.last_name;
+        recordOwnerName = data.first_name + " " + data.last_name;
+      }
+    });
+  }
 
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {
     const fetchTeams = async () => {
-      try {
-        const response = await api.getTeams(token);
-        setTeams(response.data);
-      } catch (error) {
-        console.error("Error fetching teams:", error);
-      }
+        try {
+            const response = await api.getTeams(token);
+            setTeams(response.data);
+        } catch (error) {
+            console.error("Error fetching teams:", error);
+        }
     };
     fetchTeams();
-  }, [token]);
+}, [token]);
 
   const [subsystems, setSubsystems] = useState([]);
 
   useEffect(() => {
     const fetchSubsystems = async () => {
-      try {
-        const response = await api.getSubsystems(token);
-        setSubsystems(response.data);
-      } catch (error) {
-        console.error("Error fetching subsystems:", error);
-      }
+        try {
+            const response = await api.getSubsystems(token);
+            setSubsystems(response.data);
+        } catch (error) {
+            console.error("Error fetching subsystems:", error);
+        }
     };
     fetchSubsystems();
-  }, [token]);
+}, [token]);
 
   const filteredSubsystems = formData.team ? subsystems?.filter((subsystem) => subsystem.parent_team === formData.team) : [];
 
   useEffect(() => {
     if (teams.length !== 0 && formData.team) {
-      const selectedTeam = teams?.find((team) => team.team_name === formData.team);
-      if (selectedTeam) {
+      const selectedTeam = teams.find((team) => team.team_name === formData.team);
+      if (selectedTeam && allUsers) {
         allUsers?.map((user) => {
           if (user.user_id === selectedTeam.team_lead) {
             setFormData((prevFormData) => ({
@@ -185,27 +176,43 @@ const Report = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.getCars(token);
-        setCars(response.data);
-        if (response.data.length > 0) {
-          setFormData(prevState => ({
-            ...prevState,
-            car_year: response.data[0].car_year
-          }));
+        try {
+            const response = await api.getCars(token);
+            setCars(response.data);
+        } catch (error) {
+            console.error(error);
         }
-      } catch (error) {
-        console.error(error);
-      }
     };
     fetchData();
-  }, [token]);
+}, [token]);
+
+  //const isUserAllowedToEdit = users.first_name + " " + users.last_name === recordCreatorName;
+
+  const handleSubmit = async () => {
+    try {
+      const response = await api.updateRecord(token, result.record_id, formData);
+      if (response.status === 200) {
+          navigate("/userdashboard");
+      } else {
+          throw new Error("Failed to update the record");
+      }
+  } catch (error) {
+      if (error.response && error.response.status === 400) {
+        console.error("Field value error:", error.response.data);
+      } else if (error.response && error.response.status === 403) {
+        console.error("Permission denied:", error.response.data.detail);
+      } else {
+        console.error("Error submitting data:", error);
+      }
+    }
+  };
 
   const getUserNameById = (userId) => {
     const user = allUsers.find(u => u.user_id === parseInt(userId));
     return user ? `${user.first_name} ${user.last_name}` : '';
   }
-  
+
+
   // Selected editors
   const [selectedUsers, setSelectedUsers] = useState([]); // to store selected users from the dropdown
   // Synchronise selected editors with formData
@@ -228,9 +235,8 @@ const Report = () => {
     }));
   };
 
-
   return (
-    <div className="report-container">
+    <div className="view-container">
       <div className="mainbox w">
         <div className="topimg">
           <h1>
@@ -286,23 +292,11 @@ const Report = () => {
           </div>
           <div>
             <u>Record creator:</u>
-            <select value={formData.record_creator} onChange={(e) => handleInputChange(e, "record_creator")}>
-              {allUsers?.map(user => (
-                <option key={user.user_id} value={user.user_id}>
-                  {user.first_name} {user.last_name}
-                </option>
-              ))}
-            </select>
+            <input type="text" value={recordCreatorName} readOnly />
           </div>
           <div>
-              <u>Record owner:</u>
-              <select value={formData.record_owner} onChange={(e) => handleInputChange(e, "record_owner")}>
-                {allUsers.map(user => (
-                  <option key={user.user_id} value={user.user_id}>
-                    {user.first_name} {user.last_name}
-                  </option>
-                ))}
-              </select>
+            <u>Record owner:</u>
+            <input type="text" value={recordOwnerName} readOnly />
           </div>
           <div>
             <u>Technical team:</u>
@@ -310,14 +304,14 @@ const Report = () => {
               <option value="" disabled>
                 Select a team
               </option>
-              {teams ? (
+              {teams ? ( // Check if teams.results is defined
                 teams?.map((team) => (
                   <option key={team.team_name} value={team.team_name}>
                     {team.team_name}
                   </option>
                 ))
               ) : (
-                <></> 
+                <></> // Render nothing if teams.results is not defined
               )}
             </select>
           </div>
@@ -327,7 +321,7 @@ const Report = () => {
               <option value="" disabled>
                 Select a subsystem
               </option>
-              {filteredSubsystems.length > 0 ? (
+              {filteredSubsystems?.length > 0 ? (
                 filteredSubsystems?.map((subsystem) => (
                   <option key={subsystem.subsystem_name} value={subsystem.subsystem_name}>
                     {subsystem.subsystem_name}
@@ -351,9 +345,7 @@ const Report = () => {
           </div>
           <div>
             <u>Failure time:</u>
-
-            <input type="datetime-local" value={formData.failure_time} onChange={(e) => handleInputChange(e, "failure_time")} />
-
+            <input type="datetime-local" value={formData.failure_time} onChange={(e) => handleInputChange(e, "failure_time")} placeholder="" />
           </div>
           <div>
             <u>Failure description:</u>
@@ -383,13 +375,13 @@ const Report = () => {
               style={{ height: "60px" }}
             />
           </div>
-          <div>
+          {/* <div>
             <u>Comments:</u>
-            <input type="text" placeholder="Add comments after you've submitted a report" readOnly/>
-          </div>
+            <input type="text" placeholder="" style={{ height: "80px" }} />
+          </div> */}
         </div>
         <div className="shoubox">
-          <h4>Additional Data Folder</h4>
+          <h4>Addtional Data Folder</h4>
           <span onClick={() => setShowAdditionalData(!showAdditionalData)}></span>
         </div>
         {showAdditionalData && (
@@ -407,8 +399,17 @@ const Report = () => {
               <input type="text" value={formData.team_lead} readOnly />
             </div>
             <div>
+              <u>Report creation time:</u>
+              <input
+                type="datetime-local"
+                value={formData.record_creation_time}
+                placeholder=""
+                readOnly
+              />
+            </div>
+            <div>
               <u>Review status:</u>
-              <input type="text" value={formData.is_reviewed} onChange={(e) => handleInputChange(e, "is_reviewed")} placeholder="" />
+              <input type="text" value={formData.is_reviwed} onChange={(e) => handleInputChange(e, "is_reviwed")} placeholder="" />
             </div>
             <div>
               <u>Due date:</u>
@@ -460,14 +461,14 @@ const Report = () => {
         )}
         <div className="btnbox">
           <div className="botbtn">
-            <div className="right" onClick={handleSubmit}>
-              Submit
-            </div>
+            <button className="left" onClick={handleSubmit}>Update</button>
+            <button className="right" onClick={() => setModalOpen(true)}>Add a Comment</button>
           </div>
         </div>
+        <CommentsModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} record_id={result.record_id}></CommentsModal>
       </div>
     </div>
   );
 };
 
-export default Report;
+export default ViewEdit;

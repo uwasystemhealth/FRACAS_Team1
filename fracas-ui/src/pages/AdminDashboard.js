@@ -1,10 +1,10 @@
 import React from 'react';
-import '../styles/UserDashboard.scss';
+import '../styles/AdminDashboard.scss';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/useAuth';
 import * as api from "../api";
 
-const UserDashboard = () => {
+const AdminDashboard = () => {
     const navigate = useNavigate();
 
     const handleSearchReportsClick = () => {
@@ -16,23 +16,18 @@ const UserDashboard = () => {
     }
 
     const auth = useAuth();
-    const handleLogout = async (e) => {
-        e.preventDefault();
+    const handleLogout = async () => {
         try {
-          const token = localStorage.getItem("token");
-          const response = await api.logoutUser(token)
-          localStorage.removeItem("is_admin"); // Remove the is_admin from localStorage
-          localStorage.removeItem("token"); // Remove the token from localStorage
-          if (response.message === "Logged out successfully") {
-            navigate("/"); // Navigate to the root upon successful logout.
-          } else {
-            const data = await response.json();
-            alert(data.message || "Error logging out. Please try again.");
-          }
+            const token = localStorage.getItem('token');
+            const response = await api.logoutUser(token); // Use the function from api.js
+            
+            auth.signout();
+            navigate('/');  // Navigate to the root upon successful logout.
         } catch (error) {
-          alert("An error occurred while logging out. Please try again.");
+            console.error("Error during logout:", error);
+            alert("An error occurred while logging out. Please try again.");
         }
-      };
+    };
 
     return (
         <div>
@@ -52,4 +47,4 @@ const UserDashboard = () => {
     );
 }
 
-export default UserDashboard;
+export default AdminDashboard;

@@ -39,8 +39,10 @@
   }
   
   @media screen and (max-width: 920px) {
-    .usermainbox {
-      padding: 0 16px;
+    .mainbox {
+      div {
+        width: 100%;
+      }
     }
   }
   

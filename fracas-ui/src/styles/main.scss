@@ -73,12 +73,17 @@
   
   nav {
     box-sizing: border-box;
-    max-width: 1100px;
+    max-width: 1920px;
     height: 80px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: auto;
+    position: relative;
+
+    .nav-menu-img {
+      display: none;
+    }
   
     a {
       color: #000;
@@ -116,6 +121,7 @@
       .topright {
         width: 200px;
         height: 35px;
+        flex-shrink: 0;
   
         img {
           width: 38px;
@@ -125,15 +131,24 @@
       }
     }
   
-    @media (max-width: 992px) {
+    @media (max-width: 920px) {
       height: 60px;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
+
+      .nav-menu-img {
+        width: 32px;
+        margin-right: 16px;
+        display: block;
+      }
+
+      .nav-right {
+        width: 100%;
+      }
   
       .nav-left, .nav-right {
-        width: 100%;
-        text-align: center;
+        text-align: left;
   
         img {
           max-width: 220px;
@@ -158,96 +173,14 @@
     font-size: 20px;
     margin-bottom: 10px;
   }
-  
-  @media screen and (max-width: 1024px) {
-    nav {
-      flex-wrap: wrap;
-      justify-content: space-between;
-  
-      label[for="nav-checkbox"] {
-        display: block;
-        width: 50px;
-        height: 40px;
-        font-size: 40px;
-        display: flex;
-        margin-right: 10px;
-        justify-content: center;
-        align-items: center;
-        border: rgb(173, 173, 173) 2px solid;
-        color: rgb(173, 173, 173);
-        border-radius: 4px;
-      }
-  
-      .nav-left {
-        margin: 0;
-        margin-left: 10px;
-      }
-  
-      .nav-right {
-        position: absolute;
-        top: 80px;
-        z-index: 111111;
-        display: none;
-        flex: 0 0 100%;
-        width: 100%;
-        flex-direction: column;
-        justify-content: initial;
-        align-items: initial;
-        background-color: white;
-        text-indent: 1em;
-        padding-bottom: 20px;
-  
-        > ul {
-          flex-direction: column;
-        }
-  
-        > ul > li > a {
-          width: 100%;
-          padding: 15px 0;
-        }
-  
-        #nav-checkbox:checked ~ & {
-          display: flex;
-        }
-      }
-    }
-  
-    .endnav {
-        height: auto;
-        display: grid;
-        gap: 20px;
-        grid-template-columns: repeat(1, 1fr);
-    
-        ul {
-            margin-left: 0;
-        }
-    
-        .endNav_lef {
-            justify-content: center;
-        }
-    
-        .p {
-            position: relative;
-            margin: auto;
-            left: 0;
-            transform: none;
-        }
-    
-        .right {
-            margin: auto;
-        }
-    }
-    
-  }
+
 
   .endnav {
     position: relative;
-    width: 100%;
-    min-height: 100px;
-    padding: 20px 0;
+    max-width: 1920px;
+    padding: 20px 90px;
     background-color: #032D5F;
-    display: flex;
-    justify-content: space-between;
+    box-sizing: border-box;
 
     .endNav_lef {
         display: flex;
@@ -255,14 +188,14 @@
     }
 
     ul {
-        margin-left: 90px;
         width: 90px;
         height: 80px;
+        margin: 0 12px;
 
         li {
             width: 100%;
             height: 19px;
-            margin-top: 20px;
+            margin-bottom: 20px;
 
             a {
                 color: white;
@@ -271,21 +204,110 @@
         }
     }
 
-    .p {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        align-items: flex-end;
-        text-align: center;
-        color: white;
-    }
-
     .right {
         max-width: 340px;
         height: 100%;
+        img {
+          width: 70px;
+        }
     }
 }
 
+@media screen and (max-width: 920px) {
+  .w {
+    width: 100%;
+  }
+  nav {
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    label[for="nav-checkbox"] {
+      display: block;
+      width: 50px;
+      height: 40px;
+      font-size: 40px;
+      display: flex;
+      margin-right: 10px;
+      justify-content: center;
+      align-items: center;
+      border: rgb(173, 173, 173) 2px solid;
+      color: rgb(173, 173, 173);
+      border-radius: 4px;
+    }
+
+    .nav-left {
+      margin: 0;
+    }
+
+    .nav-right {
+      position: absolute;
+      top: 80px;
+      z-index: 111111;
+      display: none;
+      flex: 0 0 100%;
+      width: 100%;
+      flex-direction: column;
+      justify-content: initial;
+      align-items: initial;
+      background-color: white;
+      text-indent: 1em;
+      padding-bottom: 20px;
+
+      > ul {
+        flex-direction: column;
+      }
+
+      > ul > li > a {
+        width: 100%;
+        padding: 15px 0;
+      }
+
+      #nav-checkbox:checked ~ & {
+        display: flex;
+      }
+    }
+  }
+
+  .endnav {
+    padding: 20px 16px;
+    &>div {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
   
+}
+
+.text-white {
+  color: white
+}
+.flex {
+  display: flex;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.items-center {
+  align-items: center;
+}
+.items-end {
+  align-items: end;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.ml-md {
+  margin-left: 16px;
+}
+.mr-md {
+  margin-right: 16px;
+}
+.mt-md {
+  margin-top: 16px;
+}
+.text-center {
+  text-align: center;
+}

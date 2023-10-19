@@ -1,0 +1,70 @@
+.modal-overlay {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    bottom: 25%;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    .modal {
+        background-color: white;
+        padding: 20px;
+        border-radius: 4px;
+        width: 80%;
+        height: 70%;
+        max-width: 500px;
+        position: relative;
+        border: 1px solid black;
+
+        .top-container {
+            display: flex;
+            justify-content: space-between;
+
+            .modal-close-button {
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                border: none;
+                background-color: transparent;
+                cursor: pointer;
+                font-size: 24px;
+                width: 7%;
+            }
+        }
+
+        .content {
+            height: 85%;
+            width: 100%;
+            overflow: auto;
+        }
+
+        .input-box {
+            display: flex;
+            justify-content: space-between;
+
+            input {
+                width: 85%;
+                height: 40px;
+            }
+
+            button {
+                width: 10%;
+                background-color: #f5d33b;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 920px) {
+    .modal-overlay {
+        position: absolute;
+        top: 63%;
+        left: 7%;
+        width: -webkit-fill-available !important;
+        height: 50%;
+    }
+}
+
+  
