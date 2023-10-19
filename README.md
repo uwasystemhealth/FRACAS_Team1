@@ -1,4 +1,11 @@
 # FRACAS Team 1
+# Repository Structure
+- `Deployment/`: project's deployment guide and template files related to deployment.
+- `Documents/`: project-related documents.
+- `Planning/`: CITS5206 unit-related documents and meeting minutes.
+- `Resources/`: documents provided by the clients.
+- `backend/`: project's Django backend. Descriptions of subdirectories and files can be found inside the directory's `README.md`.
+- `fracas-ui/`: project's React frontend. Descriptions of subdirectories and files can be found inside the directory's `README.md`.
 
 # Introduction
 

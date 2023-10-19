@@ -1,5 +1,25 @@
 # FRACAS Backend API documentation
-
+## Important Files and Directories
+- `api/`: stores the required public sources, including static images.
+  - `api/static/`: stores static files to be used by backend.
+  - `api/api_unit_test`: stores unit tests for backend.
+  - `api/templates/`: stores email templates used by backend.
+  - `api/admin.py`: controls how models are registered and controled in the admin panel.
+  - `api/apps.py`: django app definition file.
+  - `api/backends.py`: controls user login for approved users only.
+  - `api/emails.py`: controls emails sent from the backend. Needs to be configured before deployment.
+  - `api/forms.py`: forms used in backend.
+  - `api/models.py`: defines backend data models. Migrations should be made and applied for the first time and every time the models are changed.
+  - `api/permissions.py`: stores permission classes used in the backend.
+  - `api/serializers.py`: defines serializers that convert data to and from complex data types.
+  - `api/validations.py`: stores validation classes used in the backend.
+  - `api/views.py`: defines all functional APIs.
+- `fracas/`: Django main directory.
+    - `fracas/urls.py`: controls url redirection.
+    - `fracas/settings.py`: settings of the Django backend. Needs to be configured carefully before deployment.
+    - Other files should be kept intact.
+- `manage.py`: Django command-line running tool.
+- `requirements.txt`: packages to be installed in the running virtual environment.
 #### Helpful tips / commands
 
 - To show a list of all available endpoints: `python3 manage.py show_urls`
