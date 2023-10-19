@@ -82,7 +82,7 @@ A normal user can only use the site after the account is both email-verified and
 
 ### Admin user addition
 - Log into admin site using an admin account.
-- Click the Add button next to the Users row.
+- Click the "Add" button next to the Users row.
 - Fill in user detaills, then click "save".
 
 ### Admin user permission change
@@ -94,7 +94,7 @@ User properties in the Admin site:
 
 Change permission:
 - Log into admin site using an admin account.
-- Click the Users hyperlink, then select a user to modify.
+- Click the "Users" hyperlink, then select a user to modify.
 - Additionally, tick multiple checkboxes to select multiple users, then expand the Action dropdown menu to selct an action to be applied on the selected users. Click Go to confirm.
 
 Please note: the actions "Approve/Disapprove" change the "Approved" attribute and essentially activate/deactivate the account.  
@@ -106,10 +106,26 @@ Please note: the actions "Approve/Disapprove" change the "Approved" attribute an
 - Log out: log out.
 
 In the top-right navigation bar, the user is provided with a few buttons as well. The buttons will trigger the corresponding functionalities.
-## Submit Report
+### Submit Report
 - The report creation page provides some fields to be filled. The submit button is located at the bottom of the page. A new report can be submitted after some key fields are filled.  
 - Click on the triangle button below "Additional Data Folder" to fill some additional data. You can add other users as record editors if you have the editing permission.  
-## Search Report
-- Type keywords in the input box, then click Search to search.
+- Some fields will be automatically filled with proper values.
+### Search Report
+- Type keywords in the input box, then click "Search" to search.
 - Click Clear Search to return to the intial state.
 - Pagination buttons will be enabled when more than 20 results are returned in one search.
+### View and Edit Report
+- Search for report first.
+- Click on a record's title to view and edit the report.
+- If the user is not the creator or not one of the editors, then the user cannot edit the report.
+- If the user can edit but is not a staff, then the record statuses will not be changed.
+### Add comments
+- Search for report first.
+- Click on a record's title.
+- Scroll to the bottome of the page, click "Add a Comment" to add a comment.
+## Admin dashboard
+In the top-right navigation bar, the admin user is provided with an additional "Admin" button, which navigates to the admin site. Log in with the user credentials.  
+The admin dashboard is essentially a panel provided by the Django backend server. An admin user can freely modify cars, comments, records, subsystems, teams, and users using the dashboard.
+- For a record, if the creator user has been deleted, the account's email will be preserved in a field "Record creator email" that is only visible in the admin panel. This is same for the record owner.  
+- Team assignment is done by change the "Team" attribute of a user.
+- To find the users on the same team, toggle sorting of users using the Team column.
