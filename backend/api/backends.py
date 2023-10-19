@@ -12,7 +12,7 @@ class ApprovedUserBackend(ModelBackend):
         User = get_user_model()
         try:
             user = User.objects.get(email=username)
-            if user.check_password(password) and user.is_approved:
+            if user.check_password(password) and user.is_approved and user.is_active:
                 return user
         except User.DoesNotExist:
             return None
