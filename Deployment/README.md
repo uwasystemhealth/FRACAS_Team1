@@ -1,5 +1,5 @@
 # FRACAS system deployment
-
+## Online Deployment
 A prototype [deployed website](http://54.253.142.8/) using the following deployment tutorial (not always available).
 
 > <font color="red">**Important note**</font>  
@@ -122,7 +122,7 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
 
 1. **Initialise and activate Python virtual environment\***
 
-   - Change to the directory where the Python virtual environment. For example, `~` (`/home/ubuntu`):
+   - Change to the directory where the Python virtual environment is to be saved. For example, `~` (`/home/ubuntu`):
 
    ```bash
    cd ~
@@ -160,15 +160,12 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
    git clone https://github.com/uwasystemhealth/FRACAS_Team1
    ```
 
-   - Enter the backend folder, then switch to the `backend` branch.
+   - Enter the backend folder.
 
    ```bash
    cd FRACAS_Team1/backend
    ```
 
-   ```bash
-   git checkout backend
-   ```
 
 3. **Install required packages**
    - In the activated virtual environment and in the backend directory, install the required packages:
@@ -260,7 +257,8 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
    > <font color="red">**Important note**</font>  
    > Before commencing this section for the first time, please make sure that the used database does not contain existing data.  
    > For the cloud postgres database, please make sure that the public schema is cleaned. It is recommended that the public schema does not contain any existing table to avoid any initilisation error.  
-   > Related SQL statements: `DROP SCHEMA public CASCADE; CREATE SCHEMA public;`
+   > Related SQL statements to empty the database (EXECUTE WITH CAUTION):  
+   > `DROP SCHEMA public CASCADE; CREATE SCHEMA public;`
 
    - Make sure that your virtual environment is activated. Change to the backend directory.
    - Execute the following 2 commands one by one:
@@ -342,14 +340,11 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
    nvm use 18.18.2
    ```
 
-2. **Retrieve the frontend files**
-   - Change to a empty directory, for example, create a folder called frontend:
+2. **Retrieve the frontend files\***
+   - If you haven't done so in the backend development step, change to the directory where the backend server files are stored. For example, `~` (`/home/ubuntu`), then clone the repository.
+
    ```bash
-   mkdir ~/frontend
-   cd ~/frontend
-   ```
-   - Clone the repository.
-   ```bash
+   cd ~
    git clone https://github.com/uwasystemhealth/FRACAS_Team1
    ```
 3. **Build frontend site**
@@ -367,7 +362,10 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
    export const BASE_URL_NEW = "http://your.server.public.ip:80";
    ```
 
-   - Install packages using npm
+   - Install packages using npm. 
+   > **Developer tips**  
+   > The instalation may take some time, please maintain a stable Internet connection and wait patiently.  
+   > You may see some warning messages like **npm WARN deprecated** during the installation. This is normal as the system has been developed using particular versions of some packages. These packages are being updated by the community iteratively and the versions used in this project may quickly become "obsolete".
 
    ```bash
    npm install
@@ -379,7 +377,7 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
    npm run build
    ```
 
-   - <font color="green">**Known issue**</font> If an error message "node-sass not supported" is displayed when running `npm run build`, then run the following commands to replace it with `sass` and build site again:
+   - <font color="green">**Known issue**</font> If an error message "Failed to compile. Node Sass does not yet support your current environment:" is displayed when running `npm run build`, please run the following commands to replace it with `sass` and build site again:
 
    ```bash
    npm uninstall node-sass
@@ -488,10 +486,57 @@ To run tests using npm, follow these steps:
 
     This command will execute the tests defined in the project. You will see the test results in your terminal.
 
-4. **test all files**: once inside th watch mode press a, to show all test results you migh see some test cases failed and passes and thats normal
+4. **test all files**: once inside th watch mode press a, to show all test results you might see some test cases failed and passes. You can still deploy the site if some tests fail. For reference, a successful deployment may require
 
 ## Troubleshooting
 
 If you encounter any issues during the testing process, refer to the project's documentation or seek assistance from the project maintainers.
 </details>
+</details>
+
+## Run Locally
+
+<details>
+<summary>Local deployment guide</summary>
+
+### How to get the backend running locally
+
+1. Install python3 and pip3 if not already done (and sqlite3).
+2. Install virtualenv: `pip3 install virtualenv`.
+3. Clone this repo.
+4. Move into the backend directory: `cd backend`.
+5. Create a virtual environment: `python3 -m venv .venv`.
+6. Activate the virtual environment: `source .venv/bin/activate`.
+7. Install dependencies: `pip3 install -r requirements.txt`.
+8. Create a `.env` plaintext file, add email configurations (see the related sections in the online deployment).
+9. Make database migraitons: `python3 manage.py makemigrations`, then `python3 manage.py makemigrations api`.
+10. Migrate the database: `python3 manage.py migrate`.
+11. Create superuser: `python3 manage.py createsuperuser`.
+12. Run the server: `python3 manage.py runserver`.
+13. Open the browser and go to: `http://127.0.0.1:8000/api/`.  
+    This should show the API root page using the browsable API.
+14. You'll need to add some data to the database. Either use the browsable API, the admin interface at `http://127.0.0.1:8000/admin/` or use the API endpoints directly with something like `curl`.
+
+
+
+### How to get the frontend running locally
+
+1. Install python3 and pip3 if not already done (and sqlite3).
+2. Install virtualenv: `pip3 install virtualenv`.
+3. Clone this repo.
+4. Move into the backend directory: `cd backend`.
+5. Create a virtual environment: `python3 -m venv .venv`.
+6. Activate the virtual environment: `source .venv/bin/activate`.
+7. Install dependencies: `pip3 install -r requirements.txt`.
+8. Create a `.env` plaintext file, add configurations (see the section ".env configs" below).
+9. Make database migraitons: `python3 manage.py makemigrations`, then `python3 manage.py makemigrations api`.
+10. Migrate the database: `python3 manage.py migrate`.
+11. Create superuser: `python3 manage.py createsuperuser`.
+12. Run the server: `python3 manage.py runserver`.
+13. Open the browser and go to: `http://127.0.0.1:8000/api/`.  
+    This should show the API root page using the browsable API.
+14. You'll need to add some data to the database. Either use the browsable API, the admin interface at `http://127.0.0.1:8000/admin/` or use the API endpoints directly with something like `curl`.
+
+DEBUG is turned on and the database is sqlite3 for local testing.
+
 </details>

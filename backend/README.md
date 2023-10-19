@@ -1,42 +1,4 @@
-# FRACAS Backend
-
-## Django rest API backend
-
-### Run Locally
-
-#### How to get the backend running locally
-
-1. Install python3 and pip3 if not already done (and sqlite3).
-2. Install virtualenv: `pip3 install virtualenv`.
-3. Clone this repo.
-4. Move into the backend directory: `cd backend`.
-5. Create a virtual environment: `python3 -m venv .venv`.
-6. Activate the virtual environment: `source .venv/bin/activate`.
-7. Install dependencies: `pip3 install -r requirements.txt`.
-8. Create a `.env` plaintext file, add configurations (see the section ".env configs" below).
-9. Make database migraitons: `python3 manage.py makemigrations`, then `python3 manage.py makemigrations api`.
-10. Migrate the database: `python3 manage.py migrate`.
-11. Create superuser: `python3 manage.py createsuperuser`.
-12. Run the server: `python3 manage.py runserver`.
-13. Open the browser and go to: `http://127.0.0.1:8000/api/`.  
-    This should show the API root page using the browsable API.
-14. You'll need to add some data to the database. Either use the browsable API, the admin interface at `http://127.0.0.1:8000/admin/` or use the API endpoints directly with something like `curl`.
-
-DEBUG is turned on and the database is sqlite3 for now.
-
-#### .env configs:
-
-```
-DJANGO_DEBUG=True
-
-DJANGO_EMAIL_HOST='smtp.gmail.com'
-
-DJANGO_EMAIL_HOST_USER='yourgmailaccount@gmail.com'
-
-DJANGO_EMAIL_HOST_PASSWORD='your gmail app password'
-```
-
-A sample config using gmail as the email host, see how to allow Django to send emails using a Gmail account in [this article](https://knowledge.workspace.google.com/kb/how-to-generate-an-app-passwords-000009237).
+# FRACAS Backend API documentation
 
 #### Helpful tips / commands
 
@@ -1749,13 +1711,14 @@ Using HTTPie:
 
 ---
 
-## Admin APIs
+## Staff/Admin APIs
 
-An admin user can:
+An staff/admin user can:
 
 - Create, read, update, and delete all objects freely.
+- Modify record statuses.
 
-For admin users, Normal User APIs can be used without being the creator of a resource. Apart from Normal User APIs, some APIs can only be used by admin users:
+For staf/admin users, Normal User APIs can be used without being the creator of a resource. Apart from Normal User APIs, some APIs can only be used by admin users:
 
 ### CREATE
 
@@ -2289,7 +2252,3 @@ Using HTTPie:
 </details>
 
 ---
-
-## Run for Production
-
-TODO
