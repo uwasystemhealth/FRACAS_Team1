@@ -451,7 +451,7 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
 </details>
 
 <details>
-<summary>running the test for frontend files</summary>
+<summary>test running</summary>
 
 # Running Tests with npm
 
