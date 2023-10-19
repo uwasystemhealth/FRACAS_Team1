@@ -229,9 +229,7 @@ class RecordViewSet(
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = [
         "record_id",
-        "record_creator__user_id",
         "record_creator_unlinked",
-        "record_owner__user_id",
         "record_owner_unlinked",
         "team__team_name",
         "team_unlinked",
@@ -263,6 +261,10 @@ class RecordViewSet(
         "status",
         "car_year__car_year",
         "car_year__car_nickname",
+        "is_resolved",
+        "is_record_validated",
+        "is_analysis_validated",
+        "is_correction_validated",
     ]
 
     ordering_fields = ["record_creation_time"]
