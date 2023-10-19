@@ -11,8 +11,8 @@ const ActivateAccount = () => {
   useEffect(() => {
     api.activateAccount(uid, token)  // Use the function from api.js
       .then(() => {
-        navigate("/login");
-        alert("Activation successful!");
+        navigate("/");
+        alert("Email verification successful!\nYou can login once your account has been approved by an admin.");
       })
       .catch((error) => {
         if (error.message.includes("403")) {
