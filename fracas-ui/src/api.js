@@ -44,6 +44,11 @@ export const searchRecords = (token, query, formData, ordering = "-record_creati
     if (formData.team) url += `&team__team_name=${formData.team}`;
     if (formData.subsystem) url += `&subsystem__subsystem_name=${formData.subsystem}`;
     if (formData.carYear) url += `&car_year__car_year=${formData.carYear}`;
+    if (formData.isResolved) url += `&is_resolved=${formData.isResolved}`;
+    if (formData.isRecordValidated) url += `&is_record_validated=${formData.isRecordValidated}`;
+    if (formData.isAnalysisValidated) url += `&is_analysis_validated=${formData.isAnalysisValidated}`;
+    if (formData.isCorrectionValidated) url += `&is_correction_validated=${formData.isCorrectionValidated}`;
+    
 
     return axios.get(url, { headers: headers(token) });
 }

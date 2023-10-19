@@ -31,7 +31,7 @@ $grey-text: #696969;
   }
 
   .searchmainbox {
-    min-height: 500px;
+    min-height: 800px;
     box-shadow: 0px 0px 10px $secondary-color;
     margin-top: 40px;
     margin-bottom: 110px;
@@ -122,11 +122,15 @@ $grey-text: #696969;
       flex-shrink: 0;
       display: flex;
       justify-content: center;
+      align-items: center;
       flex-wrap: wrap;
+      margin-bottom: 10px;
+      max-width: min-content;
+
 
       span {
         margin: 1%;
-        width: 100px;
+        width: 150px;
       }
 
       select {

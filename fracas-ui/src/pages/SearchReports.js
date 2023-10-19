@@ -8,7 +8,7 @@ const SearchReports = () => {
     team: "",
     subsystem: "",
     carYear: "",
-    isRecordResolved: "",
+    isResolved: "",
     isRecordValidated: "",
     isAnalysisValidated: "",
     isCorrectionValidated: "",
@@ -88,7 +88,7 @@ const SearchReports = () => {
       team: "",
       subsystem: "",
       carYear: "",
-      isRecordResolved: "",
+      isResolved: "",
       isRecordValidated: "",
       isAnalysisValidated: "",
       isCorrectionValidated: "",
@@ -165,6 +165,50 @@ const SearchReports = () => {
           <button onClick={handleClearSearch}>Clear Search</button>
         </div>
         <div className="filters">
+        <div className="filter">
+            <span>Record Resolved:</span>
+            <select
+              value={formData.isResolved}
+              onChange={(e) => handleInputChange(e, "isResolved")}
+            >
+              <option value="">Select a status</option>
+              <option value="True">Resolved</option>
+              <option value="False">Unresolved</option>
+            </select>
+          </div>
+          <div className="filter">
+            <span>Record Validated:</span>
+            <select
+              value={formData.isRecordValidated}
+              onChange={(e) => handleInputChange(e, "isRecordValidated")}
+            >
+              <option value="">Select a status</option>
+              <option value="True">Validated</option>
+              <option value="False">Unvalidated</option>
+            </select>
+            </div>
+          <div className="filter">
+            <span>Analysis Validated:</span>
+            <select
+              value={formData.isAnalysisValidated}
+              onChange={(e) => handleInputChange(e, "isAnalysisValidated")}
+            >
+              <option value="">Select a status</option>
+              <option value="True">Validated</option>
+              <option value="False">Unvalidated</option>
+            </select>
+          </div>
+          <div className="filter">
+            <span>Correction Validated:</span>
+            <select
+              value={formData.isCorrectionValidated}
+              onChange={(e) => handleInputChange(e, "isCorrectionValidated")}
+            >
+              <option value="">Select a status</option>
+              <option value="True">Validated</option>
+              <option value="False">Unvalidated</option>
+            </select>
+            </div>
           <div className="filter">
             <span>Team:</span>
             <select
@@ -205,17 +249,6 @@ const SearchReports = () => {
                   {year.car_year}
                 </option>
               ))}
-            </select>
-          </div>
-          <div className="filter">
-            <span> Reviewed:</span>
-            <select
-              value={formData.isRecordResolved}
-              onChange={(e) => handleInputChange(e, "is_resolved")}
-            >
-              <option value="">Select a status</option>
-              <option value="True">Reviewed</option>
-              <option value="False">Unreviewed</option>
             </select>
           </div>
         </div>
