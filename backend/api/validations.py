@@ -39,7 +39,9 @@ def register_validation(data):
         raise serializers.ValidationError("Passwords must match.")
     else:
         data.pop("password2")
-        # new registered user is not staff or admin
+        # new registered user is not staff or admin or approved.
+        # these fields are set by an admin in the Django admin panel
         data["is_staff"] = False
         data["is_admin"] = False
+        data["is_approved"] = False
     return data

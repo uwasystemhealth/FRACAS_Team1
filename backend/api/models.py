@@ -66,6 +66,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False, verbose_name="Admin")
     is_staff = models.BooleanField(default=False, verbose_name="Team Lead")
     is_superuser = models.BooleanField(default=False, verbose_name="Superuser")
+    is_approved = models.BooleanField(default=False, verbose_name="Approved")
 
     # customised user manager
     objects = CustomUserManager()

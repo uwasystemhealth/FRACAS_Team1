@@ -19,11 +19,24 @@ TokenAdmin.raw_id_fields = ["user"]
 # A rewritten UserAdmin method to work with a customized AbstractBaseUser
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#auth-custom-user
 # ------------------------------------------------------------------------------
+
+
+@admin.action(description="Approve selected users")
+def approve_users(modeladmin, request, queryset):
+    queryset.update(is_approved=True)
+
+
+@admin.action(description="Disapprove selected users")
+def disapprove_users(modeladmin, request, queryset):
+    queryset.update(is_approved=False)
+
+
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
     """Define admin model for custom User model with no username field."""
 
     # The forms to add and change user instances
+    actions = [approve_users, disapprove_users]
     form = UserChangeForm
     add_form = UserCreationForm
     fieldsets = (
@@ -36,6 +49,7 @@ class UserAdmin(auth_admin.UserAdmin):
                     "last_name",
                     "team",
                     "email",
+                    "is_approved",
                     "is_staff",
                     "is_admin",
                     "is_active",
@@ -52,6 +66,7 @@ class UserAdmin(auth_admin.UserAdmin):
         "last_name",
         "team",
         "email",
+        "is_approved",
         "is_staff",
         "is_admin",
         "is_active",
@@ -75,6 +90,7 @@ class UserAdmin(auth_admin.UserAdmin):
                     "is_staff",
                     "is_admin",
                     "is_active",
+                    "is_approved",
                 ],
             },
         ),

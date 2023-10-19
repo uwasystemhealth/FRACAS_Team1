@@ -21,7 +21,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Static files collect path for deployment
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -129,6 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 # Authentication settings
 AUTH_USER_MODEL = "api.User"
+AUTHENTICATION_BACKENDS = ["api.backends.ApprovedUserBackend"]
 
 
 # rest framework settings
