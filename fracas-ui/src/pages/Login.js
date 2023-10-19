@@ -36,7 +36,7 @@ const Login = () => {
         }
     } catch (error) {
         console.error("Error during login:", error);
-        alert("An error occurred. Please try again.");
+        alert("An error occurred. Please try again. \n\nNote: \nNew users must have completed email address verification and have admin approval before login will function.");
     }
 };
 
