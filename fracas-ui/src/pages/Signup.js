@@ -57,7 +57,7 @@ const SignUpPage = () => {
         };
         
         await api.registerUser(userDetails);
-        alert("Registration successful! You'll receive an activation email shortly.");
+        alert("Registration successful! You'll receive a verification email shortly.");
         navigate("/login");
     } catch (error) {
         console.error("Error while registering:", error);
