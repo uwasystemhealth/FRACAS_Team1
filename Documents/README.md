@@ -15,3 +15,4 @@ Documents available outside the project repository are listed below:
 | [UI Design V2](https://www.figma.com/file/n8OppcejxU4Uhf1I8kDAoe/UWAM-FRACAS?type=design&node-id=154-406&mode=design) | Second version of UI design |
 | [UI Design V3](https://www.figma.com/file/n8OppcejxU4Uhf1I8kDAoe/UWAM-FRACAS?type=design&node-id=198-318&mode=design) | Third version of UI design |
 | [STRIDE threat modelling](https://docs.google.com/document/d/1Ih0MCZn3DmfoPAJ-is80mQPrnPDPCYjsKQXYiat8vD8/edit?usp=sharing) | STRIDE analysis documentation |
+| [Demo site deployment model](https://drive.google.com/file/d/1JabAbv2_KN0XESXweyI8kgo7CexfaqjF/view?usp=sharing) | Graphical topology of the deployed demonstration site |
