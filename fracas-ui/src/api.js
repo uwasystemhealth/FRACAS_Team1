@@ -39,8 +39,8 @@ export const getRecords = (token, ordering = "-record_creation_time") => {
     return axios.get(`${BASE_URL}/records/?ordering=${ordering}`, { headers: headers(token) });
 }
 
-export const searchRecords = (token, query, formData) => {
-    let url = `${BASE_URL}/records/?search=${query}`;
+export const searchRecords = (token, query, formData, ordering = "-record_creation_time") => {
+    let url = `${BASE_URL}/records/?search=${query}&ordering=${ordering}`;
     if (formData.team) url += `&team__team_name=${formData.team}`;
     if (formData.subsystem) url += `&subsystem__subsystem_name=${formData.subsystem}`;
     if (formData.carYear) url += `&car_year__car_year=${formData.carYear}`;
