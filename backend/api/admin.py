@@ -1,3 +1,5 @@
+from operator import is_
+
 from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
@@ -17,18 +19,42 @@ TokenAdmin.raw_id_fields = ["user"]
 # A rewritten UserAdmin method to work with a customized AbstractBaseUser
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#auth-custom-user
 # ------------------------------------------------------------------------------
+
+
+@admin.action(description="Approve selected users")
+def approve_users(modeladmin, request, queryset):
+    queryset.update(is_approved=True)
+
+
+@admin.action(description="Disapprove selected users")
+def disapprove_users(modeladmin, request, queryset):
+    queryset.update(is_approved=False)
+
+
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
     """Define admin model for custom User model with no username field."""
 
     # The forms to add and change user instances
+    actions = [approve_users, disapprove_users]
     form = UserChangeForm
     add_form = UserCreationForm
     fieldsets = (
         (None, {"fields": ["password"]}),
         (
             "Personal info",
-            {"fields": ("first_name", "last_name", "team", "email")},
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "team",
+                    "email",
+                    "is_approved",
+                    "is_staff",
+                    "is_admin",
+                    "is_active",
+                )
+            },
         ),
     )
     list_filter = [
@@ -40,7 +66,10 @@ class UserAdmin(auth_admin.UserAdmin):
         "last_name",
         "team",
         "email",
+        "is_approved",
+        "is_staff",
         "is_admin",
+        "is_active",
     ]
     search_fields = ["first_name", "last_name", "team", "email"]
     ordering = ("first_name", "last_name", "team", "email", "is_admin")
@@ -51,7 +80,18 @@ class UserAdmin(auth_admin.UserAdmin):
             None,
             {
                 "classes": ["wide"],
-                "fields": ["email", "password1", "password2"],
+                "fields": [
+                    "first_name",
+                    "last_name",
+                    "team",
+                    "email",
+                    "password1",
+                    "password2",
+                    "is_staff",
+                    "is_admin",
+                    "is_active",
+                    "is_approved",
+                ],
             },
         ),
     ]
@@ -96,6 +136,7 @@ class RecordAdmin(admin.ModelAdmin):
     """Admin class for the Record model."""
 
     list_display = [
+        "failure_title",
         "record_creation_time",
         "status",
         "team",
@@ -111,6 +152,7 @@ class RecordAdmin(admin.ModelAdmin):
         "record_creator",
         "car_year",
     ]
+    ordering = ["failure_title", "record_creation_time"]
 
 
 # comment admin

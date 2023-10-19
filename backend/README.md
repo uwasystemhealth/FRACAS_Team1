@@ -13,19 +13,35 @@
 5. Create a virtual environment: `python3 -m venv .venv`.
 6. Activate the virtual environment: `source .venv/bin/activate`.
 7. Install dependencies: `pip3 install -r requirements.txt`.
-8. Migrate the database: `python3 manage.py migrate`.
-9. Create superuser: `python3 manage.py createsuperuser`.
-10. Run the server: `python3 manage.py runserver`.
-11. Open the browser and go to: `http://127.0.0.1:8000/api/`.  
+8. Create a `.env` plaintext file, add configurations (see the section ".env configs" below).
+9. Make database migraitons: `python3 manage.py makemigrations`, then `python3 manage.py makemigrations api`.
+10. Migrate the database: `python3 manage.py migrate`.
+11. Create superuser: `python3 manage.py createsuperuser`.
+12. Run the server: `python3 manage.py runserver`.
+13. Open the browser and go to: `http://127.0.0.1:8000/api/`.  
     This should show the API root page using the browsable API.
-12. You'll need to add some data to the database. Either use the browsable API, the admin interface at `http://127.0.0.1:8000/admin/` or use the API endpoints directly with something like `curl`.
+14. You'll need to add some data to the database. Either use the browsable API, the admin interface at `http://127.0.0.1:8000/admin/` or use the API endpoints directly with something like `curl`.
 
 DEBUG is turned on and the database is sqlite3 for now.
+
+#### .env configs:
+
+```
+DJANGO_DEBUG=True
+
+DJANGO_EMAIL_HOST='smtp.gmail.com'
+
+DJANGO_EMAIL_HOST_USER='yourgmailaccount@gmail.com'
+
+DJANGO_EMAIL_HOST_PASSWORD='your gmail app password'
+```
+
+A sample config using gmail as the email host, see how to allow Django to send emails using a Gmail account in [this article](https://knowledge.workspace.google.com/kb/how-to-generate-an-app-passwords-000009237).
 
 #### Helpful tips / commands
 
 - To show a list of all available endpoints: `python3 manage.py show_urls`
-- If you change the models, you'll need to make migrations: `python3 manage.py makemigrations` after that you'll need to migrate again: `python3 manage.py migrate` before you can run the server again `python3 manage.py runserver`.
+- If you change the models, you'll need to make migrations: `python3 manage.py makemigrations`, `python3 manage.py makemigrations api` after that you'll need to migrate again: `python3 manage.py migrate` before you can run the server again `python3 manage.py runserver`.
 
 ### Authentication
 
@@ -173,31 +189,32 @@ A normal user can:
 
 data format: JSON object
 
-> | field name              | type         | data type    | data format/range    | default value if not specified | description                       |
-> | ----------------------- | ------------ | ------------ | -------------------- | ------------------------------ | --------------------------------- |
-> | record_creator          | not required | int / string | a positive integer   | null                           | user_id of the record creator     |
-> | record_owner            | not required | int / string | a positive integer   | null                           | user_id of the record owner       |
-> | team                    | not required | string       |                      | null                           | team name                         |
-> | subsystem               | not required | string       |                      | null                           | subsystem name                    |
-> | car_year                | not required | int / string |                      | null                           | car year                          |
-> | is_deleted              | not required | boolean      | ture/false           | false                          | deletion status                   |
-> | status                  | not required | string       |                      | null                           | status string                     |
-> | failure_time            | not required | string       | ISO 8601 time format | request submission time        | failure time                      |
-> | failure_title           | not required | string       |                      | null                           | failure title                     |
-> | failure_impact          | not required | string       |                      | null                           | failure impact                    |
-> | failure_cause           | not required | string       |                      | null                           | failure cause                     |
-> | failure_mechanism       | not required | string       |                      | null                           | failure mechanism                 |
-> | corrective_action_plan  | not required | string       |                      | null                           | corrective action plan            |
-> | record_creation_time    | not required | string       | ISO 8601 time format | request submission time        | record creation time              |
-> | due_date                | not required | string       | ISO 8601 time format | null                           | record due date                   |
-> | resolve_date            | not required | string       | ISO 8601 time format | null                           | record resolve date               |
-> | resolution_status       | not required | string       |                      | null                           | record resolve status             |
-> | review_date             | not required | string       |                      | null                           | record review date                |
-> | is_resolved             | not required | boolean      | true/false           | false                          | record resolve status flag        |
-> | is_record_validated     | not required | boolean      | true/false           | false                          | record validation status flag     |
-> | is_analysis_validated   | not required | boolean      | true/false           | false                          | analysis validation status flag   |
-> | is_correction_validated | not required | boolean      | true/false           | false                          | correction validation status flag |
-> | is_reviewed             | not required | boolean      | true/false           | false                          | review status flag                |
+> | field name              | type         | data type    | data format/range           | default value if not specified | description                       |
+> | ----------------------- | ------------ | ------------ | --------------------------- | ------------------------------ | --------------------------------- |
+> | record_creator          | not required | int / string | a positive integer          | null                           | user_id of the record creator     |
+> | record_owner            | not required | int / string | a positive integer          | null                           | user_id of the record owner       |
+> | record_editors          | not required | list         | a list of positive integers | null                           | user_id of the record editors     |
+> | team                    | not required | string       |                             | null                           | team name                         |
+> | subsystem               | not required | string       |                             | null                           | subsystem name                    |
+> | car_year                | not required | int / string |                             | null                           | car year                          |
+> | is_deleted              | not required | boolean      | ture/false                  | false                          | deletion status                   |
+> | status                  | not required | string       |                             | null                           | status string                     |
+> | failure_time            | not required | string       | ISO 8601 time format        | request submission time        | failure time                      |
+> | failure_title           | not required | string       |                             | null                           | failure title                     |
+> | failure_impact          | not required | string       |                             | null                           | failure impact                    |
+> | failure_cause           | not required | string       |                             | null                           | failure cause                     |
+> | failure_mechanism       | not required | string       |                             | null                           | failure mechanism                 |
+> | corrective_action_plan  | not required | string       |                             | null                           | corrective action plan            |
+> | record_creation_time    | not required | string       | ISO 8601 time format        | request submission time        | record creation time              |
+> | due_date                | not required | string       | ISO 8601 time format        | null                           | record due date                   |
+> | resolve_date            | not required | string       | ISO 8601 time format        | null                           | record resolve date               |
+> | resolution_status       | not required | string       |                             | null                           | record resolve status             |
+> | review_date             | not required | string       |                             | null                           | record review date                |
+> | is_resolved             | not required | boolean      | true/false                  | false                          | record resolve status flag        |
+> | is_record_validated     | not required | boolean      | true/false                  | false                          | record validation status flag     |
+> | is_analysis_validated   | not required | boolean      | true/false                  | false                          | analysis validation status flag   |
+> | is_correction_validated | not required | boolean      | true/false                  | false                          | correction validation status flag |
+> | is_reviewed             | not required | boolean      | true/false                  | false                          | review status flag                |
 
 <details>
 <summary>Example</summary>
@@ -206,6 +223,7 @@ data format: JSON object
 {
   "record_creator": 2,
   "record_owner": 3,
+  "record_editors": [1, 2],
   "team": "Team 1",
   "subsystem": "AL",
   "car_year": 2022,
@@ -246,36 +264,37 @@ data format: JSON object
 
 data format: JSON object
 
-> | field name              | data type    | data format/range    | description                       |
-> | ----------------------- | ------------ | -------------------- | --------------------------------- |
-> | record_creator          | int / string | a positive integer   | user_id of the record creator     |
-> | record_owner            | int / string | a positive integer   | user_id of the record owner       |
-> | team                    | string       |                      | team name                         |
-> | subsystem               | string       |                      | subsystem name                    |
-> | car_year                | int / string |                      | car year                          |
-> | is_deleted              | boolean      | ture/false           | deletion status                   |
-> | status                  | string       |                      | status string                     |
-> | failure_time            | string       | ISO 8601 time format | failure time                      |
-> | failure_title           | string       |                      | failure title                     |
-> | failure_impact          | string       |                      | failure impact                    |
-> | failure_cause           | string       |                      | failure cause                     |
-> | failure_mechanism       | string       |                      | failure mechanism                 |
-> | corrective_action_plan  | string       |                      | corrective action plan            |
-> | record_creation_time    | string       | ISO 8601 time format | record creation time              |
-> | due_date                | string       | ISO 8601 time format | record due date                   |
-> | resolve_date            | string       | ISO 8601 time format | record resolve date               |
-> | resolution_status       | string       |                      | record resolve status             |
-> | review_date             | string       |                      | record review date                |
-> | is_resolved             | boolean      | true/false           | record resolve status flag        |
-> | is_record_validated     | boolean      | true/false           | record validation status flag     |
-> | is_analysis_validated   | boolean      | true/false           | analysis validation status flag   |
-> | is_correction_validated | boolean      | true/false           | correction validation status flag |
-> | is_reviewed             | boolean      | true/false           | review status flag                |
-> | url                     | string       | URL                  | url to the resource               |
-> | record_creator_unlinked | string       |                      | record creator literal name       |
-> | record_owner_unlinked   | string       |                      | record owner literal name         |
-> | team_unlinked           | string       |                      | team name                         |
-> | subsystem_unlinked      | string       |                      | subsystem name                    |
+> | field name              | data type    | data format/range           | description                       |
+> | ----------------------- | ------------ | --------------------------- | --------------------------------- |
+> | record_creator          | int / string | a positive integer          | user_id of the record creator     |
+> | record_owner            | int / string | a positive integer          | user_id of the record owner       |
+> | record_editors          | list         | a list of positive integers | user_id of the record editors     |
+> | team                    | string       |                             | team name                         |
+> | subsystem               | string       |                             | subsystem name                    |
+> | car_year                | int / string |                             | car year                          |
+> | is_deleted              | boolean      | ture/false                  | deletion status                   |
+> | status                  | string       |                             | status string                     |
+> | failure_time            | string       | ISO 8601 time format        | failure time                      |
+> | failure_title           | string       |                             | failure title                     |
+> | failure_impact          | string       |                             | failure impact                    |
+> | failure_cause           | string       |                             | failure cause                     |
+> | failure_mechanism       | string       |                             | failure mechanism                 |
+> | corrective_action_plan  | string       |                             | corrective action plan            |
+> | record_creation_time    | string       | ISO 8601 time format        | record creation time              |
+> | due_date                | string       | ISO 8601 time format        | record due date                   |
+> | resolve_date            | string       | ISO 8601 time format        | record resolve date               |
+> | resolution_status       | string       |                             | record resolve status             |
+> | review_date             | string       |                             | record review date                |
+> | is_resolved             | boolean      | true/false                  | record resolve status flag        |
+> | is_record_validated     | boolean      | true/false                  | record validation status flag     |
+> | is_analysis_validated   | boolean      | true/false                  | analysis validation status flag   |
+> | is_correction_validated | boolean      | true/false                  | correction validation status flag |
+> | is_reviewed             | boolean      | true/false                  | review status flag                |
+> | url                     | string       | URL                         | url to the resource               |
+> | record_creator_unlinked | string       |                             | record creator literal name       |
+> | record_owner_unlinked   | string       |                             | record owner literal name         |
+> | team_unlinked           | string       |                             | team name                         |
+> | subsystem_unlinked      | string       |                             | subsystem name                    |
 
 <details>
 <summary>Example Response</summary>
@@ -285,6 +304,10 @@ data format: JSON object
   "record_id": 8,
   "record_creator": 2,
   "record_owner": 3,
+  "record_editors": [
+    1,
+    2
+  ],
   "team": "Team 1",
   "subsystem": "AL",
   "car_year": 2022,
@@ -339,11 +362,11 @@ data format: JSON object
 
 data format: JSON object
 
-> | field name        | type          | data type    | data format/range  | description                                |
-> | ----------------- | ------------- | ------------ | ------------------ | ------------------------------------------ |
-> | comment_text      | required      | string       |                    | comment content                            |
-> | record_id         | required      | int / string | a positive integer | record_id of the record to be commented on |
-> | commenter         | not required  | int / string | a positive integer | user_id of the commenter                   |
+> | field name        | type         | data type    | data format/range  | description                                |
+> | ----------------- | ------------ | ------------ | ------------------ | ------------------------------------------ |
+> | comment_text      | required     | string       |                    | comment content                            |
+> | record_id         | required     | int / string | a positive integer | record_id of the record to be commented on |
+> | commenter         | not required | int / string | a positive integer | user_id of the commenter                   |
 > | parent_comment_id | not required | int / string | a positive integer | comment_id of the parent comment           |
 
 <details>
@@ -444,36 +467,37 @@ Using HTTPie:
 
 data format: JSON object
 
-> | field name              | data type    | data format/range    | description                       |
-> | ----------------------- | ------------ | -------------------- | --------------------------------- |
-> | record_creator          | int / string | a positive integer   | user_id of the record creator     |
-> | record_owner            | int / string | a positive integer   | user_id of the record owner       |
-> | team                    | string       |                      | team name                         |
-> | subsystem               | string       |                      | subsystem name                    |
-> | car_year                | int / string |                      | car year                          |
-> | is_deleted              | boolean      | ture/false           | deletion status                   |
-> | status                  | string       |                      | status string                     |
-> | failure_time            | string       | ISO 8601 time format | failure time                      |
-> | failure_title           | string       |                      | failure title                     |
-> | failure_impact          | string       |                      | failure impact                    |
-> | failure_cause           | string       |                      | failure cause                     |
-> | failure_mechanism       | string       |                      | failure mechanism                 |
-> | corrective_action_plan  | string       |                      | corrective action plan            |
-> | record_creation_time    | string       | ISO 8601 time format | record creation time              |
-> | due_date                | string       | ISO 8601 time format | record due date                   |
-> | resolve_date            | string       | ISO 8601 time format | record resolve date               |
-> | resolution_status       | string       |                      | record resolve status             |
-> | review_date             | string       |                      | record review date                |
-> | is_resolved             | boolean      | true/false           | record resolve status flag        |
-> | is_record_validated     | boolean      | true/false           | record validation status flag     |
-> | is_analysis_validated   | boolean      | true/false           | analysis validation status flag   |
-> | is_correction_validated | boolean      | true/false           | correction validation status flag |
-> | is_reviewed             | boolean      | true/false           | review status flag                |
-> | url                     | string       | URL                  | url to the resource               |
-> | record_creator_unlinked | string       |                      | record creator literal name       |
-> | record_owner_unlinked   | string       |                      | record owner literal name         |
-> | team_unlinked           | string       |                      | team name                         |
-> | subsystem_unlinked      | string       |                      | subsystem name                    |
+> | field name              | data type    | data format/range           | description                       |
+> | ----------------------- | ------------ | --------------------------- | --------------------------------- |
+> | record_creator          | int / string | a positive integer          | user_id of the record creator     |
+> | record_owner            | int / string | a positive integer          | user_id of the record owner       |
+> | record_editors          | list         | a list of positive integers | user_id of the record editors     |
+> | team                    | string       |                             | team name                         |
+> | subsystem               | string       |                             | subsystem name                    |
+> | car_year                | int / string |                             | car year                          |
+> | is_deleted              | boolean      | ture/false                  | deletion status                   |
+> | status                  | string       |                             | status string                     |
+> | failure_time            | string       | ISO 8601 time format        | failure time                      |
+> | failure_title           | string       |                             | failure title                     |
+> | failure_impact          | string       |                             | failure impact                    |
+> | failure_cause           | string       |                             | failure cause                     |
+> | failure_mechanism       | string       |                             | failure mechanism                 |
+> | corrective_action_plan  | string       |                             | corrective action plan            |
+> | record_creation_time    | string       | ISO 8601 time format        | record creation time              |
+> | due_date                | string       | ISO 8601 time format        | record due date                   |
+> | resolve_date            | string       | ISO 8601 time format        | record resolve date               |
+> | resolution_status       | string       |                             | record resolve status             |
+> | review_date             | string       |                             | record review date                |
+> | is_resolved             | boolean      | true/false                  | record resolve status flag        |
+> | is_record_validated     | boolean      | true/false                  | record validation status flag     |
+> | is_analysis_validated   | boolean      | true/false                  | analysis validation status flag   |
+> | is_correction_validated | boolean      | true/false                  | correction validation status flag |
+> | is_reviewed             | boolean      | true/false                  | review status flag                |
+> | url                     | string       | URL                         | url to the resource               |
+> | record_creator_unlinked | string       |                             | record creator literal name       |
+> | record_owner_unlinked   | string       |                             | record owner literal name         |
+> | team_unlinked           | string       |                             | team name                         |
+> | subsystem_unlinked      | string       |                             | subsystem name                    |
 
 <details>
 <summary>Example Response</summary>
@@ -483,6 +507,10 @@ data format: JSON object
   "record_id": 8,
   "record_creator": 2,
   "record_owner": 3,
+  "record_editors": [
+    1,
+    2
+  ],
   "team": "Team 1",
   "subsystem": "AL",
   "car_year": 2022,
@@ -1334,31 +1362,32 @@ Note: Only provided fields will be updated.
 
 data format: JSON object
 
-> | field name              | type         | data type    | data format/range    | default value if not specified | description                       |
-> | ----------------------- | ------------ | ------------ | -------------------- | ------------------------------ | --------------------------------- |
-> | record_creator          | not required | int / string | a positive integer   | null                           | user_id of the record creator     |
-> | record_owner            | not required | int / string | a positive integer   | null                           | user_id of the record owner       |
-> | team                    | not required | string       |                      | null                           | team name                         |
-> | subsystem               | not required | string       |                      | null                           | subsystem name                    |
-> | car_year                | not required | int / string |                      | null                           | car year                          |
-> | is_deleted              | not required | boolean      | ture/false           | false                          | deletion status                   |
-> | status                  | not required | string       |                      | null                           | status string                     |
-> | failure_time            | not required | string       | ISO 8601 time format | request submission time        | failure time                      |
-> | failure_title           | not required | string       |                      | null                           | failure title                     |
-> | failure_impact          | not required | string       |                      | null                           | failure impact                    |
-> | failure_cause           | not required | string       |                      | null                           | failure cause                     |
-> | failure_mechanism       | not required | string       |                      | null                           | failure mechanism                 |
-> | corrective_action_plan  | not required | string       |                      | null                           | corrective action plan            |
-> | record_creation_time    | not required | string       | ISO 8601 time format | request submission time        | record creation time              |
-> | due_date                | not required | string       | ISO 8601 time format | null                           | record due date                   |
-> | resolve_date            | not required | string       | ISO 8601 time format | null                           | record resolve date               |
-> | resolution_status       | not required | string       |                      | null                           | record resolve status             |
-> | review_date             | not required | string       |                      | null                           | record review date                |
-> | is_resolved             | not required | boolean      | true/false           | false                          | record resolve status flag        |
-> | is_record_validated     | not required | boolean      | true/false           | false                          | record validation status flag     |
-> | is_analysis_validated   | not required | boolean      | true/false           | false                          | analysis validation status flag   |
-> | is_correction_validated | not required | boolean      | true/false           | false                          | correction validation status flag |
-> | is_reviewed             | not required | boolean      | true/false           | false                          | review status flag                |
+> | field name              | type         | data type    | data format/range           | default value if not specified | description                       |
+> | ----------------------- | ------------ | ------------ | --------------------------- | ------------------------------ | --------------------------------- |
+> | record_creator          | not required | int / string | a positive integer          | null                           | user_id of the record creator     |
+> | record_owner            | not required | int / string | a positive integer          | null                           | user_id of the record owner       |
+> | record_editors          | not required | list         | a list of positive integers | null                           | user_id of the record editors     |
+> | team                    | not required | string       |                             | null                           | team name                         |
+> | subsystem               | not required | string       |                             | null                           | subsystem name                    |
+> | car_year                | not required | int / string |                             | null                           | car year                          |
+> | is_deleted              | not required | boolean      | ture/false                  | false                          | deletion status                   |
+> | status                  | not required | string       |                             | null                           | status string                     |
+> | failure_time            | not required | string       | ISO 8601 time format        | request submission time        | failure time                      |
+> | failure_title           | not required | string       |                             | null                           | failure title                     |
+> | failure_impact          | not required | string       |                             | null                           | failure impact                    |
+> | failure_cause           | not required | string       |                             | null                           | failure cause                     |
+> | failure_mechanism       | not required | string       |                             | null                           | failure mechanism                 |
+> | corrective_action_plan  | not required | string       |                             | null                           | corrective action plan            |
+> | record_creation_time    | not required | string       | ISO 8601 time format        | request submission time        | record creation time              |
+> | due_date                | not required | string       | ISO 8601 time format        | null                           | record due date                   |
+> | resolve_date            | not required | string       | ISO 8601 time format        | null                           | record resolve date               |
+> | resolution_status       | not required | string       |                             | null                           | record resolve status             |
+> | review_date             | not required | string       |                             | null                           | record review date                |
+> | is_resolved             | not required | boolean      | true/false                  | false                          | record resolve status flag        |
+> | is_record_validated     | not required | boolean      | true/false                  | false                          | record validation status flag     |
+> | is_analysis_validated   | not required | boolean      | true/false                  | false                          | analysis validation status flag   |
+> | is_correction_validated | not required | boolean      | true/false                  | false                          | correction validation status flag |
+> | is_reviewed             | not required | boolean      | true/false                  | false                          | review status flag                |
 
 <details>
 <summary>Example</summary>
@@ -1367,6 +1396,7 @@ data format: JSON object
 {
   "record_creator": 2,
   "record_owner": 3,
+  "record_editors": [1, 2],
   "team": "Team 1",
   "subsystem": "AL",
   "car_year": 2022,
@@ -1407,36 +1437,37 @@ data format: JSON object
 
 data format: JSON object
 
-> | field name              | data type    | data format/range    | description                       |
-> | ----------------------- | ------------ | -------------------- | --------------------------------- |
-> | record_creator          | int / string | a positive integer   | user_id of the record creator     |
-> | record_owner            | int / string | a positive integer   | user_id of the record owner       |
-> | team                    | string       |                      | team name                         |
-> | subsystem               | string       |                      | subsystem name                    |
-> | car_year                | int / string |                      | car year                          |
-> | is_deleted              | boolean      | ture/false           | deletion status                   |
-> | status                  | string       |                      | status string                     |
-> | failure_time            | string       | ISO 8601 time format | failure time                      |
-> | failure_title           | string       |                      | failure title                     |
-> | failure_impact          | string       |                      | failure impact                    |
-> | failure_cause           | string       |                      | failure cause                     |
-> | failure_mechanism       | string       |                      | failure mechanism                 |
-> | corrective_action_plan  | string       |                      | corrective action plan            |
-> | record_creation_time    | string       | ISO 8601 time format | record creation time              |
-> | due_date                | string       | ISO 8601 time format | record due date                   |
-> | resolve_date            | string       | ISO 8601 time format | record resolve date               |
-> | resolution_status       | string       |                      | record resolve status             |
-> | review_date             | string       |                      | record review date                |
-> | is_resolved             | boolean      | true/false           | record resolve status flag        |
-> | is_record_validated     | boolean      | true/false           | record validation status flag     |
-> | is_analysis_validated   | boolean      | true/false           | analysis validation status flag   |
-> | is_correction_validated | boolean      | true/false           | correction validation status flag |
-> | is_reviewed             | boolean      | true/false           | review status flag                |
-> | url                     | string       | URL                  | url to the resource               |
-> | record_creator_unlinked | string       |                      | record creator literal name       |
-> | record_owner_unlinked   | string       |                      | record owner literal name         |
-> | team_unlinked           | string       |                      | team name                         |
-> | subsystem_unlinked      | string       |                      | subsystem name                    |
+> | field name              | data type    | data format/range           | description                       |
+> | ----------------------- | ------------ | --------------------------- | --------------------------------- |
+> | record_creator          | int / string | a positive integer          | user_id of the record creator     |
+> | record_owner            | int / string | a positive integer          | user_id of the record owner       |
+> | record_editors          | list         | a list of positive integers | user_id of the record editors     |
+> | team                    | string       |                             | team name                         |
+> | subsystem               | string       |                             | subsystem name                    |
+> | car_year                | int / string |                             | car year                          |
+> | is_deleted              | boolean      | ture/false                  | deletion status                   |
+> | status                  | string       |                             | status string                     |
+> | failure_time            | string       | ISO 8601 time format        | failure time                      |
+> | failure_title           | string       |                             | failure title                     |
+> | failure_impact          | string       |                             | failure impact                    |
+> | failure_cause           | string       |                             | failure cause                     |
+> | failure_mechanism       | string       |                             | failure mechanism                 |
+> | corrective_action_plan  | string       |                             | corrective action plan            |
+> | record_creation_time    | string       | ISO 8601 time format        | record creation time              |
+> | due_date                | string       | ISO 8601 time format        | record due date                   |
+> | resolve_date            | string       | ISO 8601 time format        | record resolve date               |
+> | resolution_status       | string       |                             | record resolve status             |
+> | review_date             | string       |                             | record review date                |
+> | is_resolved             | boolean      | true/false                  | record resolve status flag        |
+> | is_record_validated     | boolean      | true/false                  | record validation status flag     |
+> | is_analysis_validated   | boolean      | true/false                  | analysis validation status flag   |
+> | is_correction_validated | boolean      | true/false                  | correction validation status flag |
+> | is_reviewed             | boolean      | true/false                  | review status flag                |
+> | url                     | string       | URL                         | url to the resource               |
+> | record_creator_unlinked | string       |                             | record creator literal name       |
+> | record_owner_unlinked   | string       |                             | record owner literal name         |
+> | team_unlinked           | string       |                             | team name                         |
+> | subsystem_unlinked      | string       |                             | subsystem name                    |
 
 <details>
 <summary>Example Response</summary>
@@ -1446,6 +1477,10 @@ data format: JSON object
   "record_id": 8,
   "record_creator": 2,
   "record_owner": 3,
+  "record_editors": [
+    1,
+    2
+  ],
   "team": "Team 1",
   "subsystem": "AL",
   "car_year": 2022,
@@ -1500,11 +1535,11 @@ data format: JSON object
 
 data format: JSON object
 
-> | field name        | type          | data type    | data format/range  | description                                |
-> | ----------------- | ------------- | ------------ | ------------------ | ------------------------------------------ |
-> | comment_text      | required      | string       |                    | comment content                            |
-> | record_id         | required      | int / string | a positive integer | record_id of the record to be commented on |
-> | commenter         | not required  | int / string | a positive integer | user_id of the commenter                   |
+> | field name        | type         | data type    | data format/range  | description                                |
+> | ----------------- | ------------ | ------------ | ------------------ | ------------------------------------------ |
+> | comment_text      | required     | string       |                    | comment content                            |
+> | record_id         | required     | int / string | a positive integer | record_id of the record to be commented on |
+> | commenter         | not required | int / string | a positive integer | user_id of the commenter                   |
 > | parent_comment_id | not required | int / string | a positive integer | comment_id of the parent comment           |
 
 <details>
@@ -1556,6 +1591,7 @@ data format: JSON object
 </details>
 
 ---
+
 <details>
  <summary><code>PUT</code> <code><b>/api/users/&ltint:user_id&gt/</b></code> <code>(update own user object using a user's user_id)</code></summary>
 
@@ -1573,12 +1609,12 @@ data format: JSON object
 
 data format: JSON object
 
-> | field name | type     | data type | description                           |
-> | ---------- | -------- | --------- | ------------------------------------- |
-> | email      | required | string    | user login email    |
-> | first_name | not required | string    | user first name     |
-> | last_name  | not required | string    | user last name      |
-> | team       | not required | string    | user team, can be empty               |
+> | field name | type         | data type | description             |
+> | ---------- | ------------ | --------- | ----------------------- |
+> | email      | required     | string    | user login email        |
+> | first_name | not required | string    | user first name         |
+> | last_name  | not required | string    | user last name          |
+> | team       | not required | string    | user team, can be empty |
 
 <details>
 <summary>Example</summary>
@@ -1598,7 +1634,7 @@ data format: JSON object
 
 > | http code | content-type       | response content                                              |
 > | --------- | ------------------ | ------------------------------------------------------------- |
-> | `200`     | `application/json` | Updated user object.                                       |
+> | `200`     | `application/json` | Updated user object.                                          |
 > | `400`     | `application/json` | Field-specific error message.                                 |
 > | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
 
@@ -1955,6 +1991,7 @@ data format: JSON object
 > | ------------ | ------------ | --------- | ------------------ | ------------------------------------------ |
 > | car_year     | required     | int       |                    | car year                                   |
 > | car_nickname | not required | string    | a positive integer | record_id of the record to be commented on |
+
 <details>
 <summary>Example</summary>
 
@@ -1971,7 +2008,7 @@ data format: JSON object
 
 > | http code | content-type       | response content                                              |
 > | --------- | ------------------ | ------------------------------------------------------------- |
-> | `201`     | `application/json` | Updated car object.                                       |
+> | `201`     | `application/json` | Updated car object.                                           |
 > | `400`     | `application/json` | Field-specific error message.                                 |
 > | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
 
@@ -2040,7 +2077,7 @@ data format: JSON object
 
 > | http code | content-type       | response content                                              |
 > | --------- | ------------------ | ------------------------------------------------------------- |
-> | `201`     | `application/json` | Updated subsystem object.                                       |
+> | `201`     | `application/json` | Updated subsystem object.                                     |
 > | `400`     | `application/json` | Field-specific error message.                                 |
 > | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
 
@@ -2109,7 +2146,7 @@ data format: JSON object
 
 > | http code | content-type       | response content                                              |
 > | --------- | ------------------ | ------------------------------------------------------------- |
-> | `201`     | `application/json` | Updated team object.                                       |
+> | `201`     | `application/json` | Updated team object.                                          |
 > | `400`     | `application/json` | Field-specific error message.                                 |
 > | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
 
@@ -2140,9 +2177,8 @@ data format: JSON object
 
 ---
 
-
-
 ### DELETE
+
 <details>
  <summary><code>DELETE</code> <code><b>/api/cars/&ltint:car_year&gt/</b></code> <code>(delete a particular car object using a car year)</code></summary>
 
@@ -2170,15 +2206,16 @@ Using HTTPie:
 
 ##### Responses
 
-> | http code | content-type       | response content                                                   |
-> | --------- | ------------------ | ------------------------------------------------------------------ |
-> | `204`     | `application/json` | None                                                               |
-> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}`      |
-> | `404`     | `application/json` | `{"detail": "Not found."}`                                         |
+> | http code | content-type       | response content                                              |
+> | --------- | ------------------ | ------------------------------------------------------------- |
+> | `204`     | `application/json` | None                                                          |
+> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
+> | `404`     | `application/json` | `{"detail": "Not found."}`                                    |
 
 </details>
 
 ---
+
 <details>
  <summary><code>DELETE</code> <code><b>/api/subsystems/&ltstr:subsystem_name&gt/</b></code> <code>(delete a particular team object using a name)</code></summary>
 
@@ -2206,11 +2243,11 @@ Using HTTPie:
 
 ##### Responses
 
-> | http code | content-type       | response content                                                   |
-> | --------- | ------------------ | ------------------------------------------------------------------ |
-> | `204`     | `application/json` | None                                                               |
-> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}`      |
-> | `404`     | `application/json` | `{"detail": "Not found."}`                                         |
+> | http code | content-type       | response content                                              |
+> | --------- | ------------------ | ------------------------------------------------------------- |
+> | `204`     | `application/json` | None                                                          |
+> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
+> | `404`     | `application/json` | `{"detail": "Not found."}`                                    |
 
 </details>
 
@@ -2243,16 +2280,15 @@ Using HTTPie:
 
 ##### Responses
 
-> | http code | content-type       | response content                                                   |
-> | --------- | ------------------ | ------------------------------------------------------------------ |
-> | `204`     | `application/json` | None                                                               |
-> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}`      |
-> | `404`     | `application/json` | `{"detail": "Not found."}`                                         |
+> | http code | content-type       | response content                                              |
+> | --------- | ------------------ | ------------------------------------------------------------- |
+> | `204`     | `application/json` | None                                                          |
+> | `401`     | `application/json` | `{"detail": "Authentication credentials were not provided."}` |
+> | `404`     | `application/json` | `{"detail": "Not found."}`                                    |
 
 </details>
 
 ---
-
 
 ## Run for Production
 

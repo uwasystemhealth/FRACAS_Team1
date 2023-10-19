@@ -10,22 +10,33 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+# Static files collect path for deployment
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-mrl%^m)*g*v%#9k8m09*%g(uj^es4q@$()fa-5axl-#gq15(_&"
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-mrl%^m)*g*v%#9k8m09*%g(uj^es4q@$()fa-5axl-#gq15(_&",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = os.getenv("DJANGO_DEBUG", False)
 
-ALLOWED_HOSTS = ["1.0.0.127.in-addr.arpa", "127.0.0.1"]
+
+ALLOWED_HOSTS = ["localhost:3000", "1.0.0.127.in-addr.arpa", "127.0.0.1"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
@@ -36,7 +47,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-
+CSRF_TRUSTED_ORIGINS = []
 # Application definition
 
 INSTALLED_APPS = [
@@ -52,6 +63,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "corsheaders",
     "django_filters",
+    "djoser",
 ]
 
 MIDDLEWARE = [
@@ -118,6 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 # Authentication settings
 AUTH_USER_MODEL = "api.User"
+AUTHENTICATION_BACKENDS = ["api.backends.ApprovedUserBackend"]
 
 
 # rest framework settings
@@ -130,8 +143,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 20,
+    "DEFAULT_PAGINATION_CLASS": None,
 }
 
 # Internationalization
@@ -156,3 +168,48 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# DJOSER
+DJOSER = {
+    "SEND_ACTIVATION_EMAIL": True,
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "SEND_CONFIRMATION_EMAIL": True,
+    "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
+    "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": False,
+    "PASSWORD_RESET_CONFIRM_RETYPE": True,
+    "SET_USERNAME_RETYPE": True,
+    "SET_PASSWORD_RETYPE": True,
+    "USERNAME_RESET_CONFIRM_URL": "username/reset/confirm/{uid}/{token}",
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION_EMAIL": True,
+    "LOGIN_FIELD": "email",
+    "SERIALIZERS": {
+        "user_create": "api.serializers.UserRegistrationSerializer",
+    },
+    "EMAIL": {
+        "activation": "api.email.ActivationEmail",
+        "confirmation": "api.email.ConfirmationEmail",
+        "password_reset": "api.email.PasswordResetEmail",
+        "password_changed_confirmation": "api.email.PasswordChangedConfirmationEmail",
+    },
+}
+
+
+# EMAIL
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+EMAIL_BACKEND = os.getenv(
+    "DJANGO_EMAIL_BACKEND",
+    default="django.core.mail.backends.smtp.EmailBackend",
+)
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
+EMAIL_TIMEOUT = 5
+
+EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "")
+EMAIL_HOST_USER = os.getenv("DJANGO_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("DJANGO_EMAIL_HOST_PASSWORD", "")
+EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "587")
+EMAIL_USE_TLS = True
+
+DEFAULT_FROM_EMAIL = "UWAM FRACAS"
+SERVER_EMAIL = "No Reply"

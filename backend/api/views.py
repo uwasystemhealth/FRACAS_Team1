@@ -12,6 +12,7 @@ from rest_framework.mixins import (
     RetrieveModelMixin,
     UpdateModelMixin,
 )
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -30,31 +31,25 @@ from .serializers import (
     RecordSerializer,
     SubsystemSerializer,
     TeamSerializer,
-    UserRegisterSerializer,
     UserSerializer,
 )
-from .validations import register_validation, validate_email, validate_password
 
 User = get_user_model()
 
 
+# Pagination classes
+class Pagination20(PageNumberPagination):
+    page_size = 20
+
+
+class Pagination10(PageNumberPagination):
+    page_size = 10
+
+
 # API views
 # ------------------------------------------------------------------------------
-class UserRegister(APIView):
-    """View to register a new user."""
-
-    authentication_classes = []
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request):
-        clean_data = register_validation(request.data)
-        serializer = UserRegisterSerializer(data=clean_data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.create(clean_data)
-            if user:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
+# class UserRegister(APIView):
+# now using djoser
 
 # class UserLogin(APIView):
 # View is now using views.obtain_auth_token in urls.py
@@ -66,7 +61,7 @@ class UserLogout(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
-        token, created = Token.objects.get_or_create(user=request.user)
+        token, _ = Token.objects.get_or_create(user=request.user)
         token.delete()
         return Response({"message": "Logged out successfully"})
 
@@ -94,7 +89,7 @@ class UserViewSet(
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = ["user_id", "email", "team__team_name"]
     filterset_fields = ["user_id", "email", "team__team_name"]
-    ordering_fields = ["user_id"]
+    ordering_fields = ["first_name", "last_name", "user_id"]
 
     @action(detail=False, methods=["get"], permission_classes=[ReadOnlyPermission])
     def me(self, request):
@@ -109,13 +104,14 @@ class TeamViewSet(
     CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
-    UpdateModelMixin,
     DestroyModelMixin,
+    UpdateModelMixin,
     GenericViewSet,
 ):
     """Viewset for the Team model."""
 
-    permission_classes = [ReadOnlyPermission]
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"
@@ -160,8 +156,8 @@ class SubsystemViewSet(
     CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
-    UpdateModelMixin,
     DestroyModelMixin,
+    UpdateModelMixin,
     GenericViewSet,
 ):
     """Viewset for the Subsystem model."""
@@ -189,8 +185,8 @@ class CarViewSet(
     CreateModelMixin,
     RetrieveModelMixin,
     ListModelMixin,
-    UpdateModelMixin,
     DestroyModelMixin,
+    UpdateModelMixin,
     GenericViewSet,
 ):
     """Viewset for the Car model."""
@@ -227,14 +223,13 @@ class RecordViewSet(
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsRecordCreatorOrAdmin]
     serializer_class = RecordSerializer
+    pagination_class = Pagination20
     queryset = Record.objects.all()
     lookup_field = "record_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = [
         "record_id",
-        "record_creator__user_id",
         "record_creator_unlinked",
-        "record_owner__user_id",
         "record_owner_unlinked",
         "team__team_name",
         "team_unlinked",
@@ -266,6 +261,10 @@ class RecordViewSet(
         "status",
         "car_year__car_year",
         "car_year__car_nickname",
+        "is_resolved",
+        "is_record_validated",
+        "is_analysis_validated",
+        "is_correction_validated",
     ]
 
     ordering_fields = ["record_creation_time"]
@@ -280,6 +279,51 @@ class RecordViewSet(
         )
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
+    # Customised update(), overwrites UpdateModelMixin.update()
+    # Exclude fields that cannot be modified by non-staff
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        if not user.is_staff and not user.is_admin:
+            # For regular users, remove the fields they cannot update
+            fields_not_allowed_to_modify = [
+                "is_record_validated",
+                "is_analysis_validated",
+                "is_correction_validated",
+                "is_reviewed",
+            ]
+            for field_name in fields_not_allowed_to_modify:
+                if field_name in serializer.validated_data:
+                    del serializer.validated_data[field_name]
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    # Customised create(), overwrites CreateModelMixin.create()
+    # Exclude fields that cannot be modified by non-staff
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        if not user.is_staff and not user.is_admin:
+            # For regular users, remove the fields they cannot initialise
+            fields_not_allowed_to_modify = [
+                "is_record_validated",
+                "is_analysis_validated",
+                "is_correction_validated",
+                "is_reviewed",
+            ]
+            for field_name in fields_not_allowed_to_modify:
+                if field_name in serializer.validated_data:
+                    del serializer.validated_data[field_name]
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
 
 # Comments Viewset
 # ------------------------------------------------------------------------------
@@ -293,18 +337,35 @@ class CommentViewSet(
 ):
     """Viewset for the Comment model."""
 
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsCommenterOrAdmin]
     serializer_class = CommentSerializer
+    pagination_class = Pagination20
     queryset = Comment.objects.all()
     lookup_field = "comment_id"
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = ["comment_text", "commenter__user_id"]
-    filterset_fields = ["comment_text", "commenter__user_id"]
+    filterset_fields = ["comment_text", "commenter__user_id", "record_id__record_id"]
     ordering_fields = ["creation_time"]
 
-    @action(detail=True, methods=["get"], permission_classes=[ReadOnlyPermission])
-    def record(self, request, comment_id=None):
-        """additional API route to return comment's record"""
-        comment = self.get_object()
-        serializer = RecordSerializer(comment.record_id, context={"request": request})
+    @action(detail=False, methods=["get"], permission_classes=[ReadOnlyPermission])
+    def record(self, request, record_id=None):
+        """additional API route to all comment based on record_id"""
+        comments = Comment.objects.filter(
+            record_id__record_id=request.query_params["record_id"]
+        ).order_by("creation_time")
+        serializer = CommentSerializer(
+            comments, many=True, context={"request": request}
+        )
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def user(self, request, user_id=None):
+        """additional API route to all comment based on user_id"""
+        comments = Comment.objects.filter(
+            commenter__user_id=request.query_params["user_id"]
+        ).order_by("creation_time")
+        serializer = CommentSerializer(
+            comments, many=True, context={"request": request}
+        )
         return Response(status=status.HTTP_200_OK, data=serializer.data)

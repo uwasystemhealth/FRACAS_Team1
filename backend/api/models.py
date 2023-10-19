@@ -38,6 +38,7 @@ class CustomUserManager(BaseUserManager):
         )
         user.is_admin = True
         user.is_superuser = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -61,8 +62,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         on_delete=models.SET_NULL,
         related_name="teams",
     )
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True, verbose_name="Email Verified")
+    is_admin = models.BooleanField(default=False, verbose_name="Admin")
+    is_staff = models.BooleanField(default=False, verbose_name="Team Lead")
+    is_superuser = models.BooleanField(default=False, verbose_name="Superuser")
+    is_approved = models.BooleanField(default=False, verbose_name="Approved")
 
     # customised user manager
     objects = CustomUserManager()
@@ -74,10 +78,15 @@ class User(AbstractBaseUser, PermissionsMixin):
             name = self.user_id
         return str(name)
 
-    @property
-    def is_staff(self):
-        """Satisifes built-in forms for user authorisation"""
-        return self.is_admin
+    def save(self, *args, **kwargs):
+        """
+        Ensure that is_superuser is always the same as is_admin.
+        Ensure that all admins are also staff.
+        """
+        self.is_superuser = self.is_admin
+        if self.is_admin:
+            self.is_staff = True
+        super().save(*args, **kwargs)
 
 
 # team model
@@ -151,6 +160,7 @@ class Record(models.Model):
         related_name="owns",
     )
     record_owner_unlinked = models.TextField(null=True, blank=True)
+    record_editors = models.ManyToManyField(User, blank=True)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
     team_unlinked = models.TextField(blank=True, null=True)
     subsystem = models.ForeignKey(
@@ -179,6 +189,8 @@ class Record(models.Model):
     is_analysis_validated = models.BooleanField(blank=True, null=True, default=False)
     is_correction_validated = models.BooleanField(blank=True, null=True, default=False)
     is_reviewed = models.BooleanField(blank=True, null=True, default=False)
+    record_creator_email = models.TextField(blank=True, null=True)
+    record_owner_email = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """
@@ -188,8 +200,10 @@ class Record(models.Model):
         if creating:
             if self.record_creator:
                 self.record_creator_unlinked = str(self.record_creator)
+                self.record_creator_email = self.record_creator.email
             if self.record_owner:
                 self.record_owner_unlinked = str(self.record_owner)
+                self.record_owner_email = self.record_owner.email
             if self.team:
                 self.team_unlinked = str(self.team)
             if self.subsystem:

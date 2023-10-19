@@ -1,7 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
-
-from .models import Team
+from rest_framework import serializers
 
 UserModel = get_user_model()
 
@@ -18,67 +16,32 @@ def register_validation(data):
     Raises:
         ValidationError: If the email is already taken, the password is too short, or the passwords do not match.
     """
-    email = data["email"].strip()
-    first_name = data["first_name"].strip()
-    last_name = data["last_name"].strip()
-    password1 = data["password1"].strip()
-    password2 = data["password2"].strip()
-    team = data["team"].strip()
+    # strip all whitespace from the data, capitalize first and last name
+    data["email"] = data["email"].strip()
+    data["first_name"] = (
+        data["first_name"].strip()[0].upper() + data["first_name"].strip()[1:]
+    )
+    data["last_name"] = (
+        data["last_name"].strip()[0].upper() + data["last_name"].strip()[1:]
+    )
+    data["password"] = data["password"].strip()
+    data["password2"] = data["password2"].strip()
 
-    if not email or UserModel.objects.filter(email=email).exists():
-        raise ValidationError("Email taken: choose another email.")
-    if not password1 or len(password1) < 8:
-        raise ValidationError("Choose another password, min 8 characters.")
-    if not first_name:
-        raise ValidationError("First name is required.")
-    if not last_name:
-        raise ValidationError("Last name is required.")
-    if not password2 or password1 != password2:
-        raise ValidationError("Passwords must match.")
+    if not data["email"] or UserModel.objects.filter(email=data["email"]).exists():
+        raise serializers.ValidationError("Email taken: choose another email.")
+    if not data["password"] or len(data["password"]) < 8:
+        raise serializers.ValidationError("Choose another password, min 8 characters.")
+    if not data["first_name"]:
+        raise serializers.ValidationError("First name is required.")
+    if not data["last_name"]:
+        raise serializers.ValidationError("Last name is required.")
+    if not data["password2"] or data["password"] != data["password2"]:
+        raise serializers.ValidationError("Passwords must match.")
     else:
-        data["password"] = password1
-        data.pop("password1")
         data.pop("password2")
-    if not team or not Team.objects.filter(team_name__iexact=team).exists():
-        # team not found or not provided: silently assigns null
-        # can change this later
-        data["team"] = None
-    else:  # team found case insensitive exact match (__iexact)
-        data["team"] = Team.objects.get(team_name__iexact=team).pk
+        # new registered user is not staff or admin or approved.
+        # these fields are set by an admin in the Django admin panel
+        data["is_staff"] = False
+        data["is_admin"] = False
+        data["is_approved"] = False
     return data
-
-
-def validate_email(data):
-    """Validates the email field in the data.
-
-    Args:
-        data (dict): A dictionary containing the user data.
-
-    Returns:
-        bool: True if the email is valid, False otherwise.
-
-    Raises:
-        ValidationError: If the email is empty.
-    """
-    email = data["email"].strip()
-    if not email:
-        raise ValidationError("An email is required.")
-    return True
-
-
-def validate_password(data):
-    """Validates the password field in the data.
-
-    Args:
-        data (dict): A dictionary containing the user data.
-
-    Returns:
-        bool: True if the password is valid, False otherwise.
-
-    Raises:
-        ValidationError: If the password is empty.
-    """
-    password = data["password"].strip()
-    if not password:
-        raise ValidationError("Password is required.")
-    return True
