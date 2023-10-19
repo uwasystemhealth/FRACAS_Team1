@@ -8,6 +8,10 @@ const SearchReports = () => {
     team: "",
     subsystem: "",
     carYear: "",
+    isRecordResolved: "",
+    isRecordValidated: "",
+    isAnalysisValidated: "",
+    isCorrectionValidated: "",
   });
   const [teams, setTeams] = useState([]);
   const [subsystems, setSubsystems] = useState([]);
@@ -84,6 +88,10 @@ const SearchReports = () => {
       team: "",
       subsystem: "",
       carYear: "",
+      isRecordResolved: "",
+      isRecordValidated: "",
+      isAnalysisValidated: "",
+      isCorrectionValidated: "",
     });
     try {
       const response = await api.getRecords(token);
@@ -197,6 +205,17 @@ const SearchReports = () => {
                   {year.car_year}
                 </option>
               ))}
+            </select>
+          </div>
+          <div className="filter">
+            <span> Reviewed:</span>
+            <select
+              value={formData.isRecordResolved}
+              onChange={(e) => handleInputChange(e, "is_resolved")}
+            >
+              <option value="">Select a status</option>
+              <option value="True">Reviewed</option>
+              <option value="False">Unreviewed</option>
             </select>
           </div>
         </div>
