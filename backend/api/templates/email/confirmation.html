@@ -1,12 +1,12 @@
 {% load i18n %}
 
 {% block subject %}
-{% blocktrans %}{{ site_name }} - Your account has been successfully created and activated!{% endblocktrans %}
+{% blocktrans %}{{ site_name }} - Your email has been successfully verified!{% endblocktrans %}
 {% endblock %}
 
 {% block text_body %}
 {% trans "Hello " %}{{ user.first_name }},
-{% blocktrans %}Your account is now ready to use at {{ site_name }}.{% endblocktrans %}
+{% blocktrans %}Your account will be ready to use at once it has passed admin approval at {{ site_name }}.{% endblocktrans %}
 
 {% trans "Thank you," %}
 
@@ -18,7 +18,7 @@
     <img src="{{ protocol }}://{{ backend }}/{{ image_url }}" alt="UWAM Logo" height="50px" width="260px">   
 </a><br>
 <p>{% trans "Hello " %}{{ user.first_name }},</p>
-<p>{% blocktrans %}Your account is now ready to use at {{ site_name }}.{% endblocktrans %}</p>
+<p>{% blocktrans %}Your account will be ready to use at once it has passed admin approval at {{ site_name }}.{% endblocktrans %}</p>
 
 <p>{% trans "Thank you," %}</p>
 
