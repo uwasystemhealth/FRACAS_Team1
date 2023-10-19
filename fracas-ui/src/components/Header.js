@@ -18,9 +18,9 @@ const Header = () => {
     setShow(false);
     try {
       const token = localStorage.getItem("token");
-      const response = await api.logoutUser(token)
       localStorage.removeItem("is_admin"); // Remove the is_admin from localStorage
       localStorage.removeItem("token"); // Remove the token from localStorage
+      const response = await api.logoutUser(token)
       if (response.message === "Logged out successfully") {
         navigate("/"); // Navigate to the root upon successful logout.
       } else {
