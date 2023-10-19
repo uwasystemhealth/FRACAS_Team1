@@ -54,7 +54,8 @@ export const searchRecords = (token, query, formData, ordering = "-record_creati
 }
 
 export const getPageByURL = (token, url) => {
-    return axios.get(url, { headers: headers(token) });
+    const newURL = url.replace(/http.+?\/api/, BASE_URL);
+    return axios.get(newURL, { headers: headers(token) });
 }
 
 export const registerUser = async (userDetails) => {
