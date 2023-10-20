@@ -2,7 +2,7 @@
 ## Important Files and Directories
 - `api/`: stores the required public sources, including static images.
   - `api/static/`: stores static files to be used by backend.
-  - `api/api_unit_test`: stores unit tests for backend.
+  - `api/api_unit_test/`: stores unit tests and test instructions for backend.
   - `api/templates/`: stores email templates used by backend.
   - `api/admin.py`: controls how models are registered and controled in the admin panel.
   - `api/apps.py`: django app definition file.
