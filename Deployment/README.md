@@ -313,6 +313,12 @@ Remember to monitor and manage your instances to avoid unnecessary charges. The 
     nohup python3 manage.py runserver &
     ```
 
+    - If you'd like to run the backend server in debug mode (which is not recommended for production), add the following to the `.env` file:
+
+    ```
+    DJANGO_DEBUG='True'
+    ```
+
 11. **Stop server**
     - If the backend server is running in the foreground, press contrl+C to terminate it.
     - If the backend server is running in the background, find its process ID using `ps aux | grep manage.py`, then kill it using `kill PID`.
