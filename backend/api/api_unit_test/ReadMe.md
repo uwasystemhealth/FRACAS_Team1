@@ -11,33 +11,33 @@ This document provides instructions on how to run the unit tests and generate a 
      python --version
      ```
 
-2. **Create and Activate Virtual Environment**:
-   - Move into the backend directory:
-  
-     ```bash
-     cd backend
-     ```
+2. **Create and Activate Virtual Environment**:   
 
-   - Create a virtual environment:
+   - Create a virtual environment if you have not done it already:
   
      ```bash
-     python3 -m venv .venv
+     python3 -m venv venv
      ```
   
    - Activate the virtual environment:
      - On Windows:
   
        ```bash
-       .venv\Scripts\activate
+       venv\Scripts\activate
        ```
 
      - On macOS and Linux:
   
        ```bash
-       source .venv/bin/activate
+       source venv/bin/activate
        ```
 
 3. **Install Dependencies**:
+    - Move into the backend directory:
+  
+     ```bash
+     cd backend
+     ```
    - Install the necessary packages from the `requirements.txt` file:
   
      ```bash
