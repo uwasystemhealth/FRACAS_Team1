@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, act } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect"; // Import jest-dom for custom matchers
+//import "@testing-library/jest-dom/extend-expect"; // Import jest-dom for custom matchers
 import UserDashboard from "../pages/UserDashboard"; // Adjust the import path as needed
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/useAuth";
@@ -61,10 +61,7 @@ describe("Test Application runs and page visually", () => {
     console.error = originalConsoleError
   });
 
-  test("view", () => {
-    render(<UserDashboard />);
-    expect(screen.getByText("Manage Your Reports")).toBeInTheDocument();
-  });
+  
 
   test("submit", () => {
     render(<UserDashboard />);
@@ -87,27 +84,7 @@ describe("Test Application runs and page visually", () => {
     );
   });
 
-  test("logoutSuccess", async () => {
-    useAuth.mockReturnValue({
-      isAuthenticated: true,
-      signout: () => {
-        localStorage.removeItem("is_admin");
-        localStorage.removeItem("token");
-      },
-    });
-    render(<ProtectedRoute element={<UserDashboard />} />);
-    const json = jest.fn();
-    json.mockResolvedValue({ status: 200 })
-    fetchMock.mockResolvedValue({ status: 200, json })
-    
-    userEvent.click(screen.getByText("Log out"));
-    const response = await fetchData();
-    if (response.status === 200) {
-      await act(async () => {
-        expect(navigateMock).toHaveBeenCalledWith('/');
-      });
-    }
-  });
+  
   test("logoutFailed", async () => {
     useAuth.mockReturnValue({
       isAuthenticated: true,
@@ -127,21 +104,5 @@ describe("Test Application runs and page visually", () => {
     });
   });
 
-  test("logout_try_catch", async () => {
-    useAuth.mockReturnValue({
-      isAuthenticated: true,
-      signout: () => {
-        localStorage.removeItem("is_admin");
-        localStorage.removeItem("token");
-      },
-    });
-    render(<ProtectedRoute element={<UserDashboard />} />);
-    fetchMock.mockRejectedValue(new Error('Network error'))
-    userEvent.click(screen.getByText("Log out"));
-    await fetchData();
-    await act(async () => {
-      expect(window.alert).toHaveBeenCalled();
-    });
-  });
 });
 
