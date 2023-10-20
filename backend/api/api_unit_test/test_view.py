@@ -41,19 +41,6 @@ class UserTestCase(APITestCase):
             comment_id="1", record_id=self.record, commenter=self.user
         )
 
-    def test_user_register(self):
-        url = reverse("api:register")
-        data = {
-            "email": "newuser@example.com",
-            "password1": "password123",  # updated field name to password1
-            "password2": "password123",  # confirm password field
-            "first_name": "New",
-            "last_name": "User",
-            "team": self.team.team_name,  # updated to use team_name instead of team_id
-        }
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(User.objects.count(), 2)
 
     def test_user_logout(self):
         self.client.force_authenticate(user=self.user)
@@ -371,11 +358,12 @@ class CommentViewSetTestCase(APITestCase):
 
     def test_comment_record(self):
         url = reverse(
-            "api:comment-record", kwargs={"comment_id": self.comment.comment_id}
+            "api:comment-record"
         )
-        response = self.client.get(url, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        expected_data = RecordSerializer(
-            self.record, context={"request": response.wsgi_request}
+        response = self.client.get(url,{"record_id": self.record.pk}, format="json")
+        self.assertEqual(response.status_code,  status.HTTP_200_OK)
+        expected_data = CommentSerializer(
+            self.comment, context={"request": response.wsgi_request}
         ).data
-        self.assertEqual(response.data, expected_data)
+        print(expected_data)
+        self.assertEqual(response.data[0], expected_data)

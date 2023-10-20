@@ -110,8 +110,8 @@ class TeamViewSet(
 ):
     """Viewset for the Team model."""
 
-    authentication_classes = []
-    permission_classes = [permissions.AllowAny]
+    
+    permission_classes = [ReadOnlyPermission]
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     lookup_field = "team_name"

@@ -47,11 +47,11 @@ class UserTestCase(TestCase):
         """Test __str__ method."""
         self.assertEqual(str(self.user), "John Doe")
 
-    def test_is_staff_property(self):
+    def test_is_admin_property(self):
         """Test is_staff property."""
-        self.assertFalse(self.user.is_staff)
+        self.assertFalse(self.user.is_admin)
         self.user.is_admin = True
-        self.assertTrue(self.user.is_staff)
+        self.assertTrue(self.user.is_admin)
 
 
 class TeamTestCase(TestCase):

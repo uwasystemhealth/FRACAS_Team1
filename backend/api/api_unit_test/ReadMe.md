@@ -63,7 +63,7 @@ This document provides instructions on how to run the unit tests and generate a 
    - To run a specific test file, specify the path to the test file:
   
      ```bash
-     pytest api/api_unit_test/<test_file_name>_test.py
+     pytest api/api_unit_test/test_<test_file_name>.py
      ```
 
 ## Generating Coverage Report

@@ -19,7 +19,7 @@ class UserAdminTest(TestCase):
     def test_user_admin_list_display(self):
         self.assertEqual(
             list(self.admin.list_display),
-            ["first_name", "last_name", "team", "email", "is_admin"],
+            ["first_name", "last_name", "team", "email", "is_approved", "is_staff", "is_admin", "is_active"],
         )
 
     def test_user_admin_ordering(self):
@@ -69,6 +69,7 @@ class RecordAdminTest(TestCase):
         self.assertEqual(
             list(self.admin.list_display),
             [
+                "failure_title",
                 "record_creation_time",
                 "status",
                 "team",
