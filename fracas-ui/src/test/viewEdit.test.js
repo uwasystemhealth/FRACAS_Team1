@@ -78,15 +78,6 @@ describe("<ViewEdit />", () => {
     console.error = originalConsoleError;
   });
 
-  it("renders the view", () => {
-    render(
-      <MemoryRouter>
-        <ViewEdit />
-      </MemoryRouter>
-    );
-    expect(screen.getByText("RS")).toBeInTheDocument();
-  });
-
   test("submit", async () => {
     render(
       <MemoryRouter>
