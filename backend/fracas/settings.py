@@ -32,8 +32,7 @@ SECRET_KEY = os.getenv(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# DEBUG = os.getenv("DJANGO_DEBUG", False)
+DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() in ("true", "1", "t")
 
 
 ALLOWED_HOSTS = ["localhost:3000", "1.0.0.127.in-addr.arpa", "127.0.0.1"]
